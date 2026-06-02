@@ -1,0 +1,218 @@
+/* ========================================
+   Header – Variables
+   ======================================== */
+:root {
+  --header-height: 72px;
+  --header-bg: #fff7eb;
+  --header-border: #f0dbb6;
+
+  --header-title-color: #332815;
+  --header-title-size: 1.125rem;
+
+  --header-icon-color: #5b523f;
+  --header-icon-hover-bg: #f4e1b8;
+  --header-icon-hover-color: #2d2414;
+
+  --header-badge-bg: #c39127;
+  --header-badge-color: #ffffff;
+  --header-badge-danger-bg: #d74c42;
+
+  --header-divider-color: #f0dbb6;
+
+  --header-user-hover-bg: #fff1d6;
+  --header-avatar-bg: #b2862a;
+  --header-avatar-color: #ffffff;
+
+  --header-logout-hover-bg: #fde5c1;
+  --header-logout-hover-color: #8b5d16;
+
+  --header-transition: 0.2s ease;
+}
+
+/* ========================================
+   Header – Conteneur
+   ======================================== */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 900;
+  height: var(--header-height);
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--header-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0 24px;
+}
+
+/* ========================================
+   Header – Titre
+   ======================================== */
+.header__title {
+  margin: 0;
+  font-size: var(--header-title-size);
+  font-weight: 700;
+  color: var(--header-title-color);
+  letter-spacing: -0.2px;
+}
+
+/* ========================================
+   Header – Zone d'actions
+   ======================================== */
+.header__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ========================================
+   Header – Boutons icônes (messages, notifs, logout)
+   ======================================== */
+.header__icon-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--header-icon-color);
+  cursor: pointer;
+  transition:
+    background var(--header-transition),
+    color var(--header-transition);
+}
+
+.header__icon-btn:hover {
+  background: var(--header-icon-hover-bg);
+  color: var(--header-icon-hover-color);
+}
+
+/* --- Variante logout --- */
+.header__icon-btn--logout:hover {
+  background: var(--header-logout-hover-bg);
+  color: var(--header-logout-hover-color);
+}
+
+/* ========================================
+   Header – Badge (compteur messages / notifs)
+   ======================================== */
+.header__badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9999px;
+  background: var(--header-badge-bg);
+  color: var(--header-badge-color);
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.header__badge--danger {
+  background: var(--header-badge-danger-bg);
+}
+
+/* ========================================
+   Header – Séparateur
+   ======================================== */
+.header__divider {
+  width: 1px;
+  height: 28px;
+  background: var(--header-divider-color);
+  margin: 0 8px;
+}
+
+/* ========================================
+   Header – Utilisateur connecté
+   ======================================== */
+.header__user-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--header-icon-color);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background var(--header-transition),
+    color var(--header-transition);
+}
+
+.header__user-btn:hover {
+  background: var(--header-user-hover-bg);
+  color: var(--header-icon-hover-color);
+}
+
+/* --- Avatar --- */
+.header__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.header__avatar--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--header-avatar-bg);
+  color: var(--header-avatar-color);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* --- Nom utilisateur --- */
+.header__username {
+  white-space: nowrap;
+}
+
+/* --- Chevron --- */
+.header__chevron {
+  opacity: 0.5;
+  transition: transform var(--header-transition);
+}
+
+.header__user-btn:hover .header__chevron {
+  transform: translateY(1px);
+}
+
+/* ========================================
+   Header – Responsive
+   ======================================== */
+@media (max-width: 640px) {
+  .header__username,
+  .header__chevron {
+    display: none;
+  }
+
+  .header__user-btn {
+    padding: 4px;
+  }
+
+  .header__divider {
+    margin: 0 4px;
+  }
+
+  .header__inner {
+    padding: 0 12px;
+  }
+}

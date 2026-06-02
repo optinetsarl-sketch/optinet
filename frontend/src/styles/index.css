@@ -1,0 +1,17 @@
+:root {
+  --cyan: #00C8C8;
+  --blue: #0A6EE8;
+  --deep: #020B18;
+  --dark: #060F1C;
+  --card: #0C1A2E;
+  --border: rgba(0,200,200,0.15);
+  --text: #C8D8EE;
+  --white: #FFFFFF;
+  --grad: linear-gradient(
+    135deg,
+    #00C8C8 0%,
+    #0A6EE8 100%
+  );
+}
+
+/* puis tout le reste de ton CSS */
