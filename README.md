@@ -12,13 +12,11 @@ Le projet est dockerisé en mode développement et production.
 ### Fichiers Docker
 
 - `docker-compose.yml` : lancement développement backend + frontend
-- `docker-compose.prod.yml` : lancement production avec backend Django et frontend Nginx
+- `docker-compose.prod.yml` : lancement production avec backend Django et frontend Vite
 - `backend/Dockerfile` : image de développement Django
 - `backend/Dockerfile.prod` : image de production Django avec Gunicorn
 - `frontend/Dockerfile` : image de développement Vite
-- `frontend/Dockerfile.prod` : image de production Vite + Nginx
-- `frontend/nginx.conf` : configuration Nginx pour servir le frontend et proxy `/api/`
-- `build-docker-images.sh` : script de construction des images Docker de production
+- `frontend/Dockerfile.prod` : image de production Vite servie par un serveur Node léger
 - `DOCKER_SUMMARY.md` : résumé détaillé de la dockerisation
 
 ### Commandes utiles
@@ -48,7 +46,7 @@ docker compose -f docker-compose.prod.yml up --build
 - Backend Django : `http://localhost:8000`
 - Frontend dev Vite : `http://localhost:5173`
 - Frontend production : `http://localhost`
-- Le frontend redirige les requêtes `/api/` vers le backend via Nginx en production.
+- Le frontend doit appeler le backend via son URL directe (par exemple `http://localhost:8000`) en production.
 
 ## Liens
 

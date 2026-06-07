@@ -3,28 +3,28 @@
    ======================================== */
 :root {
   --header-height: 72px;
-  --header-bg: #fff7eb;
-  --header-border: #f0dbb6;
+  --header-bg: #eaf4ff;
+  --header-border: #cce4fb;
 
-  --header-title-color: #332815;
+  --header-title-color: #0f4f7b;
   --header-title-size: 1.125rem;
 
-  --header-icon-color: #5b523f;
-  --header-icon-hover-bg: #f4e1b8;
-  --header-icon-hover-color: #2d2414;
+  --header-icon-color: #0f6cb3;
+  --header-icon-hover-bg: #d9ecff;
+  --header-icon-hover-color: #084d78;
 
-  --header-badge-bg: #c39127;
+  --header-badge-bg: #0f6cb3;
   --header-badge-color: #ffffff;
-  --header-badge-danger-bg: #d74c42;
+  --header-badge-danger-bg: #da4b4b;
 
-  --header-divider-color: #f0dbb6;
+  --header-divider-color: #cce4fb;
 
-  --header-user-hover-bg: #fff1d6;
-  --header-avatar-bg: #b2862a;
+  --header-user-hover-bg: #d9ecff;
+  --header-avatar-bg: #0f6cb3;
   --header-avatar-color: #ffffff;
 
-  --header-logout-hover-bg: #fde5c1;
-  --header-logout-hover-color: #8b5d16;
+  --header-logout-hover-bg: #d8e8ff;
+  --header-logout-hover-color: #084d78;
 
   --header-transition: 0.2s ease;
 }

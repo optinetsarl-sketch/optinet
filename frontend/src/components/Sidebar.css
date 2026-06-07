@@ -3,15 +3,15 @@
    ======================================== */
 :root {
   --sidebar-width: 260px;
-  --sidebar-bg: #11101b;
-  --sidebar-text: #d9d1c1;
-  --sidebar-hover-bg: #1e1a30;
+  --sidebar-bg: #0b2035;
+  --sidebar-text: #e9f1fb;
+  --sidebar-hover-bg: #0e3357;
   --sidebar-hover-text: #ffffff;
-  --sidebar-active-bg: #2d2541;
-  --sidebar-active-text: #f2c25b;
-  --sidebar-brand-color: #f3e6c3;
-  --sidebar-brand-accent: #d6a237;
-  --sidebar-divider: rgba(255, 255, 255, 0.08);
+  --sidebar-active-bg: #0f4f7b;
+  --sidebar-active-text: #ffffff;
+  --sidebar-brand-color: #dceefe;
+  --sidebar-brand-accent: #0f6cb3;
+  --sidebar-divider: rgba(255, 255, 255, 0.12);
   --sidebar-transition: 0.25s ease;
 }
 
@@ -40,11 +40,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding:2px;
+  padding: 8px;
   margin: 10px;
   height: 80px;
-  background: linear-gradient(135deg, rgba(242, 194, 91, 0.15), rgba(214, 162, 55, 0.1));
-  border: 1px solid rgba(242, 194, 91, 0.3);
+  background: linear-gradient(135deg, rgba(15, 108, 179, 0.18), rgba(14, 70, 121, 0.08));
+  border: 1px solid rgba(15, 108, 179, 0.2);
   border-radius: 16px;
 }
 
@@ -86,41 +86,41 @@
 .sidebar__nav {
   list-style: none;
   margin: 0;
-  padding: 16px 0;
+  padding: 10px 0;
 }
 
 /* ========================================
    Sidebar – Liens
    ======================================== */
 .sidebar__nav-item {
-  margin: 0;
+  margin: 0 10px 8px 10px;
   padding: 0;
 }
 
 .sidebar__link {
   display: block;
-  padding: 14px 20px;
+  padding: 12px 16px;
   color: var(--sidebar-text);
   text-decoration: none;
   font-size: 0.95rem;
   font-weight: 500;
+  border-radius: 12px;
   transition:
     background var(--sidebar-transition),
     color var(--sidebar-transition),
     transform var(--sidebar-transition);
-  border-left: 3px solid transparent;
 }
 
 .sidebar__link:hover {
   background: var(--sidebar-hover-bg);
   color: var(--sidebar-hover-text);
-  transform: translateX(2px);
+  transform: translateX(4px);
 }
 
 /* --- Lien actif --- */
 .sidebar__link--active {
   background: var(--sidebar-active-bg);
   color: var(--sidebar-active-text);
-  border-left-color: var(--sidebar-brand-accent);
   font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }

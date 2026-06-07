@@ -1,0 +1,63 @@
+.admin-container {
+  padding: 40px;
+  /* background: #305385; */
+  min-height: 100vh;
+  color: white;
+  font-family: 'Inter', sans-serif;
+}
+
+.admin-header h2 { font-size: 28px; margin-bottom: 5px; }
+.admin-header span { color: #00C8C8; }
+.admin-header p { color: #ccd6f6; opacity: 0.7; margin-bottom: 40px; }
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 30px;
+}
+
+/* CARDS */
+.admin-form-card, .admin-list-card {
+  background: #07244d;
+  border: 1px solid rgba(36, 99, 99, 0.15);
+  padding: 30px;
+  border-radius: 20px;
+}
+
+h3 { margin-bottom: 25px; color: #00C8C8; font-size: 18px; }
+
+/* FORMULAIRE */
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; margin-bottom: 8px; font-size: 13px; color: #535e83; }
+.form-group input[type="text"] {
+  width: 100%; padding: 12px; background: rgba(2, 11, 24, 0.5);
+  border: 1px solid rgba(0, 200, 200, 0.2); border-radius: 8px; color: white;
+}
+
+.preview-img { width: 100%; height: 150px; object-fit: cover; border-radius: 10px; margin-top: 10px; }
+
+.btn-save {
+  width: 100%; padding: 12px; background: #00C8C8; border: none;
+  border-radius: 8px; color: #020b18; font-weight: bold; cursor: pointer;
+}
+
+/* TABLEAU */
+.admin-table { width: 100%; border-collapse: collapse; }
+.admin-table th { text-align: left; padding: 12px; color: #00C8C8; font-size: 13px; border-bottom: 1px solid rgba(0, 200, 200, 0.1); }
+.admin-table td { padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); vertical-align: middle; }
+
+.table-thumb { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
+
+.status-pill {
+  padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold;
+}
+.status-pill.active { background: rgba(0, 200, 200, 0.1); color: #00C8C8; }
+.status-pill.inactive { background: rgba(255, 255, 255, 0.05); color: #999; }
+
+.table-actions button {
+  background: none; border: none; cursor: pointer; font-size: 16px; margin-right: 10px;
+}
+
+@media (max-width: 1024px) {
+  .admin-grid { grid-template-columns: 1fr; }
+}

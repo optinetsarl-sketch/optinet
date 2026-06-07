@@ -1,12 +1,15 @@
 import { NavLink } from "react-router-dom";
-import logo from "../assets/logoLogin.png";
+import logo from "../assets/logo-Optinet-sokode.png";
 import "./Sidebar.css";
 
 const NAV_ITEMS = [
-  { to: "/admin/dashboard",            label: "Dashboard" },
-  { to: "/admin/users",       label: "Utilisateurs" },
-  { to: "/admin/locations",   label: "Locations" },
-  { to: "/admin/settings",    label: "Paramètres" },
+  { to: "/admin/dashboard", label: "Dashboard" },
+  { to: "/admin/users", label: "Utilisateurs" },
+  { to: "/admin/message", label: "Messages" },
+  { to: "/admin/portfolio", label: "Portfolio" },
+  { to: "/admin/galerie", label: "Galerie" },
+  { to: "/admin/carnetAdress", label: "Carnet d'Adresses" },
+  // { to: "/admin/logout", label: "Déconnexion" },
 ];
 
 const Sidebar = () => {
@@ -15,12 +18,11 @@ const Sidebar = () => {
       <div className="sidebar__brand">
         <img
           src={logo}
-          alt="Logo XOHome"
+          alt="Logo Optinet"
           className="sidebar__logo-img"
         />
       </div>
-
-      <nav>
+      <div className="sidebar__nav">
         <ul className="sidebar__nav">
           {NAV_ITEMS.map(({ to, label }) => (
             <li key={to} className="sidebar__nav-item">
@@ -36,7 +38,7 @@ const Sidebar = () => {
             </li>
           ))}
         </ul>
-      </nav>
+      </div>
     </aside>
   );
 };

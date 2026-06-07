@@ -1,0 +1,130 @@
+/* ===================== */
+/* DESKTOP NAV LINKS     */
+/* ===================== */
+
+/* Classe dédiée pour les liens desktop */
+.nav-desktop-links {
+  display: flex;
+  gap: 34px;
+  list-style: none;
+}
+
+.nav-desktop-links a {
+  color: var(--text);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.2s;
+  letter-spacing: 0.3px;
+}
+
+.nav-desktop-links a:hover,
+.nav-desktop-links a.active {
+  color: var(--cyan);
+}
+
+/* CTA desktop visible par défaut */
+.nav-cta-desktop {
+  display: inline-block;
+}
+
+/* ===================== */
+/* HAMBURGER BUTTON      */
+/* ===================== */
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 1001;
+}
+
+.nav-hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: #fff;
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.nav-hamburger--open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.nav-hamburger--open span:nth-child(2) {
+  opacity: 0;
+}
+.nav-hamburger--open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ===================== */
+/* MENU MOBILE DROPDOWN  */
+/* ===================== */
+.nav-mobile-menu {
+  position: fixed;
+  top: 70px;
+  left: 0;
+  right: 0;
+  background: rgba(2, 11, 24, 0.98);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  flex-direction: column;
+  padding: 20px 5% 30px;
+  list-style: none;
+  z-index: 998;
+  display: flex;
+}
+
+.nav-mobile-menu li {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.nav-mobile-menu li a {
+  display: block;
+  padding: 14px 0;
+  font-size: 16px;
+  color: var(--text);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.nav-mobile-menu li a:hover,
+.nav-mobile-menu li a.active {
+  color: var(--cyan);
+}
+
+/* CTA dans le menu mobile */
+.nav-cta-mobile {
+  border-bottom: none !important;
+  margin-top: 16px;
+}
+
+.nav-cta-mobile .nav-cta {
+  display: block;
+  text-align: center;
+  padding: 12px 24px;
+  border-radius: 30px;
+  text-decoration: none;
+}
+
+/* ===================== */
+/* RESPONSIVE — MOBILE   */
+/* ===================== */
+@media (max-width: 768px) {
+  /* Cacher les liens desktop et le CTA desktop */
+  .nav-desktop-links,
+  .nav-cta-desktop {
+    display: none;
+  }
+
+  /* Afficher le hamburger */
+  .nav-hamburger {
+    display: flex;
+  }
+}

@@ -41,6 +41,6 @@ Le frontend est dockerisé et peut être lancé avec le backend Django via Docke
 
 ### Notes
 
-- Le frontend de production est servi par Nginx.
-- Les requêtes `/api/` sont proxyées vers `http://backend:8000`.
+- Le frontend de production est servi par un serveur Node léger.
+- Les requêtes `/api/` doivent pointer vers le backend (`http://localhost:8000` ou l’URL de backend appropriée).
 - Le backend collecte les fichiers statiques dans `STATIC_ROOT` avant de démarrer.

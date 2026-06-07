@@ -33,10 +33,7 @@ L’objectif est de pouvoir lancer les deux services en développement et en pro
   - Installe les dépendances et lance Vite en développement sur `0.0.0.0:5173`
 - `frontend/Dockerfile.prod`
   - Build du projet avec Vite
-  - Service de production basé sur `nginx:stable-alpine`
-- `frontend/nginx.conf`
-  - Nginx sert les fichiers `dist`
-  - Proxy `/api/` vers `http://backend:8000`
+  - Serve le build avec un serveur Node léger
 - `frontend/.dockerignore`
   - Ignorer `node_modules`, `dist`, `build`, `.vite`, `.env`, logs, `.git`
 
@@ -90,8 +87,8 @@ systemctl --user start podman.socket
 
 - Le backend Django écoute sur `0.0.0.0:8000`.
 - Le frontend Vite écoute sur `0.0.0.0:5173` en mode développement.
-- En production, Nginx sert le frontend sur le port `80`.
-- Le proxy Nginx redirige les requêtes `/api/` vers `backend:8000`.
+- En production, le frontend est servi sur le port `80` via un serveur Node léger.
+- Les requêtes `/api/` doivent pointer vers `backend:8000`.
 
 ## Rappels
 
