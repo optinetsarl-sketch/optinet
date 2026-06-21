@@ -23,9 +23,10 @@ export default function AdminLayout() {
           <Sidebar />
           <Header />
           
-          <main 
-            style={{ 
-              flex: 1, 
+          <main
+            className="admin-layout__main"
+            style={{
+              flex: 1,
               padding: "24px",
               backgroundColor: "#71b7c3ff"
             }}

@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+__pypackages__/
+venv/
+.env
+*.sqlite3
+media/
+*.log
+*.pot
+*.mo
+.git
+.gitignore

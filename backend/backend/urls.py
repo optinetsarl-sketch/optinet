@@ -15,15 +15,50 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django import dispatch
-from django.urls import include,path
+from django.urls import include, path, re_path
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic import TemplateView
+from django.http import FileResponse
+import os
+
+
+def serve_index(request):
+    """Serve index.html for frontend SPA"""
+    index_path = os.path.join(settings.BASE_DIR, 'frontend_dist', 'index.html')
+    if os.path.exists(index_path):
+        return FileResponse(open(index_path, 'rb'), content_type='text/html')
+    # Fallback to template if file doesn't exist
+    return TemplateView.as_view(template_name='index.html')(request)
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/", include("OPTINET.urls")),
+]
+
+# Serve static assets from frontend build
+if os.path.exists(os.path.join(settings.BASE_DIR, 'frontend_dist')):
+    from django.views.static import serve as static_serve
+    
+    def serve_static_asset(request, path):
+        """Serve static assets from frontend_dist"""
+        asset_path = os.path.join(settings.BASE_DIR, 'frontend_dist', path)
+        if os.path.exists(asset_path):
+            return static_serve(request, path, document_root=os.path.join(settings.BASE_DIR, 'frontend_dist'))
+        # If not found, return 404
+        from django.http import HttpResponseNotFound
+        return HttpResponseNotFound()
+    
+    urlpatterns += [
+        re_path(r'^(?P<path>assets/.*)$', serve_static_asset, name='frontend-assets'),
+        re_path(r'^(?P<path>.*\.svg)$', serve_static_asset, name='frontend-svg'),
+    ]
+
+# Serve frontend for all other routes (SPA fallback)
+urlpatterns += [
+    re_path(r'^(?!api/|admin/).*$', serve_index, name='frontend'),
 ]
 
 if settings.DEBUG:

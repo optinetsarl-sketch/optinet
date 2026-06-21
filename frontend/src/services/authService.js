@@ -3,9 +3,13 @@ import api from "./api";
 
 // Plain axios instance (no auth interceptor) — used for the login call
 // so an expired token in localStorage doesn't block authentication.
+const API_URL = import.meta.env.VITE_API_URL;
+
 const publicApi = axios.create({
-    baseURL: "http://127.0.0.1:8000",
-    headers: { "Content-Type": "application/json" },
+    baseURL: API_URL,
+    headers: {
+        "Content-Type": "application/json",
+    },
 });
 
 export const loginUser = async (data) => {
