@@ -1,7 +1,15 @@
+import img1 from "../../assets/services/service-1.jpg";
+import img2 from "../../assets/services/service-2.jpg";
+import img3 from "../../assets/services/service-3.jpg";
+import img4 from "../../assets/services/service-4.jpg";
+import img5 from "../../assets/services/service-5.jpg";
+import img6 from "../../assets/services/service-6.jpg";
+
 const servicesData = [
   {
     id: 1,
     icon: "🌐",
+    image: img1,
     title: "Réseaux & Infrastructure",
     desc: "Conception, installation et maintenance d'infrastructures réseau LAN/WAN.",
     fullDesc:
@@ -11,6 +19,7 @@ const servicesData = [
   {
     id: 2,
     icon: "🔒",
+    image: img2,
     title: "Sécurité & Surveillance",
     desc: "Installation de caméras de surveillance CCTV et contrôle d'accès.",
     fullDesc:
@@ -20,6 +29,7 @@ const servicesData = [
   {
     id: 3,
     icon: "📡",
+    image: img3,
     title: "Fibre Optique & Télécoms",
     desc: "Déploiement et maintenance fibre optique et transmission radio.",
     fullDesc:
@@ -29,6 +39,7 @@ const servicesData = [
   {
     id: 4,
     icon: "🖥️",
+    image: img4,
     title: "Serveurs & Virtualisation",
     desc: "Administration de serveurs et solutions cloud hybride Azure.",
     fullDesc:
@@ -38,6 +49,7 @@ const servicesData = [
   {
     id: 5,
     icon: "📞",
+    image: img5,
     title: "Téléphonie d'Entreprise",
     desc: "Mise en service de systèmes de téléphonie IP et VoIP.",
     fullDesc:
@@ -47,6 +59,7 @@ const servicesData = [
   {
     id: 6,
     icon: "🎓",
+    image: img6,
     title: "Conseil & Formation",
     desc: "Accompagnement en transformation numérique et audit.",
     fullDesc:

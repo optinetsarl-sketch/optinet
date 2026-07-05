@@ -1,5 +1,6 @@
 import React from 'react';
 import '../styles_admin/A_propos.css';
+import optinetLogo from "../../assets/optinet-logo.png";
 
 export default function APropos() {
   return (
@@ -14,7 +15,9 @@ export default function APropos() {
           <div className="card-glow"></div>
           
           <div className="card-inner">
-            <div className="big-logo-hex">O</div>
+            <div className="big-logo-hex" style={{ overflow: "hidden", padding: 8, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <img src={optinetLogo} alt="OptiNet" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+            </div>
             <h3 className="company-name">Opti<span>Net</span> SARL U</h3>
             <p className="company-subtitle">Solutions IT • Réseaux • Télécommunications</p>
 

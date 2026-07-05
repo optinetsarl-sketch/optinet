@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import optinetLogo from "../../assets/optinet-logo.png";
 
 export default function Footer() {
   return (
@@ -7,7 +8,9 @@ export default function Footer() {
         <div className="footer-grid">
           <div>
             <div className="footer-brand-logo">
-              <div className="footer-logo-circle">O</div>
+              <div className="footer-logo-circle" style={{ overflow: "hidden", padding: 0 }}>
+                <img src={optinetLogo} alt="OptiNet" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }} />
+              </div>
               <span className="footer-logo-text">
                 Opti<span>Net</span>
               </span>

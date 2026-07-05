@@ -41,7 +41,13 @@ export default function Services() {
             onClick={() => setActiveService(service)}
             onKeyDown={(e) => (e.key === 'Enter' ? setActiveService(service) : null)}
           >
-            <div className="service-icon">{service.icon}</div>
+            {service.image ? (
+              <div style={{ height: 170, borderRadius: 12, overflow: "hidden", marginBottom: 14 }}>
+                <img src={service.image} alt={service.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+              </div>
+            ) : (
+              <div className="service-icon">{service.icon}</div>
+            )}
             <div className="service-title">{service.title}</div>
             <div className="service-desc">{service.desc}</div>
             <div className="service-tags">

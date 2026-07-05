@@ -77,6 +77,8 @@ class Portfolio(models.Model):
 class Photo(models.Model):
     titre = models.CharField(max_length=255,blank=True, null=True)
     image_principale = models.ImageField(upload_to='photo/')
+    prix = models.CharField(max_length=100, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
     est_actif = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 

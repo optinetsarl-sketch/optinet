@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import "./sedebar.css";
+import optinetLogo from "../../assets/optinet-logo.png";
 
 const NAV_ITEMS = [
   { to: "/", label: "Accueil" },
@@ -10,7 +11,7 @@ const NAV_ITEMS = [
   { to: "/certifications", label: "Certifications" },
   { to: "/portfolios", label: "Portfolio" },
   { to: "/contact", label: "Contact" },
-  { to: "/galerie", label: "Galerie" },
+  { to: "/galerie", label: "Nos Articles" },
 ];
 
 const Navbar = () => {
@@ -34,7 +35,9 @@ const Navbar = () => {
     <nav id="navbar">
       {/* Logo */}
       <Link className="nav-logo" to="/" onClick={closeMenu}>
-        <div className="nav-logo-circle">O</div>
+        <div className="nav-logo-circle" style={{ overflow: "hidden", padding: 0 }}>
+          <img src={optinetLogo} alt="OptiNet" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }} />
+        </div>
         <span className="nav-logo-text">
           Opti<span>Net</span>
         </span>

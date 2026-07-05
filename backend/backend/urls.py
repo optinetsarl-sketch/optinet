@@ -58,7 +58,7 @@ if os.path.exists(os.path.join(settings.BASE_DIR, 'frontend_dist')):
 
 # Serve frontend for all other routes (SPA fallback)
 urlpatterns += [
-    re_path(r'^(?!api/|admin/).*$', serve_index, name='frontend'),
+    re_path(r'^(?!api/|admin/|media/).*$', serve_index, name='frontend'),
 ]
 
 if settings.DEBUG:

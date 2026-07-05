@@ -35,7 +35,13 @@ ALLOWED_HOSTS = [
     "localhost",
     "optinetbackend.ginolux.com",
     "www.optinetbackend.ginolux.com",
+    "optinet-sarlu.ginolux.com",
+    "optinet.ginolux.com",
 ]
+
+# Derrière un proxy HTTPS (nginx) : Django génère des URLs https (images/médias inclus)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
 
 # ======================================================
 # CONFIGURATION POUR PRODUCTION AVEC HTTPS
