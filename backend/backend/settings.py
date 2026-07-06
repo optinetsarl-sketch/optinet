@@ -33,6 +33,8 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
+    "optinet-sarlu.ginolux.com",
+    "optinet.ginolux.com",
     "optinetbackend.ginolux.com",
     "www.optinetbackend.ginolux.com",
     "optinet-sarlu.ginolux.com",
@@ -58,9 +60,10 @@ if not DEBUG:
 
 # Domaines autorisés pour CSRF
 CSRF_TRUSTED_ORIGINS = [
+    "https://optinet.ginolux.com",
+    "https://optinet-sarlu.ginolux.com",
     "https://optinetbackend.ginolux.com",
     "https://www.optinetbackend.ginolux.com",
-    "https://optinet.ginolux.com",
     "http://127.0.0.1:8000",
     "http://localhost:8000",
 ]
@@ -193,10 +196,11 @@ AUTH_USER_MODEL = 'OPTINET.User'
 
 # Configuration CORS - Spécifier les origines autorisées
 CORS_ALLOWED_ORIGINS = [
+    "https://optinet.ginolux.com",
+    "https://optinet-sarlu.ginolux.com",
     "http://127.0.0.1:5173",    # Frontend local (Vite)
     "http://localhost:5173",
     "https://optinetbackend.ginolux.com",
-    "https://optinet.ginolux.com",
 ]
 
 # Autoriser les credentials (cookies, auth) dans les requêtes CORS

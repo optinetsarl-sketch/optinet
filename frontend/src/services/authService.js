@@ -90,10 +90,21 @@ export const deletePhoto = async (id) => {
     return await api.delete(`/api/photos/delete/${id}/`);
 };
 
-// // activer / désactiver un utilisateur
-// export const toggleUserStatus = async (userId) => {
-//     return await api.post(`api/users/${userId}/toggle-status/`);
-// };
+export const toggleUserStatus = async (userId) => {
+    return await api.post(`/api/users/${userId}/toggle-status/`);
+};
+
+export const createUser = async (data) => {
+    return await api.post(`/api/users/create/`, data);
+};
+
+export const updateUser = async (userId, data) => {
+    return await api.put(`/api/users/${userId}/`, data);
+};
+
+export const deleteUser = async (userId) => {
+    return await api.delete(`/api/users/${userId}/`);
+};
 
 // // récupérer ses infos (profil)
 // export const getMe = async () => {

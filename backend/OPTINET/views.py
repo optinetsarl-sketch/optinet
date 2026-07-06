@@ -7,7 +7,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .serializers import MessageSerializer,CategorieSerializer,PortfolioSerializer,MessageSerializer
-from rest_framework import generics
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 from .models import Contact
 from .serializers import ContactSerializer
 from rest_framework.permissions import AllowAny
@@ -17,10 +19,34 @@ class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
 
-class UserListView(generics.ListAPIView):
-    queryset = User.objects.all().order_by("-id")
+class UserCreateView(generics.CreateAPIView):
+    queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]    
+    permission_classes = [AllowAny]
+
+class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+class UserToggleStatusView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        try:
+            user = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+        user.is_active = not user.is_active
+        user.save()
+        return Response({"id": user.id, "is_active": user.is_active}, status=status.HTTP_200_OK)
+
+# Duplicate UserDetailView and UserToggleStatusView removed
+
+class UserListView(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
 
 # Message
 

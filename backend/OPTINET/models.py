@@ -3,8 +3,9 @@ from django.db import models
 # Create your models here.
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
 from .managers import UserManager
+
+
 class User(AbstractUser):
     ROLE_CHOICES = (
         ("DG", "Directeur Général"),
@@ -16,9 +17,7 @@ class User(AbstractUser):
     )
 
     username = None
-
     email = models.EmailField(unique=True)
-
     role = models.CharField(
         max_length=2,
         choices=ROLE_CHOICES,
