@@ -4,6 +4,7 @@ import img3 from "../../assets/services/service-3.jpg";
 import img4 from "../../assets/services/service-4.jpg";
 import img5 from "../../assets/services/service-5.jpg";
 import img6 from "../../assets/services/service-6.jpg";
+import img7 from "../../assets/services/service-7.jpg";
 
 const servicesData = [
   {
@@ -71,6 +72,17 @@ const servicesData = [
     fullDesc:
       "Audit complet de votre parc informatique, conseil stratégique et formation de vos équipes aux nouvelles technologies.",
     tags: ["Conseil", "Formation", "Audit"],
+  },
+  {
+    id: 7,
+    slug: "developpement",
+    icon: "💻",
+    image: img7,
+    title: "Développement & Applications",
+    desc: "Conception, développement, déploiement et suivi de vos applications web et mobiles.",
+    fullDesc:
+      "De l'idée à la mise en production : nous concevons des applications web et mobiles sur mesure, gérons leur déploiement (serveur/cloud), la maintenance évolutive et le suivi (monitoring, mises à jour) pour garantir leur performance et leur disponibilité dans la durée.",
+    tags: ["Web & Mobile", "Déploiement", "Maintenance & Suivi"],
   },
 ];
 

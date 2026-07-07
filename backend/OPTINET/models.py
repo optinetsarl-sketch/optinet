@@ -136,6 +136,7 @@ class Actualite(models.Model):
         ("serveurs", "Serveurs & Virtualisation"),
         ("telephonie", "Téléphonie d'Entreprise"),
         ("conseil", "Conseil & Formation"),
+        ("developpement", "Développement & Applications"),
     ]
     titre = models.CharField(max_length=255)
     contenu = models.TextField(blank=True, null=True)

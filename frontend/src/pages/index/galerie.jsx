@@ -12,6 +12,7 @@ const httpsUrl = (u) => {
 export default function Galerie() {
   const [produits, setProduits] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState('');
 
   useEffect(() => {
     getProduits()
@@ -19,6 +20,12 @@ export default function Galerie() {
       .catch((e) => console.error('Erreur chargement produits:', e))
       .finally(() => setLoading(false));
   }, []);
+
+  const q = query.trim().toLowerCase();
+  const filtered = q
+    ? produits.filter((p) =>
+        ((p.nom || '') + ' ' + (p.prix || '')).toLowerCase().includes(q))
+    : produits;
 
   return (
     <section style={{ background: '#020b18', minHeight: '80vh', padding: '96px 20px 64px', color: '#fff' }}>
@@ -31,13 +38,31 @@ export default function Galerie() {
           </p>
         </div>
 
+        {/* Recherche */}
+        <div style={{ maxWidth: 520, margin: '0 auto 34px', position: 'relative' }}>
+          <span style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#63798f', fontSize: 16 }}>🔍</span>
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Rechercher un article (nom, prix…)"
+            style={{ width: '100%', background: '#0a1526', border: '1px solid #16283f', borderRadius: 30, padding: '13px 18px 13px 44px', color: '#fff', fontSize: 15, outline: 'none' }}
+          />
+          {query && (
+            <button onClick={() => setQuery('')} aria-label="Effacer"
+              style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#9fb3c8', fontSize: 20, cursor: 'pointer', lineHeight: 1 }}>×</button>
+          )}
+        </div>
+
         {loading ? (
           <p style={{ textAlign: 'center', color: '#9fb3c8' }}>Chargement…</p>
         ) : produits.length === 0 ? (
           <p style={{ textAlign: 'center', color: '#9fb3c8' }}>Aucun article pour le moment.</p>
+        ) : filtered.length === 0 ? (
+          <p style={{ textAlign: 'center', color: '#9fb3c8' }}>Aucun article ne correspond à « {query} ».</p>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: 22 }}>
-            {produits.map((p) => (
+            {filtered.map((p) => (
               <Link
                 key={p.id}
                 to={`/articles/${p.id}`}
