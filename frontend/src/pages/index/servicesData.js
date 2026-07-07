@@ -8,6 +8,7 @@ import img6 from "../../assets/services/service-6.jpg";
 const servicesData = [
   {
     id: 1,
+    slug: "reseaux",
     icon: "🌐",
     image: img1,
     title: "Réseaux & Infrastructure",
@@ -18,6 +19,7 @@ const servicesData = [
   },
   {
     id: 2,
+    slug: "securite",
     icon: "🔒",
     image: img2,
     title: "Sécurité & Surveillance",
@@ -28,6 +30,7 @@ const servicesData = [
   },
   {
     id: 3,
+    slug: "fibre",
     icon: "📡",
     image: img3,
     title: "Fibre Optique & Télécoms",
@@ -38,6 +41,7 @@ const servicesData = [
   },
   {
     id: 4,
+    slug: "serveurs",
     icon: "🖥️",
     image: img4,
     title: "Serveurs & Virtualisation",
@@ -48,6 +52,7 @@ const servicesData = [
   },
   {
     id: 5,
+    slug: "telephonie",
     icon: "📞",
     image: img5,
     title: "Téléphonie d'Entreprise",
@@ -58,6 +63,7 @@ const servicesData = [
   },
   {
     id: 6,
+    slug: "conseil",
     icon: "🎓",
     image: img6,
     title: "Conseil & Formation",

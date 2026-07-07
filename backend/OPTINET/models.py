@@ -129,9 +129,19 @@ class Actualite(models.Model):
         ("actualite", "Actualité"),
         ("annonce", "Annonce & Info"),
     ]
+    SERVICE_CHOICES = [
+        ("reseaux", "Réseaux & Infrastructure"),
+        ("securite", "Sécurité & Surveillance"),
+        ("fibre", "Fibre Optique & Télécoms"),
+        ("serveurs", "Serveurs & Virtualisation"),
+        ("telephonie", "Téléphonie d'Entreprise"),
+        ("conseil", "Conseil & Formation"),
+    ]
     titre = models.CharField(max_length=255)
     contenu = models.TextField(blank=True, null=True)
     categorie = models.CharField(max_length=20, choices=CATEGORIE_CHOICES, default="intervention")
+    service = models.CharField(max_length=20, choices=SERVICE_CHOICES, blank=True, null=True,
+                               help_text="Service OPTINET associé (pour l'afficher sur la page du service)")
     video_url = models.URLField(blank=True, null=True, help_text="Lien YouTube (facultatif)")
     est_publie = models.BooleanField(default=True)
     date_publication = models.DateTimeField(default=timezone.now)

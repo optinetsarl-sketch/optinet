@@ -195,11 +195,13 @@ class ActualiteListSerializer(serializers.ModelSerializer):
     categorie_label = serializers.CharField(source="get_categorie_display", read_only=True)
     extrait = serializers.SerializerMethodField()
 
+    service_label = serializers.CharField(source="get_service_display", read_only=True)
+
     class Meta:
         model = Actualite
         fields = [
-            "id", "titre", "categorie", "categorie_label", "date_publication",
-            "est_publie", "image_principale", "nb_photos", "a_video", "extrait",
+            "id", "titre", "categorie", "categorie_label", "service", "service_label",
+            "date_publication", "est_publie", "image_principale", "nb_photos", "a_video", "extrait",
         ]
 
     def get_image_principale(self, obj):
@@ -221,14 +223,15 @@ class ActualiteDetailSerializer(serializers.ModelSerializer):
     photos = PhotoActualiteSerializer(many=True, read_only=True)
     image_principale = serializers.SerializerMethodField()
     categorie_label = serializers.CharField(source="get_categorie_display", read_only=True)
+    service_label = serializers.CharField(source="get_service_display", read_only=True)
     video_embed = serializers.SerializerMethodField()
 
     class Meta:
         model = Actualite
         fields = [
             "id", "titre", "contenu", "categorie", "categorie_label",
-            "video_url", "video_embed", "date_publication", "est_publie",
-            "created_at", "photos", "image_principale",
+            "service", "service_label", "video_url", "video_embed",
+            "date_publication", "est_publie", "created_at", "photos", "image_principale",
         ]
 
     def get_image_principale(self, obj):

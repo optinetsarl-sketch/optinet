@@ -155,6 +155,10 @@ export const getActualiteDetail = async (id) => {
     return await publicApi.get(`/api/actualites/${id}/`);
 };
 
+export const getActualitesByService = async (service) => {
+    return await publicApi.get(`/api/actualites/?service=${encodeURIComponent(service)}`);
+};
+
 export const createActualite = async (data) => {
     return await api.post("/api/actualites/create/", data, {
         headers: { "Content-Type": "multipart/form-data" }

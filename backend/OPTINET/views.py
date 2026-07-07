@@ -270,6 +270,9 @@ class ActualiteListView(generics.ListAPIView):
         cat = self.request.query_params.get("categorie")
         if cat:
             qs = qs.filter(categorie=cat)
+        service = self.request.query_params.get("service")
+        if service:
+            qs = qs.filter(service=service)
         return qs
 
 
@@ -290,6 +293,7 @@ class ActualiteCreateView(APIView):
             titre=data.get("titre") or "Actualité",
             contenu=data.get("contenu", "") or "",
             categorie=data.get("categorie") or "intervention",
+            service=(data.get("service") or "") or None,
             video_url=data.get("video_url", "") or "",
             est_publie=_to_bool(data.get("est_publie"), default=True),
         )
@@ -315,6 +319,8 @@ class ActualiteUpdateView(APIView):
         for field in ("titre", "contenu", "categorie", "video_url"):
             if field in data:
                 setattr(actu, field, data.get(field) or "")
+        if "service" in data:
+            actu.service = (data.get("service") or "") or None
         if "est_publie" in data:
             actu.est_publie = _to_bool(data.get("est_publie"))
         actu.save()

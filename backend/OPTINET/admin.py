@@ -83,12 +83,12 @@ class PhotoActualiteInline(admin.TabularInline):
 
 @admin.register(Actualite)
 class ActualiteAdmin(admin.ModelAdmin):
-    list_display = ('id', 'apercu', 'titre', 'categorie', 'a_video', 'est_publie', 'date_publication')
-    list_filter = ('categorie', 'est_publie', 'date_publication')
+    list_display = ('id', 'apercu', 'titre', 'categorie', 'service', 'a_video', 'est_publie', 'date_publication')
+    list_filter = ('categorie', 'service', 'est_publie', 'date_publication')
     list_editable = ('est_publie',)
     search_fields = ('titre', 'contenu')
     inlines = [PhotoActualiteInline]
-    fields = ('titre', 'categorie', 'date_publication', 'contenu', 'video_url', 'est_publie')
+    fields = ('titre', 'categorie', 'service', 'date_publication', 'contenu', 'video_url', 'est_publie')
 
     def apercu(self, obj):
         photo = obj.photo_principale
