@@ -41,7 +41,7 @@ export default function Journal() {
     <section style={{ background: '#020b18', minHeight: '80vh', padding: '96px 20px 64px', color: '#fff' }}>
       <div style={{ maxWidth: 1240, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 34 }}>
-          <span style={{ color: '#12b3d6', fontWeight: 800, letterSpacing: 2, fontSize: 13 }}>LE JOURNAL</span>
+          <span style={{ color: '#12b3d6', fontWeight: 800, letterSpacing: 2, fontSize: 13 }}>JOURNAL</span>
           <h2 style={{ fontSize: 38, fontWeight: 800, margin: '8px 0' }}>Actualités &amp; Interventions 📡</h2>
           <p style={{ color: '#9fb3c8' }}>
             Nos chantiers, nos réalisations et l'actualité d'OPTINET SARL U — en photos et en vidéo.

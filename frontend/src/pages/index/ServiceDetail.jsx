@@ -70,7 +70,7 @@ export default function ServiceDetail() {
             <p style={{ color: '#9fb3c8' }}>Chargement…</p>
           ) : pubs.length === 0 ? (
             <p style={{ color: '#9fb3c8' }}>
-              Aucune publication pour ce service pour l'instant. Retrouvez toute notre actualité dans <Link to="/journal" style={{ color: '#12b3d6' }}>Le Journal</Link>.
+              Aucune publication pour ce service pour l'instant. Retrouvez toute notre actualité dans le <Link to="/journal" style={{ color: '#12b3d6' }}>Journal</Link>.
             </p>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: 20 }}>

@@ -124,7 +124,7 @@ export default function Homes() {
         <section style={{ background: "#050d1c", padding: "64px 20px", color: "#fff" }}>
           <div style={{ maxWidth: 1240, margin: "0 auto" }}>
             <div style={{ textAlign: "center", marginBottom: 34 }}>
-              <span style={{ color: "#12b3d6", fontWeight: 800, letterSpacing: 2, fontSize: 13 }}>LE JOURNAL 📡</span>
+              <span style={{ color: "#12b3d6", fontWeight: 800, letterSpacing: 2, fontSize: 13 }}>JOURNAL 📡</span>
               <h2 style={{ fontSize: 34, fontWeight: 800, margin: "8px 0" }}>Nos dernières interventions</h2>
               <p style={{ color: "#9fb3c8" }}>Suivez nos chantiers et l'actualité d'OPTINET SARL U.</p>
             </div>
@@ -152,7 +152,7 @@ export default function Homes() {
             </div>
 
             <div style={{ textAlign: "center", marginTop: 32 }}>
-              <Link to="/journal" className="btn-outline">Voir tout le Journal</Link>
+              <Link to="/journal" className="btn-outline">Voir le Journal</Link>
             </div>
           </div>
         </section>
