@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
 from .managers import UserManager
 
 
@@ -118,6 +119,47 @@ class PhotoProduit(models.Model):
 
     def __str__(self):
         return f"Photo de {self.produit.nom}"
+
+
+class Actualite(models.Model):
+    """Une publication du Journal (intervention terrain, réalisation, actu, annonce)."""
+    CATEGORIE_CHOICES = [
+        ("intervention", "Intervention terrain"),
+        ("realisation", "Réalisation"),
+        ("actualite", "Actualité"),
+        ("annonce", "Annonce & Info"),
+    ]
+    titre = models.CharField(max_length=255)
+    contenu = models.TextField(blank=True, null=True)
+    categorie = models.CharField(max_length=20, choices=CATEGORIE_CHOICES, default="intervention")
+    video_url = models.URLField(blank=True, null=True, help_text="Lien YouTube (facultatif)")
+    est_publie = models.BooleanField(default=True)
+    date_publication = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-date_publication", "-created_at"]
+
+    def __str__(self):
+        return self.titre
+
+    @property
+    def photo_principale(self):
+        return self.photos.filter(est_principale=True).first() or self.photos.first()
+
+
+class PhotoActualite(models.Model):
+    """Une photo appartenant à une actualité."""
+    actualite = models.ForeignKey(Actualite, related_name="photos", on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="actualites/")
+    est_principale = models.BooleanField(default=False)
+    ordre = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["-est_principale", "ordre", "id"]
+
+    def __str__(self):
+        return f"Photo de {self.actualite.titre}"
 
 
 class Contact(models.Model):

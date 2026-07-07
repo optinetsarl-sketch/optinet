@@ -144,6 +144,33 @@ export const deleteProduitPhoto = async (photoId) => {
     return await api.delete(`/api/produit-photos/delete/${photoId}/`);
 };
 
+// --- Actualités (Le Journal) ---
+
+export const getActualites = async (categorie) => {
+    const q = categorie ? `?categorie=${encodeURIComponent(categorie)}` : "";
+    return await publicApi.get(`/api/actualites/${q}`);
+};
+
+export const getActualiteDetail = async (id) => {
+    return await publicApi.get(`/api/actualites/${id}/`);
+};
+
+export const createActualite = async (data) => {
+    return await api.post("/api/actualites/create/", data, {
+        headers: { "Content-Type": "multipart/form-data" }
+    });
+};
+
+export const updateActualite = async (id, data) => {
+    return await api.patch(`/api/actualites/update/${id}/`, data, {
+        headers: { "Content-Type": "multipart/form-data" }
+    });
+};
+
+export const deleteActualite = async (id) => {
+    return await api.delete(`/api/actualites/delete/${id}/`);
+};
+
 // // récupérer ses infos (profil)
 // export const getMe = async () => {
 //     return await api.get("api/users/me/");

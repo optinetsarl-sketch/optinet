@@ -7,9 +7,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .serializers import MessageSerializer,CategorieSerializer,PortfolioSerializer,MessageSerializer
-from .models import Contact, Produit, PhotoProduit
+from .models import Contact, Produit, PhotoProduit, Actualite, PhotoActualite
 from .serializers import ContactSerializer
 from .serializers import ProduitListSerializer, ProduitDetailSerializer, PhotoProduitSerializer
+from .serializers import ActualiteListSerializer, ActualiteDetailSerializer, PhotoActualiteSerializer
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -255,4 +256,102 @@ class PhotoProduitCreateView(APIView):
 class PhotoProduitDeleteView(generics.DestroyAPIView):
     queryset = PhotoProduit.objects.all()
     serializer_class = PhotoProduitSerializer
+    permission_classes = [IsAuthenticated]
+
+
+# ---------- Actualités (Le Journal) ----------
+
+class ActualiteListView(generics.ListAPIView):
+    serializer_class = ActualiteListSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        qs = Actualite.objects.all().prefetch_related("photos")
+        cat = self.request.query_params.get("categorie")
+        if cat:
+            qs = qs.filter(categorie=cat)
+        return qs
+
+
+class ActualiteDetailView(generics.RetrieveAPIView):
+    queryset = Actualite.objects.all().prefetch_related("photos")
+    serializer_class = ActualiteDetailSerializer
+    permission_classes = [AllowAny]
+
+
+class ActualiteCreateView(APIView):
+    """Créer une actualité avec plusieurs photos (multipart: champ 'images' répété)."""
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def post(self, request):
+        data = request.data
+        actu = Actualite.objects.create(
+            titre=data.get("titre") or "Actualité",
+            contenu=data.get("contenu", "") or "",
+            categorie=data.get("categorie") or "intervention",
+            video_url=data.get("video_url", "") or "",
+            est_publie=_to_bool(data.get("est_publie"), default=True),
+        )
+        images = request.FILES.getlist("images") or request.FILES.getlist("image_principale")
+        for i, img in enumerate(images):
+            PhotoActualite.objects.create(actualite=actu, image=img, est_principale=(i == 0), ordre=i)
+        return Response(
+            ActualiteDetailSerializer(actu, context={"request": request}).data,
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class ActualiteUpdateView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def patch(self, request, pk):
+        try:
+            actu = Actualite.objects.get(pk=pk)
+        except Actualite.DoesNotExist:
+            return Response({"detail": "Actualité introuvable."}, status=404)
+        data = request.data
+        for field in ("titre", "contenu", "categorie", "video_url"):
+            if field in data:
+                setattr(actu, field, data.get(field) or "")
+        if "est_publie" in data:
+            actu.est_publie = _to_bool(data.get("est_publie"))
+        actu.save()
+        for i, img in enumerate(request.FILES.getlist("images")):
+            has_main = actu.photos.filter(est_principale=True).exists()
+            PhotoActualite.objects.create(actualite=actu, image=img, est_principale=(not has_main and i == 0), ordre=actu.photos.count() + i)
+        return Response(ActualiteDetailSerializer(actu, context={"request": request}).data)
+
+
+class ActualiteDeleteView(generics.DestroyAPIView):
+    queryset = Actualite.objects.all()
+    serializer_class = ActualiteDetailSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class PhotoActualiteCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def post(self, request, pk):
+        try:
+            actu = Actualite.objects.get(pk=pk)
+        except Actualite.DoesNotExist:
+            return Response({"detail": "Actualité introuvable."}, status=404)
+        img = request.FILES.get("image")
+        if not img:
+            return Response({"detail": "Aucune image fournie."}, status=400)
+        has_main = actu.photos.filter(est_principale=True).exists()
+        photo = PhotoActualite.objects.create(
+            actualite=actu, image=img,
+            est_principale=_to_bool(request.data.get("est_principale"), default=not has_main),
+            ordre=actu.photos.count(),
+        )
+        return Response(PhotoActualiteSerializer(photo, context={"request": request}).data, status=201)
+
+
+class PhotoActualiteDeleteView(generics.DestroyAPIView):
+    queryset = PhotoActualite.objects.all()
+    serializer_class = PhotoActualiteSerializer
     permission_classes = [IsAuthenticated]

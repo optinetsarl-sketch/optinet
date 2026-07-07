@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import User, Message, Categorie, Portfolio, Photo, Produit, PhotoProduit
+from .models import User, Message, Categorie, Portfolio, Photo, Produit, PhotoProduit, Actualite, PhotoActualite
 
 # Register your models here.
 
@@ -66,4 +66,39 @@ class ProduitAdmin(admin.ModelAdmin):
     def nb_photos(self, obj):
         return obj.photos.count()
     nb_photos.short_description = "Nb photos"
+
+
+class PhotoActualiteInline(admin.TabularInline):
+    model = PhotoActualite
+    extra = 3
+    fields = ('apercu', 'image', 'est_principale', 'ordre')
+    readonly_fields = ('apercu',)
+
+    def apercu(self, obj):
+        if obj and obj.image:
+            return format_html('<img src="{}" style="height:60px;border-radius:6px;" />', obj.image.url)
+        return "—"
+    apercu.short_description = "Aperçu"
+
+
+@admin.register(Actualite)
+class ActualiteAdmin(admin.ModelAdmin):
+    list_display = ('id', 'apercu', 'titre', 'categorie', 'a_video', 'est_publie', 'date_publication')
+    list_filter = ('categorie', 'est_publie', 'date_publication')
+    list_editable = ('est_publie',)
+    search_fields = ('titre', 'contenu')
+    inlines = [PhotoActualiteInline]
+    fields = ('titre', 'categorie', 'date_publication', 'contenu', 'video_url', 'est_publie')
+
+    def apercu(self, obj):
+        photo = obj.photo_principale
+        if photo and photo.image:
+            return format_html('<img src="{}" style="height:44px;width:44px;object-fit:cover;border-radius:6px;" />', photo.image.url)
+        return "—"
+    apercu.short_description = "Photo"
+
+    def a_video(self, obj):
+        return bool(obj.video_url)
+    a_video.boolean = True
+    a_video.short_description = "Vidéo"
 

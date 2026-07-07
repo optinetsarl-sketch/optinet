@@ -6,6 +6,7 @@ import optinetLogo from "../../assets/optinet-logo.png";
 const NAV_ITEMS = [
   { to: "/", label: "Accueil" },
   { to: "/services", label: "Services" },
+  { to: "/journal", label: "Le Journal" },
   { to: "/about", label: "À propos" },
   { to: "/direction", label: "Direction" },
   { to: "/certifications", label: "Certifications" },

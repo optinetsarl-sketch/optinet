@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Photo, User,Portfolio, Categorie, Message
-from .models import Contact, Produit, PhotoProduit
+from .models import Contact, Produit, PhotoProduit, Actualite, PhotoActualite
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -160,3 +160,80 @@ class ProduitDetailSerializer(serializers.ModelSerializer):
             else:
                 result.append({"nom": "", "valeur": line})
         return result
+
+
+# ---------- Actualités (Le Journal) ----------
+
+import re as _re
+
+
+def _youtube_embed(url):
+    """Transforme un lien YouTube en URL d'intégration (embed)."""
+    if not url:
+        return None
+    m = _re.search(r"(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/|shorts/))([\w-]{11})", url)
+    if m:
+        return f"https://www.youtube.com/embed/{m.group(1)}"
+    return url
+
+
+class PhotoActualiteSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PhotoActualite
+        fields = ["id", "image", "est_principale", "ordre"]
+
+    def get_image(self, obj):
+        return _abs_url(self, obj.image)
+
+
+class ActualiteListSerializer(serializers.ModelSerializer):
+    image_principale = serializers.SerializerMethodField()
+    nb_photos = serializers.SerializerMethodField()
+    a_video = serializers.SerializerMethodField()
+    categorie_label = serializers.CharField(source="get_categorie_display", read_only=True)
+    extrait = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Actualite
+        fields = [
+            "id", "titre", "categorie", "categorie_label", "date_publication",
+            "est_publie", "image_principale", "nb_photos", "a_video", "extrait",
+        ]
+
+    def get_image_principale(self, obj):
+        photo = obj.photo_principale
+        return _abs_url(self, photo.image) if photo else None
+
+    def get_nb_photos(self, obj):
+        return obj.photos.count()
+
+    def get_a_video(self, obj):
+        return bool(obj.video_url)
+
+    def get_extrait(self, obj):
+        txt = (obj.contenu or "").strip().replace("\n", " ")
+        return txt[:160] + ("…" if len(txt) > 160 else "")
+
+
+class ActualiteDetailSerializer(serializers.ModelSerializer):
+    photos = PhotoActualiteSerializer(many=True, read_only=True)
+    image_principale = serializers.SerializerMethodField()
+    categorie_label = serializers.CharField(source="get_categorie_display", read_only=True)
+    video_embed = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Actualite
+        fields = [
+            "id", "titre", "contenu", "categorie", "categorie_label",
+            "video_url", "video_embed", "date_publication", "est_publie",
+            "created_at", "photos", "image_principale",
+        ]
+
+    def get_image_principale(self, obj):
+        photo = obj.photo_principale
+        return _abs_url(self, photo.image) if photo else None
+
+    def get_video_embed(self, obj):
+        return _youtube_embed(obj.video_url)

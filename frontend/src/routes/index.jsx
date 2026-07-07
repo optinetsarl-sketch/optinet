@@ -18,6 +18,8 @@ import Contact from "../pages/index/contact";
 import Portfolios from "../pages/index/portfolio";
 import Galerie from "../pages/index/galerie";
 import ProduitDetail from "../pages/index/ProduitDetail";
+import Journal from "../pages/index/Journal";
+import ActualiteDetail from "../pages/index/ActualiteDetail";
 
 // Pages auth & admin
 import Login from "../pages/Login";
@@ -45,6 +47,8 @@ function App() {
           <Route path="services" element={<Services />} />
           <Route path="galerie" element={<Galerie />} />
           <Route path="articles/:id" element={<ProduitDetail />} />
+          <Route path="journal" element={<Journal />} />
+          <Route path="journal/:id" element={<ActualiteDetail />} />
           <Route path="services/:id" element={<ServiceDetail />} />
           <Route path="about" element={<APropos />} />
           <Route path="direction" element={<Direction />} />

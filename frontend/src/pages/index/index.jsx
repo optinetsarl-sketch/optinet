@@ -12,14 +12,24 @@ const httpsUrl = (u) => {
   return u.replace(/^http:\/\//, "https://");
 };
 
+const CAT_COLOR = { intervention: "#12b3d6", realisation: "#11b981", actualite: "#6c6cf0", annonce: "#f0a531" };
+const frDate = (iso) => { try { return new Date(iso).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" }); } catch { return ""; } };
+
 export default function Homes() {
   const [annonces, setAnnonces] = useState([]);
+  const [actus, setActus] = useState([]);
 
   useEffect(() => {
     fetch(`${API_URL}/api/produits/`)
       .then((r) => r.json())
       .then((data) =>
         setAnnonces((data || []).filter((p) => p.est_actif).slice(0, 12))
+      )
+      .catch(() => {});
+    fetch(`${API_URL}/api/actualites/`)
+      .then((r) => r.json())
+      .then((data) =>
+        setActus((data || []).filter((a) => a.est_publie).slice(0, 3))
       )
       .catch(() => {});
   }, []);
@@ -108,6 +118,45 @@ export default function Homes() {
           <Link to="/galerie" className="btn-outline">Voir tous les articles</Link>
         </div>
       </section>
+
+      {/* ── Le Journal : dernières actualités ── */}
+      {actus.length > 0 && (
+        <section style={{ background: "#050d1c", padding: "64px 20px", color: "#fff" }}>
+          <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+            <div style={{ textAlign: "center", marginBottom: 34 }}>
+              <span style={{ color: "#12b3d6", fontWeight: 800, letterSpacing: 2, fontSize: 13 }}>LE JOURNAL 📡</span>
+              <h2 style={{ fontSize: 34, fontWeight: 800, margin: "8px 0" }}>Nos dernières interventions</h2>
+              <p style={{ color: "#9fb3c8" }}>Suivez nos chantiers et l'actualité d'OPTINET SARL U.</p>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: 22 }}>
+              {actus.map((a) => (
+                <Link key={a.id} to={`/journal/${a.id}`}
+                  style={{ background: "#0a1526", borderRadius: 16, overflow: "hidden", border: "1px solid #12233a", display: "flex", flexDirection: "column", textDecoration: "none", color: "#fff" }}>
+                  <div style={{ position: "relative", height: 180, background: "#07101f" }}>
+                    {a.image_principale && (
+                      <img src={httpsUrl(a.image_principale)} alt={a.titre} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                    )}
+                    <span style={{ position: "absolute", top: 10, left: 10, background: CAT_COLOR[a.categorie] || "#12b3d6", color: "#03121f", fontWeight: 800, fontSize: 11, padding: "4px 10px", borderRadius: 20, textTransform: "uppercase" }}>
+                      {a.categorie_label}
+                    </span>
+                    {a.a_video && <span style={{ position: "absolute", bottom: 10, right: 10, background: "rgba(0,0,0,.7)", fontSize: 12, padding: "3px 9px", borderRadius: 20 }}>🎬</span>}
+                  </div>
+                  <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: 6, flex: 1 }}>
+                    <span style={{ fontFamily: "monospace", fontSize: 11.5, color: "#63798f" }}>{frDate(a.date_publication)}</span>
+                    <div style={{ fontWeight: 700, fontSize: 15.5, lineHeight: 1.3 }}>{a.titre}</div>
+                    {a.extrait && <div style={{ color: "#9fb3c8", fontSize: 13, lineHeight: 1.5 }}>{a.extrait}</div>}
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            <div style={{ textAlign: "center", marginTop: 32 }}>
+              <Link to="/journal" className="btn-outline">Voir tout le Journal</Link>
+            </div>
+          </div>
+        </section>
+      )}
     </>
   );
 }

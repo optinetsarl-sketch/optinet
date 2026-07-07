@@ -3,6 +3,10 @@ from .views import (
     ProduitListView, ProduitDetailView, ProduitCreateView, ProduitUpdateView,
     ProduitDeleteView, PhotoProduitCreateView, PhotoProduitDeleteView,
 )
+from .views import (
+    ActualiteListView, ActualiteDetailView, ActualiteCreateView, ActualiteUpdateView,
+    ActualiteDeleteView, PhotoActualiteCreateView, PhotoActualiteDeleteView,
+)
 from .views import PortfolioListCreateView
 from .views import CategorieDetailView
 from .views import CategorieListCreateView
@@ -76,6 +80,15 @@ urlpatterns = [
     path("produits/delete/<int:pk>/", ProduitDeleteView.as_view(), name="produit-delete"),
     path("produits/<int:pk>/photos/", PhotoProduitCreateView.as_view(), name="produit-photo-add"),
     path("produit-photos/delete/<int:pk>/", PhotoProduitDeleteView.as_view(), name="produit-photo-delete"),
+
+    # Actualités (Le Journal)
+    path("actualites/", ActualiteListView.as_view(), name="actualite-list"),
+    path("actualites/create/", ActualiteCreateView.as_view(), name="actualite-create"),
+    path("actualites/<int:pk>/", ActualiteDetailView.as_view(), name="actualite-detail"),
+    path("actualites/update/<int:pk>/", ActualiteUpdateView.as_view(), name="actualite-update"),
+    path("actualites/delete/<int:pk>/", ActualiteDeleteView.as_view(), name="actualite-delete"),
+    path("actualites/<int:pk>/photos/", PhotoActualiteCreateView.as_view(), name="actualite-photo-add"),
+    path("actualite-photos/delete/<int:pk>/", PhotoActualiteDeleteView.as_view(), name="actualite-photo-delete"),
 
     path(
         "contacts/",
