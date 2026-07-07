@@ -7,12 +7,14 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .serializers import MessageSerializer,CategorieSerializer,PortfolioSerializer,MessageSerializer
+from .models import Contact, Produit, PhotoProduit
+from .serializers import ContactSerializer
+from .serializers import ProduitListSerializer, ProduitDetailSerializer, PhotoProduitSerializer
+from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Contact
-from .serializers import ContactSerializer
-from rest_framework.permissions import AllowAny
+from rest_framework.parsers import MultiPartParser, FormParser
 
 # User
 class RegisterView(generics.CreateAPIView):
@@ -145,4 +147,112 @@ class ContactUpdateView(generics.UpdateAPIView):
 class ContactDeleteView(generics.DestroyAPIView):
 
     queryset = Contact.objects.all()
-    serializer_class = ContactSerializer    
+    serializer_class = ContactSerializer
+
+
+# ---------- Produits (boutique e-commerce) ----------
+
+def _to_bool(value, default=True):
+    if value is None:
+        return default
+    return str(value).strip().lower() in ("true", "1", "on", "yes", "oui")
+
+
+class ProduitListView(generics.ListAPIView):
+    serializer_class = ProduitListSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        return Produit.objects.all().prefetch_related("photos")
+
+
+class ProduitDetailView(generics.RetrieveAPIView):
+    queryset = Produit.objects.all().prefetch_related("photos")
+    serializer_class = ProduitDetailSerializer
+    permission_classes = [AllowAny]
+
+
+class ProduitCreateView(APIView):
+    """Créer un produit avec plusieurs photos (multipart: champ 'images' répété)."""
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def post(self, request):
+        data = request.data
+        produit = Produit.objects.create(
+            nom=data.get("nom") or data.get("titre") or "Produit",
+            description=data.get("description", "") or "",
+            prix=data.get("prix", "") or "",
+            caracteristiques=data.get("caracteristiques", "") or "",
+            est_actif=_to_bool(data.get("est_actif"), default=True),
+        )
+        images = request.FILES.getlist("images") or request.FILES.getlist("image_principale")
+        for i, img in enumerate(images):
+            PhotoProduit.objects.create(produit=produit, image=img, est_principale=(i == 0), ordre=i)
+        return Response(
+            ProduitDetailSerializer(produit, context={"request": request}).data,
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class ProduitUpdateView(APIView):
+    """Modifier les champs texte d'un produit (nom, prix, description, specs, actif)."""
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def patch(self, request, pk):
+        try:
+            produit = Produit.objects.get(pk=pk)
+        except Produit.DoesNotExist:
+            return Response({"detail": "Produit introuvable."}, status=404)
+        data = request.data
+        for field in ("nom", "description", "prix", "caracteristiques"):
+            if field in data:
+                setattr(produit, field, data.get(field) or "")
+        if "est_actif" in data:
+            produit.est_actif = _to_bool(data.get("est_actif"))
+        if "ordre" in data:
+            try:
+                produit.ordre = int(data.get("ordre"))
+            except (TypeError, ValueError):
+                pass
+        produit.save()
+        # nouvelles photos éventuelles
+        for i, img in enumerate(request.FILES.getlist("images")):
+            has_main = produit.photos.filter(est_principale=True).exists()
+            PhotoProduit.objects.create(produit=produit, image=img, est_principale=(not has_main and i == 0), ordre=produit.photos.count() + i)
+        return Response(ProduitDetailSerializer(produit, context={"request": request}).data)
+
+
+class ProduitDeleteView(generics.DestroyAPIView):
+    queryset = Produit.objects.all()
+    serializer_class = ProduitDetailSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class PhotoProduitCreateView(APIView):
+    """Ajouter une photo à un produit existant."""
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def post(self, request, pk):
+        try:
+            produit = Produit.objects.get(pk=pk)
+        except Produit.DoesNotExist:
+            return Response({"detail": "Produit introuvable."}, status=404)
+        img = request.FILES.get("image")
+        if not img:
+            return Response({"detail": "Aucune image fournie."}, status=400)
+        has_main = produit.photos.filter(est_principale=True).exists()
+        photo = PhotoProduit.objects.create(
+            produit=produit, image=img,
+            est_principale=_to_bool(request.data.get("est_principale"), default=not has_main),
+            ordre=produit.photos.count(),
+        )
+        return Response(PhotoProduitSerializer(photo, context={"request": request}).data, status=201)
+
+
+class PhotoProduitDeleteView(generics.DestroyAPIView):
+    queryset = PhotoProduit.objects.all()
+    serializer_class = PhotoProduitSerializer
+    permission_classes = [IsAuthenticated]

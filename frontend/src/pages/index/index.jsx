@@ -16,7 +16,7 @@ export default function Homes() {
   const [annonces, setAnnonces] = useState([]);
 
   useEffect(() => {
-    fetch(`${API_URL}/api/photos/`)
+    fetch(`${API_URL}/api/produits/`)
       .then((r) => r.json())
       .then((data) =>
         setAnnonces((data || []).filter((p) => p.est_actif).slice(0, 12))
@@ -88,15 +88,15 @@ export default function Homes() {
           <div style={{ position: "relative" }}>
             <div className="optipub-marquee">
               {loop.map((a, i) => (
-                <Link to="/galerie" key={i} className="optipub-card">
+                <Link to={`/articles/${a.id}`} key={i} className="optipub-card">
                   <div style={{ position: "relative" }}>
-                    <img src={httpsUrl(a.image_principale)} alt={a.titre} style={{ width: "100%", height: 175, objectFit: "cover", display: "block" }} />
+                    <img src={httpsUrl(a.image_principale)} alt={a.nom} style={{ width: "100%", height: 175, objectFit: "cover", display: "block" }} />
                     {a.prix && (
                       <span style={{ position: "absolute", bottom: 8, left: 8, background: "#11b981", color: "#fff", fontWeight: 800, fontSize: 13, padding: "4px 10px", borderRadius: 16 }}>{a.prix}</span>
                     )}
                   </div>
                   <div style={{ padding: "12px 14px", fontWeight: 700, fontSize: 14, lineHeight: 1.3, minHeight: 44 }}>
-                    {(a.titre || "Article OPTINET").slice(0, 60)}
+                    {(a.nom || "Article OPTINET").slice(0, 60)}
                   </div>
                 </Link>
               ))}

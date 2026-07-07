@@ -1,4 +1,8 @@
 from .views import ContactCreateView, ContactDeleteView, ContactDetailView, ContactListView, ContactUpdateView, PhotoCreateView, PhotoDeleteView, PhotoDetailView, PhotoListView, PhotoUpdateView, PortfolioDetailView
+from .views import (
+    ProduitListView, ProduitDetailView, ProduitCreateView, ProduitUpdateView,
+    ProduitDeleteView, PhotoProduitCreateView, PhotoProduitDeleteView,
+)
 from .views import PortfolioListCreateView
 from .views import CategorieDetailView
 from .views import CategorieListCreateView
@@ -63,6 +67,15 @@ urlpatterns = [
         PhotoDeleteView.as_view(),
         name="photo-delete"
     ),
+
+    # Produits (boutique e-commerce)
+    path("produits/", ProduitListView.as_view(), name="produit-list"),
+    path("produits/create/", ProduitCreateView.as_view(), name="produit-create"),
+    path("produits/<int:pk>/", ProduitDetailView.as_view(), name="produit-detail"),
+    path("produits/update/<int:pk>/", ProduitUpdateView.as_view(), name="produit-update"),
+    path("produits/delete/<int:pk>/", ProduitDeleteView.as_view(), name="produit-delete"),
+    path("produits/<int:pk>/photos/", PhotoProduitCreateView.as_view(), name="produit-photo-add"),
+    path("produit-photos/delete/<int:pk>/", PhotoProduitDeleteView.as_view(), name="produit-photo-delete"),
 
     path(
         "contacts/",

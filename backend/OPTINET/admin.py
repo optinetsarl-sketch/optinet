@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import User, Message, Categorie, Portfolio, Photo
+from django.utils.html import format_html
+from .models import User, Message, Categorie, Portfolio, Photo, Produit, PhotoProduit
 
 # Register your models here.
 
@@ -31,4 +32,38 @@ class PhotoAdmin(admin.ModelAdmin):
     list_display = ('id', 'titre', 'est_actif', 'created_at')
     list_filter = ('est_actif', 'created_at')
     search_fields = ('titre',)
+
+
+class PhotoProduitInline(admin.TabularInline):
+    model = PhotoProduit
+    extra = 3
+    fields = ('apercu', 'image', 'est_principale', 'ordre')
+    readonly_fields = ('apercu',)
+
+    def apercu(self, obj):
+        if obj and obj.image:
+            return format_html('<img src="{}" style="height:60px;border-radius:6px;" />', obj.image.url)
+        return "—"
+    apercu.short_description = "Aperçu"
+
+
+@admin.register(Produit)
+class ProduitAdmin(admin.ModelAdmin):
+    list_display = ('id', 'apercu', 'nom', 'prix', 'nb_photos', 'est_actif', 'created_at')
+    list_filter = ('est_actif', 'created_at')
+    list_editable = ('est_actif',)
+    search_fields = ('nom', 'description')
+    inlines = [PhotoProduitInline]
+    fields = ('nom', 'prix', 'description', 'caracteristiques', 'est_actif', 'ordre')
+
+    def apercu(self, obj):
+        photo = obj.photo_principale
+        if photo and photo.image:
+            return format_html('<img src="{}" style="height:44px;width:44px;object-fit:cover;border-radius:6px;" />', photo.image.url)
+        return "—"
+    apercu.short_description = "Photo"
+
+    def nb_photos(self, obj):
+        return obj.photos.count()
+    nb_photos.short_description = "Nb photos"
 

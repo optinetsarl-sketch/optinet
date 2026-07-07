@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Photo, User,Portfolio, Categorie, Message
-from .models import Contact
+from .models import Contact, Produit, PhotoProduit
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -88,4 +88,75 @@ class ContactSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contact
-        fields = "__all__"        
+        fields = "__all__"
+
+
+# ---------- Produits (boutique e-commerce) ----------
+
+def _abs_url(serializer, obj_image):
+    """URL absolue d'une image (avec le domaine) si possible."""
+    if not obj_image:
+        return None
+    url = obj_image.url
+    request = serializer.context.get("request")
+    return request.build_absolute_uri(url) if request else url
+
+
+class PhotoProduitSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PhotoProduit
+        fields = ["id", "image", "est_principale", "ordre"]
+
+    def get_image(self, obj):
+        return _abs_url(self, obj.image)
+
+
+class ProduitListSerializer(serializers.ModelSerializer):
+    """Version légère pour la liste boutique : 1 photo principale."""
+    image_principale = serializers.SerializerMethodField()
+    nb_photos = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Produit
+        fields = ["id", "nom", "prix", "est_actif", "image_principale", "nb_photos", "created_at"]
+
+    def get_image_principale(self, obj):
+        photo = obj.photo_principale
+        return _abs_url(self, photo.image) if photo else None
+
+    def get_nb_photos(self, obj):
+        return obj.photos.count()
+
+
+class ProduitDetailSerializer(serializers.ModelSerializer):
+    """Version complète : toutes les photos + caractéristiques structurées."""
+    photos = PhotoProduitSerializer(many=True, read_only=True)
+    image_principale = serializers.SerializerMethodField()
+    caracteristiques_list = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Produit
+        fields = [
+            "id", "nom", "description", "prix", "caracteristiques",
+            "caracteristiques_list", "est_actif", "ordre", "created_at",
+            "photos", "image_principale",
+        ]
+
+    def get_image_principale(self, obj):
+        photo = obj.photo_principale
+        return _abs_url(self, photo.image) if photo else None
+
+    def get_caracteristiques_list(self, obj):
+        result = []
+        for line in (obj.caracteristiques or "").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            if ":" in line:
+                nom, valeur = line.split(":", 1)
+                result.append({"nom": nom.strip(), "valeur": valeur.strip()})
+            else:
+                result.append({"nom": "", "valeur": line})
+        return result

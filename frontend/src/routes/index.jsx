@@ -17,6 +17,7 @@ import Certifications from "../pages/index/certification";
 import Contact from "../pages/index/contact";
 import Portfolios from "../pages/index/portfolio";
 import Galerie from "../pages/index/galerie";
+import ProduitDetail from "../pages/index/ProduitDetail";
 
 // Pages auth & admin
 import Login from "../pages/Login";
@@ -43,6 +44,7 @@ function App() {
           <Route index element={<Homes />} />
           <Route path="services" element={<Services />} />
           <Route path="galerie" element={<Galerie />} />
+          <Route path="articles/:id" element={<ProduitDetail />} />
           <Route path="services/:id" element={<ServiceDetail />} />
           <Route path="about" element={<APropos />} />
           <Route path="direction" element={<Direction />} />

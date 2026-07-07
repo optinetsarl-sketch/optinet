@@ -106,6 +106,44 @@ export const deleteUser = async (userId) => {
     return await api.delete(`/api/users/${userId}/`);
 };
 
+// --- Produits (boutique e-commerce) ---
+
+export const getProduits = async () => {
+    return await publicApi.get("/api/produits/");
+};
+
+export const getProduitDetail = async (id) => {
+    return await publicApi.get(`/api/produits/${id}/`);
+};
+
+// data = FormData (champs texte + fichiers multiples 'images')
+export const createProduit = async (data) => {
+    return await api.post("/api/produits/create/", data, {
+        headers: { "Content-Type": "multipart/form-data" }
+    });
+};
+
+export const updateProduit = async (id, data) => {
+    return await api.patch(`/api/produits/update/${id}/`, data, {
+        headers: { "Content-Type": "multipart/form-data" }
+    });
+};
+
+export const deleteProduit = async (id) => {
+    return await api.delete(`/api/produits/delete/${id}/`);
+};
+
+// ajoute UNE photo (FormData: image, est_principale)
+export const addProduitPhoto = async (id, data) => {
+    return await api.post(`/api/produits/${id}/photos/`, data, {
+        headers: { "Content-Type": "multipart/form-data" }
+    });
+};
+
+export const deleteProduitPhoto = async (photoId) => {
+    return await api.delete(`/api/produit-photos/delete/${photoId}/`);
+};
+
 // // récupérer ses infos (profil)
 // export const getMe = async () => {
 //     return await api.get("api/users/me/");

@@ -81,6 +81,45 @@ class Photo(models.Model):
     est_actif = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+class Produit(models.Model):
+    """Un produit de la boutique (peut avoir plusieurs photos)."""
+    nom = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    prix = models.CharField(max_length=100, blank=True, null=True)
+    caracteristiques = models.TextField(
+        blank=True, null=True,
+        help_text="Une caractéristique par ligne, au format 'Nom: Valeur'. "
+                  "Ex: Modèle: Galaxy A54 / Réseau: 4G/5G / Batterie: 5000 mAh"
+    )
+    est_actif = models.BooleanField(default=True)
+    ordre = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["ordre", "-created_at"]
+
+    def __str__(self):
+        return self.nom
+
+    @property
+    def photo_principale(self):
+        return self.photos.filter(est_principale=True).first() or self.photos.first()
+
+
+class PhotoProduit(models.Model):
+    """Une photo appartenant à un produit."""
+    produit = models.ForeignKey(Produit, related_name="photos", on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="produits/")
+    est_principale = models.BooleanField(default=False)
+    ordre = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["-est_principale", "ordre", "id"]
+
+    def __str__(self):
+        return f"Photo de {self.produit.nom}"
+
+
 class Contact(models.Model):
     nom = models.CharField(max_length=150, blank=True, null=True)
     email = models.EmailField()
