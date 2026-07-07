@@ -5,17 +5,20 @@
 /* Classe dédiée pour les liens desktop */
 .nav-desktop-links {
   display: flex;
-  gap: 34px;
+  gap: 22px;
   list-style: none;
+  flex-wrap: nowrap;
+  align-items: center;
 }
 
 .nav-desktop-links a {
   color: var(--text);
   text-decoration: none;
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 500;
   transition: color 0.2s;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
+  white-space: nowrap; /* évite que « Le Journal » se coupe en 2 lignes */
 }
 
 .nav-desktop-links a:hover,
@@ -114,9 +117,17 @@
 }
 
 /* ===================== */
-/* RESPONSIVE — MOBILE   */
+/* RESPONSIVE            */
 /* ===================== */
-@media (max-width: 768px) {
+
+/* Écrans intermédiaires : on resserre un peu avant de basculer en menu */
+@media (max-width: 1300px) {
+  .nav-desktop-links { gap: 16px; }
+  .nav-desktop-links a { font-size: 13px; }
+}
+
+/* Sous 1150px : trop de rubriques pour tenir sur une ligne -> menu hamburger */
+@media (max-width: 1150px) {
   /* Cacher les liens desktop et le CTA desktop */
   .nav-desktop-links,
   .nav-cta-desktop {
