@@ -38,8 +38,8 @@ export default function Services() {
             className="service-card"
             role="button"
             tabIndex={0}
-            onClick={() => setActiveService(service)}
-            onKeyDown={(e) => (e.key === 'Enter' ? setActiveService(service) : null)}
+            onClick={() => navigate(`/services/${service.id}`)}
+            onKeyDown={(e) => (e.key === 'Enter' ? navigate(`/services/${service.id}`) : null)}
           >
             {service.image ? (
               <div style={{ height: 170, borderRadius: 12, overflow: "hidden", marginBottom: 14 }}>
