@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from .models import User, Message, Categorie, Portfolio, Photo, Produit, PhotoProduit, Actualite, PhotoActualite
+from .models import CategorieProduit, Commande, LigneCommande
 
 # Register your models here.
 
@@ -49,12 +50,12 @@ class PhotoProduitInline(admin.TabularInline):
 
 @admin.register(Produit)
 class ProduitAdmin(admin.ModelAdmin):
-    list_display = ('id', 'apercu', 'nom', 'prix', 'nb_photos', 'est_actif', 'created_at')
-    list_filter = ('est_actif', 'created_at')
+    list_display = ('id', 'apercu', 'nom', 'categorie', 'prix', 'nb_photos', 'est_actif', 'created_at')
+    list_filter = ('categorie', 'est_actif', 'created_at')
     list_editable = ('est_actif',)
     search_fields = ('nom', 'description')
     inlines = [PhotoProduitInline]
-    fields = ('nom', 'prix', 'description', 'caracteristiques', 'est_actif', 'ordre')
+    fields = ('nom', 'categorie', 'prix', 'description', 'caracteristiques', 'est_actif', 'ordre')
 
     def apercu(self, obj):
         photo = obj.photo_principale
@@ -101,4 +102,37 @@ class ActualiteAdmin(admin.ModelAdmin):
         return bool(obj.video_url)
     a_video.boolean = True
     a_video.short_description = "Vidéo"
+
+
+@admin.register(CategorieProduit)
+class CategorieProduitAdmin(admin.ModelAdmin):
+    list_display = ('id', 'nom', 'slug', 'ordre', 'nb_produits')
+    search_fields = ('nom',)
+    prepopulated_fields = {"slug": ("nom",)}
+
+    def nb_produits(self, obj):
+        return obj.produits.count()
+    nb_produits.short_description = "Nb produits"
+
+
+class LigneCommandeInline(admin.TabularInline):
+    model = LigneCommande
+    extra = 0
+    fields = ('nom', 'prix', 'quantite', 'produit')
+
+
+@admin.register(Commande)
+class CommandeAdmin(admin.ModelAdmin):
+    list_display = ('id', 'client_nom', 'client_telephone', 'nb_articles', 'total', 'mode_paiement', 'statut', 'created_at')
+    list_filter = ('statut', 'mode_paiement', 'created_at')
+    list_editable = ('statut',)
+    search_fields = ('client_nom', 'client_telephone', 'client_ville')
+    inlines = [LigneCommandeInline]
+    readonly_fields = ('created_at',)
+    fields = ('client_nom', 'client_telephone', 'client_adresse', 'client_ville',
+              'note', 'mode_paiement', 'total', 'statut', 'created_at')
+
+    def nb_articles(self, obj):
+        return obj.nb_articles
+    nb_articles.short_description = "Articles"
 

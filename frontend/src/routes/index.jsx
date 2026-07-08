@@ -20,6 +20,7 @@ import Galerie from "../pages/index/galerie";
 import ProduitDetail from "../pages/index/ProduitDetail";
 import Journal from "../pages/index/Journal";
 import ActualiteDetail from "../pages/index/ActualiteDetail";
+import Panier from "../pages/index/Panier";
 
 // Pages auth & admin
 import Login from "../pages/Login";
@@ -46,6 +47,7 @@ function App() {
           <Route index element={<Homes />} />
           <Route path="services" element={<Services />} />
           <Route path="galerie" element={<Galerie />} />
+          <Route path="panier" element={<Panier />} />
           <Route path="articles/:id" element={<ProduitDetail />} />
           <Route path="journal" element={<Journal />} />
           <Route path="journal/:id" element={<ActualiteDetail />} />

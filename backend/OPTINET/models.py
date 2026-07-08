@@ -4,6 +4,7 @@ from django.db import models
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
+from django.utils.text import slugify
 from .managers import UserManager
 
 
@@ -82,9 +83,34 @@ class Photo(models.Model):
     est_actif = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+class CategorieProduit(models.Model):
+    """Catégorie de la boutique (ex: Ordinateurs, Téléphones, Réseau...)."""
+    nom = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=120, unique=True, blank=True)
+    ordre = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["ordre", "nom"]
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base = slugify(self.nom)[:110] or "categorie"
+            slug, i = base, 1
+            while CategorieProduit.objects.exclude(pk=self.pk).filter(slug=slug).exists():
+                i += 1
+                slug = f"{base}-{i}"
+            self.slug = slug
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.nom
+
+
 class Produit(models.Model):
     """Un produit de la boutique (peut avoir plusieurs photos)."""
     nom = models.CharField(max_length=255)
+    categorie = models.ForeignKey(CategorieProduit, related_name="produits",
+                                  on_delete=models.SET_NULL, null=True, blank=True)
     description = models.TextField(blank=True, null=True)
     prix = models.CharField(max_length=100, blank=True, null=True)
     caracteristiques = models.TextField(
@@ -171,6 +197,52 @@ class PhotoActualite(models.Model):
 
     def __str__(self):
         return f"Photo de {self.actualite.titre}"
+
+
+class Commande(models.Model):
+    """Une commande passée depuis la boutique (invité, sans compte)."""
+    STATUT_CHOICES = [
+        ("nouvelle", "Nouvelle"),
+        ("confirmee", "Confirmée"),
+        ("expediee", "Expédiée"),
+        ("livree", "Livrée"),
+        ("annulee", "Annulée"),
+    ]
+    MODE_CHOICES = [
+        ("cod", "Paiement à la livraison"),
+        ("whatsapp", "WhatsApp"),
+    ]
+    client_nom = models.CharField(max_length=150)
+    client_telephone = models.CharField(max_length=40)
+    client_adresse = models.TextField(blank=True, null=True)
+    client_ville = models.CharField(max_length=100, blank=True, null=True)
+    note = models.TextField(blank=True, null=True)
+    mode_paiement = models.CharField(max_length=20, choices=MODE_CHOICES, default="cod")
+    total = models.CharField(max_length=120, blank=True, null=True)  # prix en texte (ex "300 000 FCFA")
+    statut = models.CharField(max_length=20, choices=STATUT_CHOICES, default="nouvelle")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Commande #{self.id} — {self.client_nom}"
+
+    @property
+    def nb_articles(self):
+        return sum(l.quantite for l in self.lignes.all())
+
+
+class LigneCommande(models.Model):
+    """Un article d'une commande (photo instantanée du produit au moment de l'achat)."""
+    commande = models.ForeignKey(Commande, related_name="lignes", on_delete=models.CASCADE)
+    produit = models.ForeignKey(Produit, on_delete=models.SET_NULL, null=True, blank=True)
+    nom = models.CharField(max_length=255)
+    prix = models.CharField(max_length=100, blank=True, null=True)
+    quantite = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return f"{self.quantite} × {self.nom}"
 
 
 class Contact(models.Model):

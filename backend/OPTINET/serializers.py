@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Photo, User,Portfolio, Categorie, Message
 from .models import Contact, Produit, PhotoProduit, Actualite, PhotoActualite
+from .models import CategorieProduit, Commande, LigneCommande
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -113,14 +114,28 @@ class PhotoProduitSerializer(serializers.ModelSerializer):
         return _abs_url(self, obj.image)
 
 
+class CategorieProduitSerializer(serializers.ModelSerializer):
+    nb_produits = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CategorieProduit
+        fields = ["id", "nom", "slug", "ordre", "nb_produits"]
+
+    def get_nb_produits(self, obj):
+        return obj.produits.filter(est_actif=True).count()
+
+
 class ProduitListSerializer(serializers.ModelSerializer):
     """Version légère pour la liste boutique : 1 photo principale."""
     image_principale = serializers.SerializerMethodField()
     nb_photos = serializers.SerializerMethodField()
+    categorie_nom = serializers.CharField(source="categorie.nom", read_only=True, default=None)
+    categorie_slug = serializers.CharField(source="categorie.slug", read_only=True, default=None)
 
     class Meta:
         model = Produit
-        fields = ["id", "nom", "prix", "est_actif", "image_principale", "nb_photos", "created_at"]
+        fields = ["id", "nom", "prix", "est_actif", "image_principale", "nb_photos",
+                  "categorie", "categorie_nom", "categorie_slug", "created_at"]
 
     def get_image_principale(self, obj):
         photo = obj.photo_principale
@@ -136,11 +151,15 @@ class ProduitDetailSerializer(serializers.ModelSerializer):
     image_principale = serializers.SerializerMethodField()
     caracteristiques_list = serializers.SerializerMethodField()
 
+    categorie_nom = serializers.CharField(source="categorie.nom", read_only=True, default=None)
+    categorie_slug = serializers.CharField(source="categorie.slug", read_only=True, default=None)
+
     class Meta:
         model = Produit
         fields = [
             "id", "nom", "description", "prix", "caracteristiques",
             "caracteristiques_list", "est_actif", "ordre", "created_at",
+            "categorie", "categorie_nom", "categorie_slug",
             "photos", "image_principale",
         ]
 
@@ -240,3 +259,26 @@ class ActualiteDetailSerializer(serializers.ModelSerializer):
 
     def get_video_embed(self, obj):
         return _youtube_embed(obj.video_url)
+
+
+# ---------- Commandes (boutique) ----------
+
+class LigneCommandeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LigneCommande
+        fields = ["id", "produit", "nom", "prix", "quantite"]
+
+
+class CommandeSerializer(serializers.ModelSerializer):
+    lignes = LigneCommandeSerializer(many=True, read_only=True)
+    nb_articles = serializers.IntegerField(read_only=True)
+    mode_paiement_label = serializers.CharField(source="get_mode_paiement_display", read_only=True)
+    statut_label = serializers.CharField(source="get_statut_display", read_only=True)
+
+    class Meta:
+        model = Commande
+        fields = [
+            "id", "client_nom", "client_telephone", "client_adresse", "client_ville",
+            "note", "mode_paiement", "mode_paiement_label", "total",
+            "statut", "statut_label", "created_at", "nb_articles", "lignes",
+        ]

@@ -8,9 +8,11 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .serializers import MessageSerializer,CategorieSerializer,PortfolioSerializer,MessageSerializer
 from .models import Contact, Produit, PhotoProduit, Actualite, PhotoActualite
+from .models import CategorieProduit, Commande, LigneCommande
 from .serializers import ContactSerializer
 from .serializers import ProduitListSerializer, ProduitDetailSerializer, PhotoProduitSerializer
 from .serializers import ActualiteListSerializer, ActualiteDetailSerializer, PhotoActualiteSerializer
+from .serializers import CategorieProduitSerializer, CommandeSerializer
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -164,7 +166,17 @@ class ProduitListView(generics.ListAPIView):
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        return Produit.objects.all().prefetch_related("photos")
+        qs = Produit.objects.all().select_related("categorie").prefetch_related("photos")
+        cat = self.request.query_params.get("categorie")
+        if cat:
+            if str(cat).isdigit():
+                qs = qs.filter(categorie_id=cat)
+            else:
+                qs = qs.filter(categorie__slug=cat)
+        q = self.request.query_params.get("q")
+        if q:
+            qs = qs.filter(nom__icontains=q)
+        return qs
 
 
 class ProduitDetailView(generics.RetrieveAPIView):
@@ -360,4 +372,69 @@ class PhotoActualiteCreateView(APIView):
 class PhotoActualiteDeleteView(generics.DestroyAPIView):
     queryset = PhotoActualite.objects.all()
     serializer_class = PhotoActualiteSerializer
+    permission_classes = [IsAuthenticated]
+
+
+# ---------- Catégories & Commandes (boutique) ----------
+
+class CategorieProduitListView(generics.ListAPIView):
+    queryset = CategorieProduit.objects.all()
+    serializer_class = CategorieProduitSerializer
+    permission_classes = [AllowAny]
+
+
+class CommandeCreateView(APIView):
+    """Passer une commande (invité — pas de compte)."""
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        data = request.data
+        items = data.get("items") or []
+        if not items:
+            return Response({"detail": "Le panier est vide."}, status=400)
+        if not data.get("client_nom") or not data.get("client_telephone"):
+            return Response({"detail": "Le nom et le téléphone sont requis."}, status=400)
+        commande = Commande.objects.create(
+            client_nom=data.get("client_nom", ""),
+            client_telephone=data.get("client_telephone", ""),
+            client_adresse=data.get("client_adresse", "") or "",
+            client_ville=data.get("client_ville", "") or "",
+            note=data.get("note", "") or "",
+            mode_paiement=data.get("mode_paiement") or "cod",
+            total=data.get("total", "") or "",
+        )
+        for it in items:
+            prod = None
+            pid = it.get("produit") or it.get("produit_id") or it.get("id")
+            if pid:
+                prod = Produit.objects.filter(pk=pid).first()
+            try:
+                qte = int(it.get("quantite") or 1)
+            except (TypeError, ValueError):
+                qte = 1
+            LigneCommande.objects.create(
+                commande=commande,
+                produit=prod,
+                nom=it.get("nom") or (prod.nom if prod else "Article"),
+                prix=it.get("prix", "") or "",
+                quantite=max(1, qte),
+            )
+        return Response(CommandeSerializer(commande).data, status=status.HTTP_201_CREATED)
+
+
+class CommandeListView(generics.ListAPIView):
+    queryset = Commande.objects.all().prefetch_related("lignes")
+    serializer_class = CommandeSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class CommandeDetailView(generics.RetrieveAPIView):
+    queryset = Commande.objects.all().prefetch_related("lignes")
+    serializer_class = CommandeSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class CommandeUpdateView(generics.UpdateAPIView):
+    queryset = Commande.objects.all()
+    serializer_class = CommandeSerializer
     permission_classes = [IsAuthenticated]

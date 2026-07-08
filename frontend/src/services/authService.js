@@ -159,6 +159,25 @@ export const getActualitesByService = async (service) => {
     return await publicApi.get(`/api/actualites/?service=${encodeURIComponent(service)}`);
 };
 
+// --- Boutique : catégories & commandes ---
+
+export const getCategoriesProduits = async () => {
+    return await publicApi.get("/api/categories-produits/");
+};
+
+// data = { client_nom, client_telephone, client_adresse, client_ville, note, mode_paiement, total, items:[...] }
+export const createCommande = async (data) => {
+    return await publicApi.post("/api/commandes/create/", data);
+};
+
+export const getCommandes = async () => {
+    return await api.get("/api/commandes/");
+};
+
+export const updateCommande = async (id, data) => {
+    return await api.patch(`/api/commandes/update/${id}/`, data);
+};
+
 export const createActualite = async (data) => {
     return await api.post("/api/actualites/create/", data, {
         headers: { "Content-Type": "multipart/form-data" }

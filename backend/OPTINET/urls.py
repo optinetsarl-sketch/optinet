@@ -7,6 +7,10 @@ from .views import (
     ActualiteListView, ActualiteDetailView, ActualiteCreateView, ActualiteUpdateView,
     ActualiteDeleteView, PhotoActualiteCreateView, PhotoActualiteDeleteView,
 )
+from .views import (
+    CategorieProduitListView, CommandeCreateView, CommandeListView,
+    CommandeDetailView, CommandeUpdateView,
+)
 from .views import PortfolioListCreateView
 from .views import CategorieDetailView
 from .views import CategorieListCreateView
@@ -80,6 +84,13 @@ urlpatterns = [
     path("produits/delete/<int:pk>/", ProduitDeleteView.as_view(), name="produit-delete"),
     path("produits/<int:pk>/photos/", PhotoProduitCreateView.as_view(), name="produit-photo-add"),
     path("produit-photos/delete/<int:pk>/", PhotoProduitDeleteView.as_view(), name="produit-photo-delete"),
+
+    # Boutique : catégories & commandes
+    path("categories-produits/", CategorieProduitListView.as_view(), name="categorie-produit-list"),
+    path("commandes/create/", CommandeCreateView.as_view(), name="commande-create"),
+    path("commandes/", CommandeListView.as_view(), name="commande-list"),
+    path("commandes/<int:pk>/", CommandeDetailView.as_view(), name="commande-detail"),
+    path("commandes/update/<int:pk>/", CommandeUpdateView.as_view(), name="commande-update"),
 
     # Actualités (Le Journal)
     path("actualites/", ActualiteListView.as_view(), name="actualite-list"),

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getProduitDetail } from '../../services/authService';
+import { addToCart } from '../../services/cart';
 
 const httpsUrl = (u) => {
   if (!u) return '';
@@ -16,6 +17,8 @@ export default function ProduitDetail() {
   const [erreur, setErreur] = useState(false);
   const [current, setCurrent] = useState(0);
   const [zoom, setZoom] = useState(false);
+  const [qte, setQte] = useState(1);
+  const [added, setAdded] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -100,6 +103,20 @@ export default function ProduitDetail() {
             <div style={{ color: '#11b981', fontWeight: 800, fontSize: 30, marginBottom: 20 }}>{produit.prix}</div>
           )}
 
+          {/* Quantité + Ajouter au panier */}
+          <div style={{ display: 'flex', gap: 12, alignItems: 'stretch', marginBottom: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #1b3355', borderRadius: 12, overflow: 'hidden' }}>
+              <button onClick={() => setQte((n) => Math.max(1, n - 1))} style={qtyBtn} aria-label="Moins">−</button>
+              <span style={{ minWidth: 40, textAlign: 'center', fontWeight: 800, fontSize: 16 }}>{qte}</span>
+              <button onClick={() => setQte((n) => n + 1)} style={qtyBtn} aria-label="Plus">+</button>
+            </div>
+            <button
+              onClick={() => { addToCart(produit, qte); setAdded(true); setTimeout(() => setAdded(false), 1600); }}
+              style={{ flex: 1, background: added ? '#11b981' : '#12b3d6', color: '#03121f', border: 'none', borderRadius: 12, fontWeight: 800, fontSize: 16, cursor: 'pointer' }}>
+              {added ? '✓ Ajouté au panier' : '🛒 Ajouter au panier'}
+            </button>
+          </div>
+
           <a href={waLink()} target="_blank" rel="noreferrer"
             style={{ display: 'block', background: '#25D366', color: '#fff', textAlign: 'center', padding: '14px', borderRadius: 12, fontWeight: 800, textDecoration: 'none', fontSize: 16, marginBottom: 24 }}>
             💬 Commander sur WhatsApp
@@ -164,6 +181,7 @@ function Wrap({ children }) {
 }
 
 const backBtn = { color: '#12b3d6', textDecoration: 'none', fontWeight: 700, fontSize: 14 };
+const qtyBtn = { width: 42, height: '100%', minHeight: 46, background: '#0a1526', color: '#fff', border: 'none', fontSize: 22, cursor: 'pointer', lineHeight: 1 };
 const navBtn = {
   position: 'absolute', top: '50%', transform: 'translateY(-50%)',
   width: 42, height: 42, borderRadius: '50%', border: 'none',

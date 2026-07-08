@@ -75,6 +75,7 @@
   left: 0;
   right: 0;
   background: rgba(2, 11, 24, 0.98);
+  -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
   flex-direction: column;
@@ -131,11 +132,17 @@
   /* Cacher les liens desktop et le CTA desktop */
   .nav-desktop-links,
   .nav-cta-desktop {
-    display: none;
+    display: none !important;
   }
 
-  /* Afficher le hamburger */
+  /* Afficher le hamburger + le panier (à côté) */
   .nav-hamburger {
     display: flex;
+  }
+  .nav-cart-mobile {
+    display: flex !important;
+    align-items: center;
+    margin-left: auto;
+    margin-right: 6px;
   }
 }

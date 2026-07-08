@@ -1,7 +1,31 @@
 import { useEffect, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import "./sedebar.css";
 import optinetLogo from "../../assets/optinet-logo.png";
+import { cartCount } from "../../services/cart";
+
+function CartLink({ onClick }) {
+  const [count, setCount] = useState(cartCount());
+  const location = useLocation();
+  useEffect(() => {
+    const update = () => setCount(cartCount());
+    update();
+    window.addEventListener("cart-updated", update);
+    window.addEventListener("storage", update);
+    return () => { window.removeEventListener("cart-updated", update); window.removeEventListener("storage", update); };
+  }, [location]);
+  return (
+    <Link to="/panier" onClick={onClick} aria-label="Panier"
+      style={{ position: "relative", display: "inline-flex", alignItems: "center", color: "#fff", textDecoration: "none", fontSize: 22, padding: "4px 6px" }}>
+      🛒
+      {count > 0 && (
+        <span style={{ position: "absolute", top: -4, right: -6, background: "#11b981", color: "#fff", fontSize: 11, fontWeight: 800, minWidth: 18, height: 18, borderRadius: 10, display: "grid", placeItems: "center", padding: "0 4px" }}>
+          {count}
+        </span>
+      )}
+    </Link>
+  );
+}
 
 const NAV_ITEMS = [
   { to: "/", label: "Accueil" },
@@ -58,15 +82,23 @@ const Navbar = () => {
         ))}
       </ul>
 
-      {/* CTA — desktop uniquement */}
-      <Link
-        to="/contact"
-        className="nav-cta nav-cta-desktop"
-        style={{ textDecoration: "none" }}
-        onClick={closeMenu}
-      >
-        Demander un devis
-      </Link>
+      {/* Panier + CTA — desktop */}
+      <div className="nav-cta-desktop" style={{ display: "flex", alignItems: "center", gap: 14 }}>
+        <CartLink onClick={closeMenu} />
+        <Link
+          to="/contact"
+          className="nav-cta"
+          style={{ textDecoration: "none" }}
+          onClick={closeMenu}
+        >
+          Demander un devis
+        </Link>
+      </div>
+
+      {/* Panier — visible sur mobile à côté du hamburger */}
+      <div className="nav-cart-mobile" style={{ display: "none" }}>
+        <CartLink onClick={closeMenu} />
+      </div>
 
       {/* Bouton hamburger — mobile uniquement */}
       <button
