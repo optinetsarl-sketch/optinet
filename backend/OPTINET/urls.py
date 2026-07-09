@@ -19,6 +19,7 @@ from .views import MessageCreateView
 from .views import MessageListView
 from .views import MessageDetailView
 from .views import UserListView
+from .views import UserCreateView, UserDetailView, UserToggleStatusView
 from .views import RegisterView
 from django.urls import path
 from rest_framework_simplejwt.views import (
@@ -34,6 +35,9 @@ urlpatterns = [
     path("refresh/", TokenRefreshView.as_view(),),
 
     path("users/", UserListView.as_view(), name="user-list"),
+    path("users/create/", UserCreateView.as_view(), name="user-create"),
+    path("users/<int:pk>/", UserDetailView.as_view(), name="user-detail"),
+    path("users/<int:pk>/toggle-status/", UserToggleStatusView.as_view(), name="user-toggle-status"),
 
     path("messages/", MessageListView.as_view()),
     path("messages/create/", MessageCreateView.as_view()),
