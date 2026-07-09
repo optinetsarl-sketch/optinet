@@ -185,6 +185,18 @@ class ProduitDetailView(generics.RetrieveAPIView):
     permission_classes = [AllowAny]
 
 
+def _resolve_categorie_produit(cat):
+    """Accepte un id numérique ou un slug, renvoie l'instance ou None."""
+    if not cat:
+        return None
+    try:
+        if str(cat).isdigit():
+            return CategorieProduit.objects.filter(pk=cat).first()
+        return CategorieProduit.objects.filter(slug=cat).first()
+    except (TypeError, ValueError):
+        return None
+
+
 class ProduitCreateView(APIView):
     """Créer un produit avec plusieurs photos (multipart: champ 'images' répété)."""
     permission_classes = [IsAuthenticated]
@@ -194,6 +206,7 @@ class ProduitCreateView(APIView):
         data = request.data
         produit = Produit.objects.create(
             nom=data.get("nom") or data.get("titre") or "Produit",
+            categorie=_resolve_categorie_produit(data.get("categorie")),
             description=data.get("description", "") or "",
             prix=data.get("prix", "") or "",
             caracteristiques=data.get("caracteristiques", "") or "",
@@ -222,6 +235,8 @@ class ProduitUpdateView(APIView):
         for field in ("nom", "description", "prix", "caracteristiques"):
             if field in data:
                 setattr(produit, field, data.get(field) or "")
+        if "categorie" in data:
+            produit.categorie = _resolve_categorie_produit(data.get("categorie"))
         if "est_actif" in data:
             produit.est_actif = _to_bool(data.get("est_actif"))
         if "ordre" in data:

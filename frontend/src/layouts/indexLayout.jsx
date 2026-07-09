@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/index/sedebar";
 import Footer from "../components/index/footer";
+import JournalPopup from "../components/index/JournalPopup";
 import "../pages/styles_admin/index.css";
 
 export default function IndexLayout() {
@@ -16,6 +17,9 @@ export default function IndexLayout() {
 
       {/* FOOTER */}
       <Footer />
+
+      {/* POP-UP promo Journal (aléatoire) */}
+      <JournalPopup />
     </div>
   );
 }
