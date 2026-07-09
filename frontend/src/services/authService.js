@@ -194,6 +194,17 @@ export const deleteActualite = async (id) => {
     return await api.delete(`/api/actualites/delete/${id}/`);
 };
 
+// ajoute UNE photo à une actualité existante (FormData: image)
+export const addActualitePhoto = async (id, data) => {
+    return await api.post(`/api/actualites/${id}/photos/`, data, {
+        headers: { "Content-Type": "multipart/form-data" }
+    });
+};
+
+export const deleteActualitePhoto = async (photoId) => {
+    return await api.delete(`/api/actualite-photos/delete/${photoId}/`);
+};
+
 // // récupérer ses infos (profil)
 // export const getMe = async () => {
 //     return await api.get("api/users/me/");

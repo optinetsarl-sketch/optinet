@@ -29,6 +29,7 @@ import Users from "../pages/admin/Users";
 import Messages from "../pages/admin/message";
 import Portfolio from "../pages/admin/portfolio";
 import GalerieAdmin from "../pages/admin/galerie";
+import JournalAdmin from "../pages/admin/journal";
 import CarnetAdress from "../pages/admin/carnetAdress";
 
 
@@ -79,6 +80,7 @@ function App() {
           <Route path="message" element={<Messages />} />
           <Route path="portfolio" element={<Portfolio />} />
           <Route path="galerie" element={<GalerieAdmin />} />
+          <Route path="journal" element={<JournalAdmin />} />
           <Route path="carnetAdress" element={<CarnetAdress />} />
           {/* <Route path="locations" element={<Locations />} /> */}
           {/* <Route path="settings" element={<Settings />} /> */}

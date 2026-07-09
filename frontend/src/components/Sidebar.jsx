@@ -8,6 +8,7 @@ const NAV_ITEMS = [
   { to: "/admin/message", label: "Messages" },
   { to: "/admin/portfolio", label: "Portfolio" },
   { to: "/admin/galerie", label: "Galerie" },
+  { to: "/admin/journal", label: "Journal" },
   { to: "/admin/carnetAdress", label: "Carnet d'Adresses" },
   // { to: "/admin/logout", label: "Déconnexion" },
 ];
