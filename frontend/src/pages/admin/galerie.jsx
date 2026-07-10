@@ -11,7 +11,7 @@ const httpsUrl = (u) => {
   return u.replace(/^http:\/\//, 'https://');
 };
 
-const EMPTY = { id: null, nom: '', prix: '', description: '', caracteristiques: '', est_actif: true };
+const EMPTY = { id: null, nom: '', prix: '', quantite_disponible: '', description: '', caracteristiques: '', est_actif: true };
 
 export default function AdminProduits() {
   const [produits, setProduits] = useState([]);
@@ -71,6 +71,7 @@ export default function AdminProduits() {
       const fd = new FormData();
       fd.append('nom', current.nom);
       fd.append('prix', current.prix || '');
+      fd.append('quantite_disponible', current.quantite_disponible === '' ? '' : current.quantite_disponible);
       fd.append('description', current.description || '');
       fd.append('caracteristiques', current.caracteristiques || '');
       fd.append('est_actif', current.est_actif ? 'true' : 'false');
@@ -99,6 +100,7 @@ export default function AdminProduits() {
       setIsEditing(true);
       setCurrent({
         id: d.id, nom: d.nom || '', prix: d.prix || '',
+        quantite_disponible: d.quantite_disponible == null ? '' : d.quantite_disponible,
         description: d.description || '', caracteristiques: d.caracteristiques || '',
         est_actif: d.est_actif,
       });
@@ -167,10 +169,17 @@ export default function AdminProduits() {
             </div>
 
             <div className="form-group">
-              <label>Prix</label>
+              <label>Prix (facultatif)</label>
               <input type="text" value={current.prix}
                 onChange={(e) => setCurrent({ ...current, prix: e.target.value })}
                 placeholder="Ex: 150 000 FCFA" />
+            </div>
+
+            <div className="form-group">
+              <label>Quantité disponible (facultatif)</label>
+              <input type="number" min="0" value={current.quantite_disponible}
+                onChange={(e) => setCurrent({ ...current, quantite_disponible: e.target.value })}
+                placeholder="Ex: 5 — vide si non suivi" />
             </div>
 
             <div className="form-group">

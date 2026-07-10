@@ -185,6 +185,16 @@ class ProduitDetailView(generics.RetrieveAPIView):
     permission_classes = [AllowAny]
 
 
+def _to_int_or_none(value):
+    """'' ou absent -> None ; sinon entier (>=0) ou None si invalide."""
+    if value in (None, ""):
+        return None
+    try:
+        return max(0, int(str(value).strip()))
+    except (TypeError, ValueError):
+        return None
+
+
 def _resolve_categorie_produit(cat):
     """Accepte un id numérique ou un slug, renvoie l'instance ou None."""
     if not cat:
@@ -209,6 +219,7 @@ class ProduitCreateView(APIView):
             categorie=_resolve_categorie_produit(data.get("categorie")),
             description=data.get("description", "") or "",
             prix=data.get("prix", "") or "",
+            quantite_disponible=_to_int_or_none(data.get("quantite_disponible")),
             caracteristiques=data.get("caracteristiques", "") or "",
             est_actif=_to_bool(data.get("est_actif"), default=True),
         )
@@ -237,6 +248,8 @@ class ProduitUpdateView(APIView):
                 setattr(produit, field, data.get(field) or "")
         if "categorie" in data:
             produit.categorie = _resolve_categorie_produit(data.get("categorie"))
+        if "quantite_disponible" in data:
+            produit.quantite_disponible = _to_int_or_none(data.get("quantite_disponible"))
         if "est_actif" in data:
             produit.est_actif = _to_bool(data.get("est_actif"))
         if "ordre" in data:

@@ -50,12 +50,12 @@ class PhotoProduitInline(admin.TabularInline):
 
 @admin.register(Produit)
 class ProduitAdmin(admin.ModelAdmin):
-    list_display = ('id', 'apercu', 'nom', 'categorie', 'prix', 'nb_photos', 'est_actif', 'created_at')
+    list_display = ('id', 'apercu', 'nom', 'categorie', 'prix', 'quantite_disponible', 'nb_photos', 'est_actif', 'created_at')
     list_filter = ('categorie', 'est_actif', 'created_at')
     list_editable = ('est_actif',)
     search_fields = ('nom', 'description')
     inlines = [PhotoProduitInline]
-    fields = ('nom', 'categorie', 'prix', 'description', 'caracteristiques', 'est_actif', 'ordre')
+    fields = ('nom', 'categorie', 'prix', 'quantite_disponible', 'description', 'caracteristiques', 'est_actif', 'ordre')
 
     def apercu(self, obj):
         photo = obj.photo_principale

@@ -100,15 +100,29 @@ export default function ProduitDetail() {
         <div>
           <h1 style={{ fontSize: 30, fontWeight: 800, margin: '0 0 12px', lineHeight: 1.2 }}>{produit.nom}</h1>
           {produit.prix && (
-            <div style={{ color: '#11b981', fontWeight: 800, fontSize: 30, marginBottom: 20 }}>{produit.prix}</div>
+            <div style={{ color: '#11b981', fontWeight: 800, fontSize: 30, marginBottom: 8 }}>{produit.prix}</div>
+          )}
+          {produit.quantite_disponible != null && (
+            <div style={{ marginBottom: 16 }}>
+              {produit.quantite_disponible > 0 ? (
+                <span style={{ display: 'inline-block', background: 'rgba(17,185,129,.12)', color: '#11b981', fontWeight: 700, fontSize: 13.5, padding: '5px 13px', borderRadius: 20 }}>
+                  ✓ En stock : {produit.quantite_disponible} disponible{produit.quantite_disponible > 1 ? 's' : ''}
+                </span>
+              ) : (
+                <span style={{ display: 'inline-block', background: 'rgba(255,90,95,.12)', color: '#ff6b6b', fontWeight: 700, fontSize: 13.5, padding: '5px 13px', borderRadius: 20 }}>
+                  Rupture de stock
+                </span>
+              )}
+            </div>
           )}
 
-          {/* Quantité + Ajouter au panier */}
+          {/* Quantité + Ajouter au panier (masqué si rupture de stock) */}
+          {(produit.quantite_disponible == null || produit.quantite_disponible > 0) && (
           <div style={{ display: 'flex', gap: 12, alignItems: 'stretch', marginBottom: 12 }}>
             <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #1b3355', borderRadius: 12, overflow: 'hidden' }}>
               <button onClick={() => setQte((n) => Math.max(1, n - 1))} style={qtyBtn} aria-label="Moins">−</button>
               <span style={{ minWidth: 40, textAlign: 'center', fontWeight: 800, fontSize: 16 }}>{qte}</span>
-              <button onClick={() => setQte((n) => n + 1)} style={qtyBtn} aria-label="Plus">+</button>
+              <button onClick={() => setQte((n) => produit.quantite_disponible != null ? Math.min(produit.quantite_disponible, n + 1) : n + 1)} style={qtyBtn} aria-label="Plus">+</button>
             </div>
             <button
               onClick={() => { addToCart(produit, qte); setAdded(true); setTimeout(() => setAdded(false), 1600); }}
@@ -116,6 +130,7 @@ export default function ProduitDetail() {
               {added ? '✓ Ajouté au panier' : '🛒 Ajouter au panier'}
             </button>
           </div>
+          )}
 
           <a href={waLink()} target="_blank" rel="noreferrer"
             style={{ display: 'block', background: '#25D366', color: '#fff', textAlign: 'center', padding: '14px', borderRadius: 12, fontWeight: 800, textDecoration: 'none', fontSize: 16, marginBottom: 24 }}>
