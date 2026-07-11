@@ -225,6 +225,17 @@ export const deleteActualitePhoto = async (photoId) => {
 //     return await api.post(`api/users/${userId}/admin-reset-password/`, { new_password: newPassword });
 // };
 
+// --- Statistiques de visite ---
+
+// signal anonyme envoyé par les pages publiques (jamais bloquant)
+export const trackVisite = async (path) => {
+    try { await publicApi.post("/api/track/", { path }); } catch { /* silencieux */ }
+};
+
+export const getStatsVisites = async () => {
+    return await api.get("/api/stats-visites/");
+};
+
 // --- Contacts (Carnet) ---
 export const getContacts = async () => {
     return await api.get(`/api/contacts/`);

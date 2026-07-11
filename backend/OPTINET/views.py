@@ -9,6 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import MessageSerializer,CategorieSerializer,PortfolioSerializer,MessageSerializer
 from .models import Contact, Produit, PhotoProduit, Actualite, PhotoActualite
 from .models import CategorieProduit, Commande, LigneCommande
+from .models import VisiteurJour, PageVue
 from .serializers import ContactSerializer
 from .serializers import ProduitListSerializer, ProduitDetailSerializer, PhotoProduitSerializer
 from .serializers import ActualiteListSerializer, ActualiteDetailSerializer, PhotoActualiteSerializer
@@ -466,3 +467,92 @@ class CommandeUpdateView(generics.UpdateAPIView):
     queryset = Commande.objects.all()
     serializer_class = CommandeSerializer
     permission_classes = [IsAuthenticated]
+
+# ---------- Statistiques de visite (compteur intégré) ----------
+
+_BOT_MARKERS = ("bot", "crawler", "spider", "curl", "wget", "python-requests",
+                "httpclient", "headless", "lighthouse", "uptime", "monitor")
+
+
+class TrackVisiteView(APIView):
+    """Signal de visite envoyé par le site public (anonyme, sans cookie)."""
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        import hashlib
+        from django.conf import settings
+        from django.db.models import F
+        from django.utils import timezone as tz
+
+        ua = (request.META.get("HTTP_USER_AGENT") or "").lower()
+        if not ua or any(m in ua for m in _BOT_MARKERS):
+            return Response(status=204)
+
+        path = str(request.data.get("path") or "/")[:255].split("?")[0]
+        if not path.startswith("/") or path.startswith("/admin") or path == "/login":
+            return Response(status=204)
+
+        ip = (request.META.get("HTTP_X_FORWARDED_FOR") or "").split(",")[0].strip() \
+            or request.META.get("REMOTE_ADDR", "")
+        today = tz.localdate()
+        # hash salé + daté : anonyme, non retraçable, change chaque jour
+        empreinte = hashlib.sha256(
+            f"{settings.SECRET_KEY}{today}{ip}{ua}".encode()
+        ).hexdigest()
+
+        VisiteurJour.objects.get_or_create(date=today, empreinte=empreinte)
+        obj, created = PageVue.objects.get_or_create(date=today, path=path, defaults={"count": 1})
+        if not created:
+            PageVue.objects.filter(pk=obj.pk).update(count=F("count") + 1)
+        return Response(status=204)
+
+
+class StatsVisitesView(APIView):
+    """Statistiques de fréquentation pour le tableau de bord admin."""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        from datetime import timedelta
+        from django.db.models import Count, Sum
+        from django.utils import timezone as tz
+
+        today = tz.localdate()
+        d7 = today - timedelta(days=6)
+        d30 = today - timedelta(days=29)
+
+        def visiteurs(depuis):
+            return VisiteurJour.objects.filter(date__gte=depuis).count()
+
+        def pages(depuis):
+            return PageVue.objects.filter(date__gte=depuis).aggregate(t=Sum("count"))["t"] or 0
+
+        # série jour par jour sur 30 jours
+        vis_par_jour = {
+            str(r["date"]): r["n"]
+            for r in VisiteurJour.objects.filter(date__gte=d30)
+                .values("date").annotate(n=Count("id"))
+        }
+        vues_par_jour = {
+            str(r["date"]): r["n"]
+            for r in PageVue.objects.filter(date__gte=d30)
+                .values("date").annotate(n=Sum("count"))
+        }
+        serie = []
+        for i in range(30):
+            d = str(d30 + timedelta(days=i))
+            serie.append({"date": d, "visiteurs": vis_par_jour.get(d, 0), "pages_vues": vues_par_jour.get(d, 0)})
+
+        top_pages = list(
+            PageVue.objects.filter(date__gte=d30)
+            .values("path").annotate(total=Sum("count"))
+            .order_by("-total")[:8]
+        )
+
+        return Response({
+            "aujourd_hui": {"visiteurs": VisiteurJour.objects.filter(date=today).count(),
+                            "pages_vues": PageVue.objects.filter(date=today).aggregate(t=Sum("count"))["t"] or 0},
+            "semaine": {"visiteurs": visiteurs(d7), "pages_vues": pages(d7)},
+            "mois": {"visiteurs": visiteurs(d30), "pages_vues": pages(d30)},
+            "serie": serie,
+            "top_pages": top_pages,
+        })

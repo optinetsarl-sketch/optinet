@@ -258,3 +258,34 @@ class Contact(models.Model):
         return f"{self.nom or self.email}"
 
 
+# ---------- Statistiques de visite (compteur intégré) ----------
+
+class VisiteurJour(models.Model):
+    """Un visiteur unique un jour donné (empreinte = hash anonyme IP + navigateur).
+
+    On ne stocke jamais l'adresse IP en clair : seulement un hash salé,
+    différent chaque jour, impossible à retracer vers une personne.
+    """
+    date = models.DateField(db_index=True)
+    empreinte = models.CharField(max_length=64)
+
+    class Meta:
+        unique_together = [("date", "empreinte")]
+
+    def __str__(self):
+        return f"{self.date} — {self.empreinte[:8]}"
+
+
+class PageVue(models.Model):
+    """Compteur de vues agrégé par jour et par page (léger pour le Raspberry Pi)."""
+    date = models.DateField(db_index=True)
+    path = models.CharField(max_length=255)
+    count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        unique_together = [("date", "path")]
+
+    def __str__(self):
+        return f"{self.date} {self.path} ({self.count})"
+
+
