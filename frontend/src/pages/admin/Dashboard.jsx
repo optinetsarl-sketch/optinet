@@ -5,11 +5,14 @@ import {
   LinearScale,
   BarElement,
   ArcElement,
+  PointElement,
+  LineElement,
+  Filler,
   Title,
   Tooltip,
   Legend,
 } from "chart.js";
-import { Bar, Doughnut } from "react-chartjs-2";
+import { Bar, Doughnut, Line } from "react-chartjs-2";
 import { getStatsVisites } from "../../services/authService";
 import "../styles_admin/Dashboard.css";
 
@@ -18,29 +21,100 @@ ChartJS.register(
   LinearScale,
   BarElement,
   ArcElement,
+  PointElement,
+  LineElement,
+  Filler,
   Title,
   Tooltip,
   Legend
 );
 
-// "2026-07-11" -> "11/07"
-const jourCourt = (iso) => {
-  const [, m, d] = iso.split("-");
-  return `${d}/${m}`;
+const brandBlue = "#0f6cb3";
+const brandPurple = "#8b5cf6";
+const brandGreen = "#10b981";
+
+// "2026-07-11" -> "11/07" ; "2026-07" -> "juil. 26"
+const labelDate = (iso) => {
+  const parts = iso.split("-");
+  if (parts.length === 3) return `${parts[2]}/${parts[1]}`;
+  const d = new Date(Number(parts[0]), Number(parts[1]) - 1, 1);
+  return d.toLocaleDateString("fr-FR", { month: "short", year: "2-digit" });
+};
+
+// "TG" -> "🇹🇬 Togo"
+const paysLabel = (code) => {
+  let drapeau = "";
+  try {
+    drapeau = String.fromCodePoint(...[...code].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65)) + " ";
+  } catch { /* code invalide */ }
+  try {
+    const nom = new Intl.DisplayNames(["fr"], { type: "region" }).of(code);
+    return drapeau + (nom || code);
+  } catch {
+    return drapeau + code;
+  }
+};
+
+const PERIODES = [
+  { key: "7j", label: "7 jours" },
+  { key: "30j", label: "30 jours" },
+  { key: "12m", label: "12 mois" },
+];
+
+// Panneau liste style Plausible : barre claire derrière le libellé, nombre à droite
+const PanneauListe = ({ titre, items, format }) => {
+  const max = items.length ? items[0].total : 1;
+  return (
+    <div className="chart-card" style={{ minHeight: 240 }}>
+      <div className="chart-card__header">
+        <h3 className="chart-card__title">{titre}</h3>
+      </div>
+      <div style={{ padding: "4px 20px 16px" }}>
+        {items.length === 0 && (
+          <p style={{ color: "#94a3b8", fontSize: 13.5, margin: "10px 0" }}>Pas encore de données.</p>
+        )}
+        {items.map((it) => {
+          const label = format ? format(it.valeur ?? it.path) : (it.valeur ?? it.path);
+          return (
+            <div key={it.valeur ?? it.path}
+              style={{ position: "relative", marginBottom: 6, borderRadius: 5, overflow: "hidden" }}>
+              <div style={{
+                position: "absolute", inset: 0,
+                width: `${Math.max(4, Math.round((it.total / max) * 100))}%`,
+                background: "rgba(15,108,179,.12)", borderRadius: 5,
+              }} />
+              <div style={{
+                position: "relative", display: "flex", justifyContent: "space-between",
+                alignItems: "center", padding: "6px 10px", fontSize: 13.5,
+              }}>
+                <span style={{
+                  color: "#1e293b", fontWeight: 600, whiteSpace: "nowrap",
+                  overflow: "hidden", textOverflow: "ellipsis", marginRight: 12,
+                }}>{label}</span>
+                <span style={{ color: "#475569", fontWeight: 700, flexShrink: 0 }}>{it.total}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 };
 
 const Dashboard = () => {
+  const [periode, setPeriode] = useState("30j");
   const [visites, setVisites] = useState(null);
 
   useEffect(() => {
-    getStatsVisites()
-      .then((res) => setVisites(res.data))
-      .catch((e) => console.error("Erreur stats visites:", e));
-  }, []);
-  // Belles couleurs modernes pour les graphiques
-  const brandBlue = "#0f6cb3";
-  const brandPurple = "#8b5cf6";
-  const brandGreen = "#10b981";
+    let actif = true;
+    const charger = () =>
+      getStatsVisites(periode)
+        .then((res) => { if (actif) setVisites(res.data); })
+        .catch((e) => console.error("Erreur stats visites:", e));
+    charger();
+    const timer = setInterval(charger, 60000); // rafraîchit le « en ce moment »
+    return () => { actif = false; clearInterval(timer); };
+  }, [periode]);
 
   const usersData = {
     labels: ["Administrateurs", "Employés", "Clients"],
@@ -59,40 +133,26 @@ const Dashboard = () => {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: {
-        display: false,
-      },
+      legend: { display: false },
       tooltip: {
         backgroundColor: "#1e293b",
         padding: 12,
         cornerRadius: 8,
         displayColors: false,
-      }
+      },
     },
     scales: {
       y: {
         beginAtZero: true,
-        grid: {
-          color: "#f1f5f9",
-        },
-        border: {
-          display: false
-        },
-        ticks: {
-          color: "#64748b"
-        }
+        grid: { color: "#f1f5f9" },
+        border: { display: false },
+        ticks: { color: "#64748b" },
       },
       x: {
-        grid: {
-          display: false,
-        },
-        border: {
-          display: false
-        },
-        ticks: {
-          color: "#64748b"
-        }
-      }
+        grid: { display: false },
+        border: { display: false },
+        ticks: { color: "#64748b" },
+      },
     },
   };
 
@@ -114,19 +174,11 @@ const Dashboard = () => {
     cutout: "70%",
     plugins: {
       legend: {
-        position: 'bottom',
-        labels: {
-          usePointStyle: true,
-          padding: 20,
-          color: "#475569"
-        }
+        position: "bottom",
+        labels: { usePointStyle: true, padding: 20, color: "#475569" },
       },
-      tooltip: {
-        backgroundColor: "#1e293b",
-        padding: 12,
-        cornerRadius: 8,
-      }
-    }
+      tooltip: { backgroundColor: "#1e293b", padding: 12, cornerRadius: 8 },
+    },
   };
 
   return (
@@ -136,130 +188,136 @@ const Dashboard = () => {
         <p className="dashboard__subtitle">Bienvenue sur votre tableau de bord administrateur.</p>
       </div>
 
-      {/* ── Fréquentation du site ── */}
-      <div className="dashboard__stats">
-        <div className="stat-card">
-          <div className="stat-card__icon stat-card__icon--blue">
-            <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-              <circle cx="12" cy="12" r="3" />
-            </svg>
+      {/* ════════ Fréquentation du site (style Plausible) ════════ */}
+      <div className="chart-card" style={{ marginBottom: 24 }}>
+        {/* Bandeau : site + en ce moment + périodes */}
+        <div style={{
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+          flexWrap: "wrap", gap: 12, padding: "18px 20px 6px",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+            <h3 style={{ margin: 0, fontSize: 17, fontWeight: 800, color: "#0f4f7b" }}>
+              🌐 optinet-sarlu.ginolux.com
+            </h3>
+            <span style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 13, color: "#475569", fontWeight: 600 }}>
+              <span style={{
+                width: 9, height: 9, borderRadius: "50%", background: "#22c55e",
+                boxShadow: "0 0 0 3px rgba(34,197,94,.25)", display: "inline-block",
+              }} />
+              {visites ? visites.live : "…"} visiteur{visites && visites.live > 1 ? "s" : ""} en ce moment
+            </span>
           </div>
-          <div className="stat-card__info">
-            <h3 className="stat-card__title">Visiteurs aujourd'hui</h3>
-            <p className="stat-card__value">{visites ? visites.aujourd_hui.visiteurs : "…"}</p>
-          </div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-card__icon stat-card__icon--green">
-            <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
-            </svg>
-          </div>
-          <div className="stat-card__info">
-            <h3 className="stat-card__title">Visiteurs — 7 jours</h3>
-            <p className="stat-card__value">{visites ? visites.semaine.visiteurs : "…"}</p>
-          </div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-card__icon stat-card__icon--blue">
-            <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-              <line x1="16" y1="2" x2="16" y2="6" />
-              <line x1="8" y1="2" x2="8" y2="6" />
-              <line x1="3" y1="10" x2="21" y2="10" />
-            </svg>
-          </div>
-          <div className="stat-card__info">
-            <h3 className="stat-card__title">Visiteurs — 30 jours</h3>
-            <p className="stat-card__value">{visites ? visites.mois.visiteurs : "…"}</p>
+          <div style={{ display: "flex", gap: 4, background: "#f1f5f9", borderRadius: 10, padding: 4 }}>
+            {PERIODES.map((p) => (
+              <button key={p.key} onClick={() => setPeriode(p.key)}
+                style={{
+                  border: "none", cursor: "pointer", borderRadius: 7,
+                  padding: "7px 14px", fontSize: 13, fontWeight: 700,
+                  background: periode === p.key ? "#ffffff" : "transparent",
+                  color: periode === p.key ? brandBlue : "#64748b",
+                  boxShadow: periode === p.key ? "0 1px 4px rgba(0,0,0,.09)" : "none",
+                }}>
+                {p.label}
+              </button>
+            ))}
           </div>
         </div>
 
-        <div className="stat-card">
-          <div className="stat-card__icon stat-card__icon--green">
-            <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-              <polyline points="14 2 14 8 20 8" />
-            </svg>
-          </div>
-          <div className="stat-card__info">
-            <h3 className="stat-card__title">Pages vues — 30 jours</h3>
-            <p className="stat-card__value">{visites ? visites.mois.pages_vues : "…"}</p>
-          </div>
+        {/* Bandeau de chiffres */}
+        <div style={{ display: "flex", gap: 36, flexWrap: "wrap", padding: "12px 20px 4px" }}>
+          {[
+            ["Visiteurs uniques", visites ? visites.totaux.visiteurs : "…"],
+            ["Pages vues", visites ? visites.totaux.pages_vues : "…"],
+            ["Vues par visite", visites ? visites.totaux.vues_par_visite : "…"],
+            ["Aujourd'hui", visites ? visites.aujourd_hui.visiteurs : "…"],
+          ].map(([lbl, val]) => (
+            <div key={lbl}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#64748b", textTransform: "uppercase", letterSpacing: 0.4 }}>{lbl}</div>
+              <div style={{ fontSize: 28, fontWeight: 800, color: "#0f172a", lineHeight: 1.25 }}>{val}</div>
+            </div>
+          ))}
         </div>
-      </div>
 
-      <div className="dashboard__charts">
-        <div className="chart-card">
-          <div className="chart-card__header">
-            <h3 className="chart-card__title">Visiteurs — 30 derniers jours</h3>
-          </div>
-          <div className="chart-card__content">
-            {visites && (
-              <Bar
-                data={{
-                  labels: visites.serie.map((j) => jourCourt(j.date)),
-                  datasets: [{
-                    label: "Visiteurs",
-                    data: visites.serie.map((j) => j.visiteurs),
-                    backgroundColor: brandBlue,
-                    borderRadius: 4,
-                    barPercentage: 0.7,
-                  }],
-                }}
-                options={{
-                  ...barOptions,
-                  scales: {
-                    ...barOptions.scales,
-                    y: { ...barOptions.scales.y, ticks: { ...barOptions.scales.y.ticks, precision: 0 } },
-                    x: { ...barOptions.scales.x, ticks: { ...barOptions.scales.x.ticks, maxTicksLimit: 8 } },
+        {/* Grande courbe */}
+        <div style={{ height: 280, padding: "8px 14px 14px" }}>
+          {visites && (
+            <Line
+              data={{
+                labels: visites.serie.map((j) => labelDate(j.date)),
+                datasets: [{
+                  label: "Visiteurs",
+                  data: visites.serie.map((j) => j.visiteurs),
+                  borderColor: brandBlue,
+                  borderWidth: 2,
+                  pointRadius: visites.serie.length > 14 ? 0 : 3,
+                  pointHoverRadius: 5,
+                  pointBackgroundColor: brandBlue,
+                  fill: true,
+                  backgroundColor: (ctx) => {
+                    const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 280);
+                    g.addColorStop(0, "rgba(15,108,179,.25)");
+                    g.addColorStop(1, "rgba(15,108,179,.02)");
+                    return g;
                   },
-                  plugins: {
-                    ...barOptions.plugins,
-                    tooltip: {
-                      ...barOptions.plugins.tooltip,
-                      callbacks: {
-                        afterLabel: (ctx) => `Pages vues : ${visites.serie[ctx.dataIndex].pages_vues}`,
-                      },
+                  tension: 0.3,
+                }],
+              }}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: "index", intersect: false },
+                plugins: {
+                  legend: { display: false },
+                  tooltip: {
+                    backgroundColor: "#1e293b", padding: 12, cornerRadius: 8, displayColors: false,
+                    callbacks: {
+                      afterLabel: (ctx) => `Pages vues : ${visites.serie[ctx.dataIndex].pages_vues}`,
                     },
                   },
-                }}
-              />
-            )}
-          </div>
-        </div>
-
-        <div className="chart-card">
-          <div className="chart-card__header">
-            <h3 className="chart-card__title">Pages les plus visitées — 30 jours</h3>
-          </div>
-          <div className="chart-card__content" style={{ overflowY: "auto" }}>
-            {visites && visites.top_pages.length === 0 && (
-              <p style={{ color: "#64748b", fontSize: 14 }}>Pas encore de visites enregistrées.</p>
-            )}
-            {visites && visites.top_pages.map((p, i) => {
-              const max = visites.top_pages[0]?.total || 1;
-              return (
-                <div key={p.path} style={{ marginBottom: 12 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, marginBottom: 4 }}>
-                    <span style={{ color: "#1e293b", fontWeight: 600 }}>{i + 1}. {p.path === "/" ? "/ (Accueil)" : p.path}</span>
-                    <span style={{ color: "#64748b", fontWeight: 700 }}>{p.total}</span>
-                  </div>
-                  <div style={{ background: "#f1f5f9", borderRadius: 4, height: 8, overflow: "hidden" }}>
-                    <div style={{ width: `${Math.round((p.total / max) * 100)}%`, height: "100%", background: brandBlue, borderRadius: 4 }} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    grid: { color: "#f1f5f9" },
+                    border: { display: false },
+                    ticks: { color: "#64748b", precision: 0 },
+                  },
+                  x: {
+                    grid: { display: false },
+                    border: { display: false },
+                    ticks: { color: "#64748b", maxTicksLimit: 10 },
+                  },
+                },
+              }}
+            />
+          )}
         </div>
       </div>
 
+      {/* Panneaux style Plausible */}
+      {visites && (
+        <div className="dashboard__charts" style={{ marginBottom: 24 }}>
+          <PanneauListe titre="Pages les plus visitées" items={visites.top_pages}
+            format={(p) => (p === "/" ? "/ (Accueil)" : p)} />
+          <PanneauListe titre="Sources de trafic" items={visites.sources} />
+        </div>
+      )}
+      {visites && (
+        <div className="dashboard__charts" style={{ marginBottom: 24 }}>
+          <PanneauListe titre="Appareils" items={visites.appareils} />
+          {visites.pays.length > 0
+            ? <PanneauListe titre="Pays" items={visites.pays} format={paysLabel} />
+            : <PanneauListe titre="Navigateurs" items={visites.navigateurs} />}
+        </div>
+      )}
+      {visites && visites.pays.length > 0 && (
+        <div className="dashboard__charts" style={{ marginBottom: 24 }}>
+          <PanneauListe titre="Navigateurs" items={visites.navigateurs} />
+          <div />
+        </div>
+      )}
+
+      {/* ════════ Utilisateurs (données de démonstration) ════════ */}
       <div className="dashboard__stats">
         <div className="stat-card">
           <div className="stat-card__icon stat-card__icon--blue">

@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import MessageSerializer,CategorieSerializer,PortfolioSerializer,MessageSerializer
 from .models import Contact, Produit, PhotoProduit, Actualite, PhotoActualite
 from .models import CategorieProduit, Commande, LigneCommande
-from .models import VisiteurJour, PageVue
+from .models import VisiteurJour, PageVue, DimensionJour, VisiteLive
 from .serializers import ContactSerializer
 from .serializers import ProduitListSerializer, ProduitDetailSerializer, PhotoProduitSerializer
 from .serializers import ActualiteListSerializer, ActualiteDetailSerializer, PhotoActualiteSerializer
@@ -473,6 +473,66 @@ class CommandeUpdateView(generics.UpdateAPIView):
 _BOT_MARKERS = ("bot", "crawler", "spider", "curl", "wget", "python-requests",
                 "httpclient", "headless", "lighthouse", "uptime", "monitor")
 
+# domaines connus -> nom lisible de la source
+_SOURCES_CONNUES = {
+    "facebook": "Facebook", "instagram": "Instagram", "google": "Google",
+    "linkedin": "LinkedIn", "lnkd.in": "LinkedIn", "twitter": "X (Twitter)",
+    "t.co": "X (Twitter)", "x.com": "X (Twitter)", "whatsapp": "WhatsApp",
+    "youtube": "YouTube", "bing": "Bing", "duckduckgo": "DuckDuckGo",
+    "yahoo": "Yahoo", "tiktok": "TikTok",
+}
+
+
+def _nom_source(referrer, host):
+    """Domaine du referrer -> nom lisible ('Entrée directe' si vide/interne)."""
+    from urllib.parse import urlparse
+    if not referrer:
+        return "Entrée directe"
+    try:
+        dom = (urlparse(referrer).hostname or "").lower()
+    except ValueError:
+        return "Entrée directe"
+    if dom.startswith("www."):
+        dom = dom[4:]
+    if not dom or (host and host in dom) or dom in ("localhost", "127.0.0.1"):
+        return "Entrée directe"
+    for cle, nom in _SOURCES_CONNUES.items():
+        if cle in dom:
+            return nom
+    return dom[:120]
+
+
+def _appareil(ua):
+    if "ipad" in ua or "tablet" in ua:
+        return "Tablette"
+    if "mobi" in ua or "iphone" in ua or ("android" in ua and "mobile" in ua):
+        return "Mobile"
+    return "Ordinateur"
+
+
+def _navigateur(ua):
+    if "edg/" in ua or "edga" in ua or "edgios" in ua:
+        return "Edge"
+    if "opr/" in ua or "opera" in ua:
+        return "Opera"
+    if "samsungbrowser" in ua:
+        return "Samsung Internet"
+    if "firefox" in ua or "fxios" in ua:
+        return "Firefox"
+    if "chrome/" in ua or "crios" in ua:
+        return "Chrome"
+    if "safari" in ua:
+        return "Safari"
+    return "Autre"
+
+
+def _increment_dimension(date, type_, valeur):
+    from django.db.models import F
+    obj, created = DimensionJour.objects.get_or_create(
+        date=date, type=type_, valeur=valeur, defaults={"count": 1})
+    if not created:
+        DimensionJour.objects.filter(pk=obj.pk).update(count=F("count") + 1)
+
 
 class TrackVisiteView(APIView):
     """Signal de visite envoyé par le site public (anonyme, sans cookie)."""
@@ -480,6 +540,7 @@ class TrackVisiteView(APIView):
 
     def post(self, request):
         import hashlib
+        from datetime import timedelta
         from django.conf import settings
         from django.db.models import F
         from django.utils import timezone as tz
@@ -500,15 +561,36 @@ class TrackVisiteView(APIView):
             f"{settings.SECRET_KEY}{today}{ip}{ua}".encode()
         ).hexdigest()
 
-        VisiteurJour.objects.get_or_create(date=today, empreinte=empreinte)
+        _, nouveau = VisiteurJour.objects.get_or_create(date=today, empreinte=empreinte)
         obj, created = PageVue.objects.get_or_create(date=today, path=path, defaults={"count": 1})
         if not created:
             PageVue.objects.filter(pk=obj.pk).update(count=F("count") + 1)
+
+        # dimensions : une seule fois par visiteur et par jour
+        if nouveau:
+            host = (request.get_host() or "").split(":")[0].lower()
+            if host.startswith("www."):
+                host = host[4:]
+            _increment_dimension(today, "source", _nom_source(request.data.get("referrer") or "", host))
+            _increment_dimension(today, "appareil", _appareil(ua))
+            _increment_dimension(today, "navigateur", _navigateur(ua))
+            pays = (request.META.get("HTTP_CF_IPCOUNTRY") or "").upper()
+            if len(pays) == 2 and pays not in ("XX", "T1"):
+                _increment_dimension(today, "pays", pays)
+
+        # compteur « en ce moment » : dernière activité par visiteur
+        now = tz.now()
+        VisiteLive.objects.update_or_create(empreinte=empreinte, defaults={"quand": now})
+        VisiteLive.objects.filter(quand__lt=now - timedelta(minutes=30)).delete()
+
         return Response(status=204)
 
 
 class StatsVisitesView(APIView):
-    """Statistiques de fréquentation pour le tableau de bord admin."""
+    """Statistiques de fréquentation pour le tableau de bord admin.
+
+    ?periode=7j | 30j (défaut) | 12m
+    """
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -516,43 +598,71 @@ class StatsVisitesView(APIView):
         from django.db.models import Count, Sum
         from django.utils import timezone as tz
 
+        periode = request.query_params.get("periode") or "30j"
         today = tz.localdate()
-        d7 = today - timedelta(days=6)
-        d30 = today - timedelta(days=29)
 
-        def visiteurs(depuis):
-            return VisiteurJour.objects.filter(date__gte=depuis).count()
+        if periode == "7j":
+            debut, mensuel = today - timedelta(days=6), False
+        elif periode == "12m":
+            debut, mensuel = (today.replace(day=1) - timedelta(days=334)).replace(day=1), True
+        else:
+            periode, debut, mensuel = "30j", today - timedelta(days=29), False
 
-        def pages(depuis):
-            return PageVue.objects.filter(date__gte=depuis).aggregate(t=Sum("count"))["t"] or 0
+        vis_qs = VisiteurJour.objects.filter(date__gte=debut)
+        vues_qs = PageVue.objects.filter(date__gte=debut)
 
-        # série jour par jour sur 30 jours
-        vis_par_jour = {
-            str(r["date"]): r["n"]
-            for r in VisiteurJour.objects.filter(date__gte=d30)
-                .values("date").annotate(n=Count("id"))
-        }
-        vues_par_jour = {
-            str(r["date"]): r["n"]
-            for r in PageVue.objects.filter(date__gte=d30)
-                .values("date").annotate(n=Sum("count"))
-        }
-        serie = []
-        for i in range(30):
-            d = str(d30 + timedelta(days=i))
-            serie.append({"date": d, "visiteurs": vis_par_jour.get(d, 0), "pages_vues": vues_par_jour.get(d, 0)})
+        visiteurs = vis_qs.count()
+        pages_vues = vues_qs.aggregate(t=Sum("count"))["t"] or 0
 
-        top_pages = list(
-            PageVue.objects.filter(date__gte=d30)
-            .values("path").annotate(total=Sum("count"))
-            .order_by("-total")[:8]
-        )
+        # série temporelle (par jour, ou par mois pour 12m)
+        if mensuel:
+            vis_par = {}
+            for r in vis_qs.values("date").annotate(n=Count("id")):
+                cle = r["date"].strftime("%Y-%m")
+                vis_par[cle] = vis_par.get(cle, 0) + r["n"]
+            vues_par = {}
+            for r in vues_qs.values("date").annotate(n=Sum("count")):
+                cle = r["date"].strftime("%Y-%m")
+                vues_par[cle] = vues_par.get(cle, 0) + (r["n"] or 0)
+            serie, d = [], debut
+            while d <= today:
+                cle = d.strftime("%Y-%m")
+                serie.append({"date": cle, "visiteurs": vis_par.get(cle, 0), "pages_vues": vues_par.get(cle, 0)})
+                d = (d.replace(day=1) + timedelta(days=32)).replace(day=1)
+        else:
+            vis_par = {str(r["date"]): r["n"] for r in vis_qs.values("date").annotate(n=Count("id"))}
+            vues_par = {str(r["date"]): r["n"] for r in vues_qs.values("date").annotate(n=Sum("count"))}
+            nb_jours = (today - debut).days + 1
+            serie = []
+            for i in range(nb_jours):
+                d = str(debut + timedelta(days=i))
+                serie.append({"date": d, "visiteurs": vis_par.get(d, 0), "pages_vues": vues_par.get(d, 0)})
+
+        def panneau(type_):
+            return list(
+                DimensionJour.objects.filter(date__gte=debut, type=type_)
+                .values("valeur").annotate(total=Sum("count"))
+                .order_by("-total")[:8]
+            )
+
+        live = VisiteLive.objects.filter(quand__gte=tz.now() - timedelta(minutes=5)).count()
 
         return Response({
-            "aujourd_hui": {"visiteurs": VisiteurJour.objects.filter(date=today).count(),
-                            "pages_vues": PageVue.objects.filter(date=today).aggregate(t=Sum("count"))["t"] or 0},
-            "semaine": {"visiteurs": visiteurs(d7), "pages_vues": pages(d7)},
-            "mois": {"visiteurs": visiteurs(d30), "pages_vues": pages(d30)},
+            "periode": periode,
+            "live": live,
+            "totaux": {
+                "visiteurs": visiteurs,
+                "pages_vues": pages_vues,
+                "vues_par_visite": round(pages_vues / visiteurs, 1) if visiteurs else 0,
+            },
+            "aujourd_hui": {
+                "visiteurs": VisiteurJour.objects.filter(date=today).count(),
+                "pages_vues": PageVue.objects.filter(date=today).aggregate(t=Sum("count"))["t"] or 0,
+            },
             "serie": serie,
-            "top_pages": top_pages,
+            "top_pages": list(vues_qs.values("path").annotate(total=Sum("count")).order_by("-total")[:8]),
+            "sources": panneau("source"),
+            "appareils": panneau("appareil"),
+            "navigateurs": panneau("navigateur"),
+            "pays": panneau("pays"),
         })

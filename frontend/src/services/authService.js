@@ -229,11 +229,14 @@ export const deleteActualitePhoto = async (photoId) => {
 
 // signal anonyme envoyé par les pages publiques (jamais bloquant)
 export const trackVisite = async (path) => {
-    try { await publicApi.post("/api/track/", { path }); } catch { /* silencieux */ }
+    try {
+        await publicApi.post("/api/track/", { path, referrer: document.referrer || "" });
+    } catch { /* silencieux */ }
 };
 
-export const getStatsVisites = async () => {
-    return await api.get("/api/stats-visites/");
+// periode: "7j" | "30j" | "12m"
+export const getStatsVisites = async (periode = "30j") => {
+    return await api.get(`/api/stats-visites/?periode=${periode}`);
 };
 
 // --- Contacts (Carnet) ---

@@ -289,3 +289,33 @@ class PageVue(models.Model):
         return f"{self.date} {self.path} ({self.count})"
 
 
+class DimensionJour(models.Model):
+    """Répartition des visiteurs par jour et par dimension (source, appareil,
+    navigateur, pays). Incrémenté une seule fois par visiteur et par jour."""
+    TYPE_CHOICES = [
+        ("source", "Source"),
+        ("appareil", "Appareil"),
+        ("navigateur", "Navigateur"),
+        ("pays", "Pays"),
+    ]
+    date = models.DateField(db_index=True)
+    type = models.CharField(max_length=12, choices=TYPE_CHOICES)
+    valeur = models.CharField(max_length=120)
+    count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        unique_together = [("date", "type", "valeur")]
+
+    def __str__(self):
+        return f"{self.date} {self.type}={self.valeur} ({self.count})"
+
+
+class VisiteLive(models.Model):
+    """Dernière activité par visiteur — sert au compteur « en ce moment »."""
+    empreinte = models.CharField(max_length=64, unique=True)
+    quand = models.DateTimeField(db_index=True)
+
+    def __str__(self):
+        return f"{self.empreinte[:8]} @ {self.quand}"
+
+
