@@ -185,6 +185,20 @@ class ProduitDetailView(generics.RetrieveAPIView):
     serializer_class = ProduitDetailSerializer
     permission_classes = [AllowAny]
 
+    def get_object(self):
+        from django.shortcuts import get_object_or_404
+        import uuid as _uuid
+        ident = self.kwargs.get("uuid") or self.kwargs.get("pk")
+        qs = self.filter_queryset(self.get_queryset())
+        # UUID (URL publique) ou id entier (admin) — on accepte les deux
+        try:
+            _uuid.UUID(str(ident))
+            obj = get_object_or_404(qs, uuid=ident)
+        except (ValueError, TypeError, AttributeError):
+            obj = get_object_or_404(qs, pk=ident)
+        self.check_object_permissions(self.request, obj)
+        return obj
+
 
 def _to_int_or_none(value):
     """'' ou absent -> None ; sinon entier (>=0) ou None si invalide."""

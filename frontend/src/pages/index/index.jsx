@@ -98,7 +98,7 @@ export default function Homes() {
           <div style={{ position: "relative" }}>
             <div className="optipub-marquee">
               {loop.map((a, i) => (
-                <Link to={`/articles/${a.id}`} key={i} className="optipub-card">
+                <Link to={`/articles/${a.uuid}`} key={i} className="optipub-card">
                   <div style={{ position: "relative" }}>
                     <img src={httpsUrl(a.image_principale)} alt={a.nom} style={{ width: "100%", height: 175, objectFit: "cover", display: "block" }} />
                     {a.prix && (

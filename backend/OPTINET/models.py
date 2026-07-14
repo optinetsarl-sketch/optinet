@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 
 # Create your models here.
@@ -108,6 +109,9 @@ class CategorieProduit(models.Model):
 
 class Produit(models.Model):
     """Un produit de la boutique (peut avoir plusieurs photos)."""
+    # Identifiant public opaque : c'est lui qui apparaît dans l'URL du navigateur
+    # (/articles/<uuid>) au lieu de l'id séquentiel — non devinable, non énumérable.
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, db_index=True)
     nom = models.CharField(max_length=255)
     categorie = models.ForeignKey(CategorieProduit, related_name="produits",
                                   on_delete=models.SET_NULL, null=True, blank=True)

@@ -93,7 +93,7 @@ export default function Galerie() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: 22 }}>
             {filtered.map((p) => (
               <Link
-                key={p.id} to={`/articles/${p.id}`}
+                key={p.id} to={`/articles/${p.uuid}`}
                 style={{ background: '#0a1526', borderRadius: 16, overflow: 'hidden', border: '1px solid #12233a', display: 'flex', flexDirection: 'column', textDecoration: 'none', color: '#fff', transition: 'transform .15s, border-color .15s' }}
                 onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.borderColor = '#12b3d6'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.borderColor = '#12233a'; }}

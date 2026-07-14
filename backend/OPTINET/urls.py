@@ -88,6 +88,7 @@ urlpatterns = [
     # Produits (boutique e-commerce)
     path("produits/", ProduitListView.as_view(), name="produit-list"),
     path("produits/create/", ProduitCreateView.as_view(), name="produit-create"),
+    path("produits/<uuid:uuid>/", ProduitDetailView.as_view(), name="produit-detail-uuid"),
     path("produits/<int:pk>/", ProduitDetailView.as_view(), name="produit-detail"),
     path("produits/update/<int:pk>/", ProduitUpdateView.as_view(), name="produit-update"),
     path("produits/delete/<int:pk>/", ProduitDeleteView.as_view(), name="produit-delete"),
