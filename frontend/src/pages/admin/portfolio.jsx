@@ -244,7 +244,7 @@ const PortfolioPage = () => {
                   {(imagePreview || (currentPortfolio && currentPortfolio.image_principale)) && (
                     <img src={imagePreview || currentPortfolio.image_principale} alt="Aperçu" className="image-upload-preview" />
                   )}
-                  <input type="file" className="form-input" name="image_principale" accept="image/*" onChange={handleImageChange} required={!currentPortfolio} style={{ background: 'transparent', border: 'none', padding: 0 }} />
+                  <input type="file" className="form-input" name="image_principale" accept=".jpg,.jpeg,.png,.gif,.webp,.bmp,.tif,.tiff,.heic,.heif,.avif,.ico" onChange={handleImageChange} required={!currentPortfolio} style={{ background: 'transparent', border: 'none', padding: 0 }} />
                 </div>
               </div>
 

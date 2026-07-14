@@ -1757,10 +1757,13 @@ footer {
 
 .hero-modern {
   position: relative;
-  height: 100vh;
+  /* min-height (et non height fixe) : le hero grandit avec son contenu,
+     donc rien n'est coupé au zoom ou sur petit écran. */
+  min-height: 100vh;
   width: 100%;
   display: flex;
   align-items: center;
+  padding: 110px 0 60px;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
