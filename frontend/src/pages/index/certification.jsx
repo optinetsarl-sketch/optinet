@@ -1,10 +1,10 @@
 import ciscoLogo from "../../assets/cert-cisco.svg";
 import microsoftLogo from "../../assets/cert-microsoft.svg";
 import fortinetLogo from "../../assets/cert-fortinet.svg";
+import { useLanguage } from "../../context/LanguageContext";
 
 const LOGOS = { Cisco: ciscoLogo, Microsoft: microsoftLogo, Fortinet: fortinetLogo };
 
-// Sélection des certifications les plus fortes (modifiable)
 const CERTS = [
   { org: "Cisco", name: "CCNA 200-301", year: "2025" },
   { org: "Microsoft", name: "Azure Security Engineer Associate (AZ-500)", year: "2024" },
@@ -16,16 +16,17 @@ const CERTS = [
 ];
 
 export default function Certifications() {
+  const { t } = useLanguage();
+
   return (
     <section className="cert-section" id="certifications">
       <div className="cert-header">
-        <div className="section-tag">Certifications</div>
+        <div className="section-tag">{t("cert_tag")}</div>
         <h2 className="section-title">
-          Standards <span className="accent">Internationaux</span>
+          {t("cert_title_1")} <span className="accent">{t("cert_title_2")}</span>
         </h2>
         <p className="section-sub">
-          Notre expertise est validée par les plus grandes certifications
-          mondiales dans les domaines IT, réseau et cybersécurité.
+          {t("cert_sub")}
         </p>
       </div>
       <div className="cert-grid">

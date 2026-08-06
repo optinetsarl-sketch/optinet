@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getActualites } from '../../services/authService';
+import { useLanguage } from '../../context/LanguageContext';
 
 const httpsUrl = (u) => {
   if (!u) return '';
@@ -17,10 +18,11 @@ export const CATS = [
 ];
 export const catColor = (k) => (CATS.find((c) => c.key === k) || CATS[0]).color;
 
-export const formatDate = (iso) => {
+export const formatDate = (iso, lang = 'fr') => {
   if (!iso) return '';
   try {
-    return new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+    const localeMap = { fr: 'fr-FR', en: 'en-US', zh: 'zh-CN' };
+    return new Date(iso).toLocaleDateString(localeMap[lang] || 'fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
   } catch { return ''; }
 };
 
@@ -28,6 +30,7 @@ export default function Journal() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cat, setCat] = useState('');
+  const { t, tDynamic, language } = useLanguage();
 
   useEffect(() => {
     setLoading(true);
@@ -41,10 +44,10 @@ export default function Journal() {
     <section style={{ background: '#020b18', minHeight: '80vh', padding: '96px 20px 64px', color: '#fff' }}>
       <div style={{ maxWidth: 1240, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 34 }}>
-          <span style={{ color: '#12b3d6', fontWeight: 800, letterSpacing: 2, fontSize: 13 }}>JOURNAL</span>
-          <h2 style={{ fontSize: 38, fontWeight: 800, margin: '8px 0' }}>Actualités &amp; Interventions 📡</h2>
+          <span style={{ color: '#12b3d6', fontWeight: 800, letterSpacing: 2, fontSize: 13 }}>{t("journal_badge")}</span>
+          <h2 style={{ fontSize: 38, fontWeight: 800, margin: '8px 0' }}>{t("journal_title")} 📡</h2>
           <p style={{ color: '#9fb3c8' }}>
-            Nos chantiers, nos réalisations et l'actualité d'OPTINET SARL U — en photos et en vidéo.
+            {t("journal_subtitle")}
           </p>
         </div>
 
@@ -58,15 +61,15 @@ export default function Journal() {
                 background: cat === c.key ? c.color : 'transparent',
                 color: cat === c.key ? '#03121f' : '#9fb3c8',
               }}>
-              {c.label}
+              {c.key ? (t(`cat_${c.key}`) || c.label) : (language === 'en' ? 'All' : language === 'zh' ? '全部' : 'Tout')}
             </button>
           ))}
         </div>
 
         {loading ? (
-          <p style={{ textAlign: 'center', color: '#9fb3c8' }}>Chargement…</p>
+          <p style={{ textAlign: 'center', color: '#9fb3c8' }}>{language === 'en' ? 'Loading…' : language === 'zh' ? '正在加载…' : 'Chargement…'}</p>
         ) : items.length === 0 ? (
-          <p style={{ textAlign: 'center', color: '#9fb3c8' }}>Aucune publication pour le moment.</p>
+          <p style={{ textAlign: 'center', color: '#9fb3c8' }}>{language === 'en' ? 'No articles found.' : language === 'zh' ? '暂无工程新闻报道。' : 'Aucune publication pour le moment.'}</p>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(300px,1fr))', gap: 22 }}>
             {items.map((a) => (
@@ -79,7 +82,7 @@ export default function Journal() {
                     <img src={httpsUrl(a.image_principale)} alt={a.titre} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                   )}
                   <span style={{ position: 'absolute', top: 10, left: 10, background: catColor(a.categorie), color: '#03121f', fontWeight: 800, fontSize: 11, letterSpacing: .5, padding: '4px 10px', borderRadius: 20, textTransform: 'uppercase' }}>
-                    {a.categorie_label}
+                    {t(`cat_${a.categorie}`) || a.categorie_label}
                   </span>
                   <span style={{ position: 'absolute', bottom: 10, right: 10, display: 'flex', gap: 6 }}>
                     {a.a_video && <span style={{ background: 'rgba(0,0,0,.7)', color: '#fff', fontSize: 12, padding: '3px 9px', borderRadius: 20 }}>🎬</span>}
@@ -87,10 +90,12 @@ export default function Journal() {
                   </span>
                 </div>
                 <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 7, flex: 1 }}>
-                  <span style={{ fontFamily: 'monospace', fontSize: 11.5, color: '#63798f', letterSpacing: .5 }}>{formatDate(a.date_publication)}</span>
-                  <div style={{ fontWeight: 700, fontSize: 15.5, lineHeight: 1.3 }}>{a.titre}</div>
-                  {a.extrait && <div style={{ color: '#9fb3c8', fontSize: 13, lineHeight: 1.5 }}>{a.extrait}</div>}
-                  <span style={{ marginTop: 'auto', color: catColor(a.categorie), fontWeight: 700, fontSize: 13.5 }}>Lire la suite →</span>
+                  <span style={{ fontFamily: 'monospace', fontSize: 11.5, color: '#63798f', letterSpacing: .5 }}>{formatDate(a.date_publication, language)}</span>
+                  <div style={{ fontWeight: 700, fontSize: 15.5, lineHeight: 1.3 }}>{tDynamic(a.titre)}</div>
+                  {a.extrait && <div style={{ color: '#9fb3c8', fontSize: 13, lineHeight: 1.5 }}>{tDynamic(a.extrait)}</div>}
+                  <span style={{ marginTop: 'auto', color: catColor(a.categorie), fontWeight: 700, fontSize: 13.5 }}>
+                    {language === 'en' ? 'Read more →' : language === 'zh' ? '阅读全文 →' : 'Lire la suite →'}
+                  </span>
                 </div>
               </Link>
             ))}
@@ -100,3 +105,4 @@ export default function Journal() {
     </section>
   );
 }
+

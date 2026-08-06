@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getActualites } from '../../services/authService';
 import { catColor } from '../../pages/index/Journal';
+import { useLanguage } from '../../context/LanguageContext';
 
 const httpsUrl = (u) => {
   if (!u) return '';
@@ -22,6 +23,7 @@ export default function JournalPopup() {
   const location = useLocation();
   const timers = useRef([]);
   const lastId = useRef(null);
+  const { t, tDynamic, language } = useLanguage();
 
   useEffect(() => {
     getActualites()
@@ -84,16 +86,18 @@ export default function JournalPopup() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: catColor(current.categorie), flex: '0 0 auto' }} />
             <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: .4, color: '#63798f', textTransform: 'uppercase' }}>
-              Journal · {current.categorie_label}
+              {t("journal")} · {t(`cat_${current.categorie}`) || current.categorie_label}
             </span>
           </div>
           <div style={{
             fontSize: 13, fontWeight: 700, lineHeight: 1.3, color: '#fff',
             display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
           }}>
-            {current.titre}
+            {tDynamic(current.titre)}
           </div>
-          <div style={{ marginTop: 5, fontSize: 11.5, fontWeight: 700, color: '#12b3d6' }}>Voir sur le site →</div>
+          <div style={{ marginTop: 5, fontSize: 11.5, fontWeight: 700, color: '#12b3d6' }}>
+            {language === 'en' ? 'Read news →' : language === 'zh' ? '查看工程动态 →' : 'Voir sur le site →'}
+          </div>
         </div>
       </div>
       <style>{`

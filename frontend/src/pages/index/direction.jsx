@@ -1,7 +1,21 @@
 import React from 'react';
 import '../styles_admin/direction.css';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function Direction() {
+  const { t, tDynamic } = useLanguage();
+
+  const skills = [
+    "Réseaux Cisco",
+    "Sécurité Fortinet",
+    "Cloud Azure",
+    "Virtualisation",
+    "Fibre Optique",
+    "Télécoms",
+    "Management",
+    "Documentation"
+  ];
+
   return (
     <section className="director-ultra-section" id="director">
       {/* Décoration d'arrière-plan */}
@@ -19,7 +33,7 @@ export default function Direction() {
           </div>
 
           <h3 className="executive-name">NABINE Tassounti</h3>
-          <p className="executive-title">Directeur Général – OPTINET SARL U</p>
+          <p className="executive-title">{t("direction_dg_title")}</p>
 
           <div className="executive-contact-list">
             <a href="mailto:nabine@optinet.tg" className="contact-pill">
@@ -36,31 +50,22 @@ export default function Direction() {
 
         {/* COLONNE DROITE : PARCOURS & SKILLS */}
         <div className="executive-content">
-          <div className="badge-modern">L'EXPERTISE AU SOMMET</div>
+          <div className="badge-modern">{t("direction_tag")}</div>
           <h2 className="executive-main-title">
-            Une Vision, <br />
-            <span className="text-gradient">une Expertise</span>
+            {t("direction_title_1")} <br />
+            <span className="text-gradient">{t("direction_title_2")}</span>
           </h2>
           
           <p className="executive-bio">
-            <strong>M. NABINE Tassounti</strong> est un ingénieur réseaux et
-            télécommunications avec plus de <strong>5 ans d'expérience</strong> sur le terrain.
-            Il a conçu et déployé des infrastructures pour certaines des
-            institutions les plus stratégiques du Togo, avec des
-            certifications internationales de haut niveau.
+            {t("direction_bio")}
           </p>
 
           <div className="skills-container">
-            <h4 className="skills-title">Compétences Clés</h4>
+            <h4 className="skills-title">{t("direction_skills_title")}</h4>
             <div className="skill-grid">
-              <span className="skill-item">Réseaux Cisco</span>
-              <span className="skill-item">Sécurité Fortinet</span>
-              <span className="skill-item">Cloud Azure</span>
-              <span className="skill-item">Virtualisation</span>
-              <span className="skill-item">Fibre Optique</span>
-              <span className="skill-item">Télécoms</span>
-              <span className="skill-item">Management</span>
-              <span className="skill-item">Documentation</span>
+              {skills.map((s, i) => (
+                <span key={i} className="skill-item">{tDynamic(s)}</span>
+              ))}
             </div>
           </div>
         </div>

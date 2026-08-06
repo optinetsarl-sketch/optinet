@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getCart, setQuantite, removeFromCart, clearCart, cartTotal, formatFCFA } from '../../services/cart';
 import { createCommande } from '../../services/authService';
+import { useLanguage } from '../../context/LanguageContext';
 
 const httpsUrl = (u) => {
   if (!u) return '';
@@ -16,7 +17,8 @@ export default function Panier() {
   const [form, setForm] = useState({ client_nom: '', client_telephone: '', client_adresse: '', client_ville: '', note: '' });
   const [sending, setSending] = useState(false);
   const [erreur, setErreur] = useState('');
-  const [done, setDone] = useState(null); // commande créée
+  const [done, setDone] = useState(null);
+  const { t, tDynamic, language } = useLanguage();
 
   useEffect(() => {
     const refresh = () => setItems(getCart());
@@ -27,7 +29,7 @@ export default function Panier() {
   const total = cartTotal();
 
   const recapWhatsApp = () => {
-    const lignes = items.map((it) => `- ${it.quantite} × ${it.nom}${it.prix ? ' (' + it.prix + ')' : ''}`).join('\n');
+    const lignes = items.map((it) => `- ${it.quantite} × ${tDynamic(it.nom)}${it.prix ? ' (' + it.prix + ')' : ''}`).join('\n');
     const msg = `Bonjour OPTINET SARL U, je souhaite commander :\n${lignes}\n\nTotal estimé : ${formatFCFA(total)}`;
     return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`;
   };
@@ -36,7 +38,7 @@ export default function Panier() {
     e.preventDefault();
     setErreur('');
     if (!form.client_nom.trim() || !form.client_telephone.trim()) {
-      setErreur('Le nom et le téléphone sont requis.');
+      setErreur(language === 'zh' ? '姓名和电话号码为必填项。' : language === 'en' ? 'Name and phone are required.' : 'Le nom et le téléphone sont requis.');
       return;
     }
     setSending(true);
@@ -51,7 +53,7 @@ export default function Panier() {
       clearCart();
       setDone(res.data);
     } catch (err) {
-      setErreur(err.response?.data?.detail || "Impossible d'enregistrer la commande. Réessayez.");
+      setErreur(err.response?.data?.detail || (language === 'zh' ? '无法提交订单，请重试。' : language === 'en' ? 'Could not record order. Try again.' : "Impossible d'enregistrer la commande. Réessayez."));
     } finally {
       setSending(false);
     }
@@ -63,13 +65,17 @@ export default function Panier() {
       <Wrap>
         <div style={{ maxWidth: 560, margin: '0 auto', textAlign: 'center', background: '#0a1526', border: '1px solid #12233a', borderRadius: 16, padding: 40 }}>
           <div style={{ fontSize: 54 }}>✅</div>
-          <h2 style={{ margin: '10px 0' }}>Commande enregistrée !</h2>
+          <h2 style={{ margin: '10px 0' }}>{t("cart_confirm_title")}</h2>
           <p style={{ color: '#9fb3c8' }}>
-            Merci {done.client_nom} 🙏 Ta commande <b>#{done.id}</b> ({done.nb_articles} article{done.nb_articles > 1 ? 's' : ''}, {done.total}) a bien été reçue.
-            Nous te contactons au <b>{done.client_telephone}</b> pour la livraison (paiement à la réception).
+            {language === 'zh' 
+              ? `感谢您 ${done.client_nom} 🙏 您的订单 #${done.id}（包含 ${done.nb_articles} 件商品，共计 ${done.total}）已成功接收。我们将在 ${done.client_telephone} 与您联系进行送货（货到付款）。`
+              : language === 'en'
+              ? `Thank you ${done.client_nom} 🙏 Your order #${done.id} (${done.nb_articles} item(s), ${done.total}) has been received. We will contact you at ${done.client_telephone} for delivery (cash on delivery).`
+              : `Merci ${done.client_nom} 🙏 Ta commande #${done.id} (${done.nb_articles} article${done.nb_articles > 1 ? 's' : ''}, ${done.total}) a bien été reçue. Nous te contactons au ${done.client_telephone} pour la livraison (paiement à la réception).`
+            }
           </p>
           <Link to="/galerie" style={{ display: 'inline-block', marginTop: 18, background: '#12b3d6', color: '#03121f', padding: '12px 22px', borderRadius: 10, fontWeight: 800, textDecoration: 'none' }}>
-            ← Continuer mes achats
+            {t("cart_continue_shopping")}
           </Link>
         </div>
       </Wrap>
@@ -82,10 +88,10 @@ export default function Panier() {
       <Wrap>
         <div style={{ textAlign: 'center', color: '#9fb3c8', paddingTop: 20 }}>
           <div style={{ fontSize: 54 }}>🛒</div>
-          <h2 style={{ color: '#fff', margin: '10px 0' }}>Ton panier est vide</h2>
-          <p>Ajoute des articles depuis la boutique.</p>
+          <h2 style={{ color: '#fff', margin: '10px 0' }}>{t("cart_empty_title")}</h2>
+          <p>{t("cart_empty_sub")}</p>
           <Link to="/galerie" style={{ display: 'inline-block', marginTop: 16, background: '#12b3d6', color: '#03121f', padding: '12px 22px', borderRadius: 10, fontWeight: 800, textDecoration: 'none' }}>
-            Voir les articles
+            {t("announcements_view_all")}
           </Link>
         </div>
       </Wrap>
@@ -94,7 +100,7 @@ export default function Panier() {
 
   return (
     <Wrap>
-      <h2 style={{ fontSize: 30, fontWeight: 800, marginBottom: 20 }}>Mon panier 🛒</h2>
+      <h2 style={{ fontSize: 30, fontWeight: 800, marginBottom: 20 }}>{t("cart_heading")}</h2>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.5fr) minmax(0,1fr)', gap: 26, alignItems: 'start' }} className="cart-grid">
         {/* Liste des articles */}
@@ -103,7 +109,7 @@ export default function Panier() {
             <div key={it.produit} style={{ display: 'flex', gap: 12, background: '#0a1526', border: '1px solid #12233a', borderRadius: 12, padding: 12, alignItems: 'center' }}>
               <img src={httpsUrl(it.image)} alt={it.nom} style={{ width: 70, height: 70, objectFit: 'cover', borderRadius: 8, background: '#07101f', flex: '0 0 auto' }} />
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: 700, fontSize: 14.5, lineHeight: 1.3 }}>{it.nom}</div>
+                <div style={{ fontWeight: 700, fontSize: 14.5, lineHeight: 1.3 }}>{tDynamic(it.nom)}</div>
                 {it.prix && <div style={{ color: '#11b981', fontWeight: 700, fontSize: 13, marginTop: 3 }}>{it.prix}</div>}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #1b3355', borderRadius: 9, overflow: 'hidden' }}>
@@ -120,35 +126,35 @@ export default function Panier() {
         {/* Récap + checkout */}
         <div style={{ background: '#0a1526', border: '1px solid #12233a', borderRadius: 14, padding: 20, position: 'sticky', top: 90 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 18, fontWeight: 800, marginBottom: 4 }}>
-            <span>Total</span><span style={{ color: '#11b981' }}>{formatFCFA(total)}</span>
+            <span>{t("cart_total")}</span><span style={{ color: '#11b981' }}>{formatFCFA(total)}</span>
           </div>
-          <p style={{ color: '#63798f', fontSize: 12, marginBottom: 18 }}>Total estimé d'après les prix affichés.</p>
+          <p style={{ color: '#63798f', fontSize: 12, marginBottom: 18 }}>{t("cart_estimated")}</p>
 
           {!showForm ? (
             <>
               <button onClick={() => setShowForm(true)}
                 style={{ width: '100%', background: '#12b3d6', color: '#03121f', border: 'none', padding: '13px', borderRadius: 11, fontWeight: 800, fontSize: 15, cursor: 'pointer', marginBottom: 10 }}>
-                💵 Payer à la livraison
+                {t("cart_pay_cod")}
               </button>
               <a href={recapWhatsApp()} target="_blank" rel="noreferrer"
                 style={{ display: 'block', textAlign: 'center', background: '#25D366', color: '#fff', padding: '13px', borderRadius: 11, fontWeight: 800, fontSize: 15, textDecoration: 'none' }}>
-                💬 Commander sur WhatsApp
+                💬 {t("order_whatsapp")}
               </a>
             </>
           ) : (
             <form onSubmit={submitCOD} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <div style={{ fontWeight: 800, fontSize: 14 }}>Livraison — paiement à la réception</div>
+              <div style={{ fontWeight: 800, fontSize: 14 }}>{t("cart_pay_cod")}</div>
               {erreur && <div style={{ background: 'rgba(255,90,95,.12)', color: '#ffb3b5', padding: '8px 11px', borderRadius: 8, fontSize: 13 }}>{erreur}</div>}
-              <input required placeholder="Nom complet *" value={form.client_nom} onChange={(e) => setForm({ ...form, client_nom: e.target.value })} style={inp} />
-              <input required placeholder="Téléphone *" value={form.client_telephone} onChange={(e) => setForm({ ...form, client_telephone: e.target.value })} style={inp} />
-              <input placeholder="Adresse / quartier" value={form.client_adresse} onChange={(e) => setForm({ ...form, client_adresse: e.target.value })} style={inp} />
-              <input placeholder="Ville" value={form.client_ville} onChange={(e) => setForm({ ...form, client_ville: e.target.value })} style={inp} />
-              <textarea placeholder="Note (facultatif)" value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} style={{ ...inp, minHeight: 60, resize: 'vertical' }} />
+              <input required placeholder={`${t("name")} *`} value={form.client_nom} onChange={(e) => setForm({ ...form, client_nom: e.target.value })} style={inp} />
+              <input required placeholder={`${t("phone")} *`} value={form.client_telephone} onChange={(e) => setForm({ ...form, client_telephone: e.target.value })} style={inp} />
+              <input placeholder={language === 'zh' ? '配送地址' : language === 'en' ? 'Delivery address' : 'Adresse / quartier'} value={form.client_adresse} onChange={(e) => setForm({ ...form, client_adresse: e.target.value })} style={inp} />
+              <input placeholder={language === 'zh' ? '城市' : language === 'en' ? 'City' : 'Ville'} value={form.client_ville} onChange={(e) => setForm({ ...form, client_ville: e.target.value })} style={inp} />
+              <textarea placeholder={language === 'zh' ? '备注 (选填)' : language === 'en' ? 'Note (optional)' : 'Note (facultatif)'} value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} style={{ ...inp, minHeight: 60, resize: 'vertical' }} />
               <button type="submit" disabled={sending}
                 style={{ background: '#11b981', color: '#03121f', border: 'none', padding: '13px', borderRadius: 11, fontWeight: 800, fontSize: 15, cursor: sending ? 'default' : 'pointer', opacity: sending ? .7 : 1 }}>
-                {sending ? 'Envoi…' : 'Valider ma commande'}
+                {sending ? '...' : t("cart_validate")}
               </button>
-              <button type="button" onClick={() => setShowForm(false)} style={{ background: 'none', border: 'none', color: '#9fb3c8', fontSize: 13, cursor: 'pointer' }}>← Retour</button>
+              <button type="button" onClick={() => setShowForm(false)} style={{ background: 'none', border: 'none', color: '#9fb3c8', fontSize: 13, cursor: 'pointer' }}>←</button>
             </form>
           )}
         </div>

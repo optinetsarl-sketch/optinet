@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import servicesData from './servicesData';
-// import './Services.css';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function Services() {
   const navigate = useNavigate();
   const [activeService, setActiveService] = useState(null);
+  const { t, tDynamic } = useLanguage();
 
   useEffect(() => {
     function onKey(e) {
@@ -18,20 +19,18 @@ export default function Services() {
   return (
     <section className="services-section" id="services">
       <div className="services-header">
-        <div className="section-tag">Nos Services</div>
+        <div className="section-tag">{t("services_tag")}</div>
         <h2 className="section-title">
-          Des <span className="accent">Solutions Complètes</span>
+          {t("services_title_1")} <span className="accent">{t("services_title_2")}</span>
           <br />
-          pour Votre Organisation
+          {t("services_title_3")}
         </h2>
         <p className="section-sub">
-          OPTINET SARL U propose une gamme complète de services IT et télécom
-          adaptés aux besoins des institutions publiques et entreprises privées.
+          {t("services_sub")}
         </p>
       </div>
 
       <div className="services-grid">
-        {/* 3. On boucle sur les données pour afficher les cartes */}
         {servicesData.map((service) => (
           <div
             key={service.id}
@@ -48,11 +47,11 @@ export default function Services() {
             ) : (
               <div className="service-icon">{service.icon}</div>
             )}
-            <div className="service-title">{service.title}</div>
-            <div className="service-desc">{service.desc}</div>
+            <div className="service-title">{tDynamic(service.title)}</div>
+            <div className="service-desc">{tDynamic(service.desc)}</div>
             <div className="service-tags">
               {service.tags.map((tag) => (
-                <span key={tag} className="service-tag">{tag}</span>
+                <span key={tag} className="service-tag">{tDynamic(tag)}</span>
               ))}
             </div>
           </div>
@@ -67,17 +66,17 @@ export default function Services() {
 
             <div className="modal-header">
               <span className="modal-icon">{activeService.icon}</span>
-              <h2>{activeService.title}</h2>
+              <h2>{tDynamic(activeService.title)}</h2>
             </div>
 
             <div className="modal-body">
-              <p className="modal-full-desc">{activeService.fullDesc}</p>
+              <p className="modal-full-desc">{tDynamic(activeService.fullDesc)}</p>
 
               <div className="modal-tags-section">
-                <h4>Expertises incluses :</h4>
+                <h4>{t("services_included")}</h4>
                 <div className="service-tags">
                   {activeService.tags.map((tag) => (
-                    <span key={tag} className="service-tag">{tag}</span>
+                    <span key={tag} className="service-tag">{tDynamic(tag)}</span>
                   ))}
                 </div>
               </div>
@@ -85,7 +84,7 @@ export default function Services() {
 
             <div style={{ display: 'flex', gap: 12, marginTop: 18 }}>
               <button className="btn-primary modal-btn" onClick={() => setActiveService(null)}>
-                Fermer
+                {t("services_close")}
               </button>
               <button
                 className="btn-outline"
@@ -94,7 +93,7 @@ export default function Services() {
                   navigate(`/services/${activeService.id}`);
                 }}
               >
-                Voir la page complète
+                {t("services_view_full")}
               </button>
             </div>
           </div>

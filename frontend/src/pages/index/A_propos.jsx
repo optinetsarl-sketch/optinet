@@ -1,8 +1,11 @@
 import React from 'react';
 import '../styles_admin/A_propos.css';
 import optinetLogo from "../../assets/optinet-logo.png";
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function APropos() {
+  const { t } = useLanguage();
+
   return (
     <section className="about-ultra" id="about">
       {/* Fond technologique discret */}
@@ -23,68 +26,64 @@ export default function APropos() {
 
             <div className="info-modern-grid">
               <div className="info-item">
-                <small>SIÈGE SOCIAL</small>
+                <small>{t("about_hq")}</small>
                 <span>Lomé, Togo</span>
               </div>
               <div className="info-item">
-                <small>CRÉÉE</small>
+                <small>{t("about_created")}</small>
                 <span>2026</span>
               </div>
               <div className="info-item">
-                <small>SECTEUR</small>
+                <small>{t("about_sector")}</small>
                 <span>IT & Télécom</span>
               </div>
               <div className="info-item">
-                <small>DOMAINE</small>
+                <small>{t("about_domain")}</small>
                 <span>Services Techniques</span>
               </div>
             </div>
 
             <div className="about-stat-badge">
               <span className="stat-num">100+</span>
-              <span className="stat-lbl">Projets réalisés</span>
+              <span className="stat-lbl">{t("about_projects_count")}</span>
             </div>
           </div>
         </div>
 
         {/* BLOC TEXTE DROITE (CONTENU NARRATIF) */}
         <div className="about-content-text">
-          <div className="section-tag-modern">À PROPOS</div>
+          <div className="section-tag-modern">{t("about_tag")}</div>
           <h2 className="section-title-ultra">
-            Qui sommes-<br />
-            <span className="accent-gradient">nous ?</span>
+            {t("about_title_1")}<br />
+            <span className="accent-gradient">{t("about_title_2")}</span>
           </h2>
           
           <p className="section-description">
-            <strong>OPTINET SARL U</strong> est une société togolaise de technologie,
-            enregistrée et opérationnelle depuis 2026. Spécialisée dans les
-            solutions IT, les réseaux et les télécommunications, elle
-            intervient auprès d'institutions publiques et privées pour la
-            modernisation de leurs infrastructures numériques.
+            {t("about_desc")}
           </p>
 
           <div className="features-stack">
             <div className="feat-card">
               <div className="feat-icon">⚡</div>
               <div className="feat-txt">
-                <h4>Réactivité & Expertise</h4>
-                <p>Une équipe hautement qualifiée avec certifications internationales et expérience opérationnelle.</p>
+                <h4>{t("about_feat1_title")}</h4>
+                <p>{t("about_feat1_desc")}</p>
               </div>
             </div>
 
             <div className="feat-card">
               <div className="feat-icon">🎯</div>
               <div className="feat-txt">
-                <h4>Solutions Sur Mesure</h4>
-                <p>Adaptées à vos besoins spécifiques, scalables et pérennes.</p>
+                <h4>{t("about_feat2_title")}</h4>
+                <p>{t("about_feat2_desc")}</p>
               </div>
             </div>
 
             <div className="feat-card">
               <div className="feat-icon">🛡️</div>
               <div className="feat-txt">
-                <h4>Sécurité en Priorité</h4>
-                <p>Conformité aux standards internationaux et protection maximale de vos données.</p>
+                <h4>{t("about_feat3_title")}</h4>
+                <p>{t("about_feat3_desc")}</p>
               </div>
             </div>
           </div>

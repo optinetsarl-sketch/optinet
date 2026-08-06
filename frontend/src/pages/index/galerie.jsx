@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getProduits, getCategoriesProduits } from '../../services/authService';
 import { addToCart } from '../../services/cart';
+import { useLanguage } from '../../context/LanguageContext';
 
 const httpsUrl = (u) => {
   if (!u) return '';
@@ -16,6 +17,7 @@ export default function Galerie() {
   const [query, setQuery] = useState('');
   const [cat, setCat] = useState('');       // slug de la catégorie sélectionnée
   const [added, setAdded] = useState({});    // feedback "Ajouté" par produit
+  const { t, tDynamic } = useLanguage();
 
   useEffect(() => {
     getProduits()
@@ -45,10 +47,10 @@ export default function Galerie() {
     <section style={{ background: '#020b18', minHeight: '80vh', padding: '96px 20px 64px', color: '#fff' }}>
       <div style={{ maxWidth: 1240, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 30 }}>
-          <span style={{ color: '#12b3d6', fontWeight: 800, letterSpacing: 2, fontSize: 13 }}>BOUTIQUE</span>
-          <h2 style={{ fontSize: 38, fontWeight: 800, margin: '8px 0' }}>Nos Articles 🛒</h2>
+          <span style={{ color: '#12b3d6', fontWeight: 800, letterSpacing: 2, fontSize: 13 }}>{t("articles").toUpperCase()}</span>
+          <h2 style={{ fontSize: 38, fontWeight: 800, margin: '8px 0' }}>{t("articles")} 🛒</h2>
           <p style={{ color: '#9fb3c8' }}>
-            Ajoutez au panier, puis commandez à la livraison ou sur WhatsApp.
+            {t("announcements_subtitle")}
           </p>
         </div>
 
@@ -57,7 +59,7 @@ export default function Galerie() {
           <span style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#63798f', fontSize: 16 }}>🔍</span>
           <input
             type="text" value={query} onChange={(e) => setQuery(e.target.value)}
-            placeholder="Rechercher un article (nom, prix…)"
+            placeholder={t("search")}
             style={{ width: '100%', background: '#0a1526', border: '1px solid #16283f', borderRadius: 30, padding: '13px 18px 13px 44px', color: '#fff', fontSize: 15, outline: 'none' }}
           />
           {query && (
@@ -69,7 +71,7 @@ export default function Galerie() {
         {/* Filtres catégories */}
         {categories.length > 0 && (
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 34 }}>
-            {[{ slug: '', nom: 'Tout' }, ...categories].map((c) => (
+            {[{ slug: '', nom: language === 'en' ? 'All' : language === 'zh' ? '全部' : 'Tout' }, ...categories].map((c) => (
               <button key={c.slug || 'tout'} onClick={() => setCat(c.slug)}
                 style={{
                   fontSize: 13.5, fontWeight: 700, padding: '8px 16px', borderRadius: 22, cursor: 'pointer',
@@ -77,17 +79,17 @@ export default function Galerie() {
                   background: cat === c.slug ? '#12b3d6' : 'transparent',
                   color: cat === c.slug ? '#03121f' : '#9fb3c8',
                 }}>
-                {c.nom}
+                {tDynamic(c.nom)}
               </button>
             ))}
           </div>
         )}
 
         {loading ? (
-          <p style={{ textAlign: 'center', color: '#9fb3c8' }}>Chargement…</p>
+          <p style={{ textAlign: 'center', color: '#9fb3c8' }}>{language === 'en' ? 'Loading…' : language === 'zh' ? '正在加载…' : 'Chargement…'}</p>
         ) : filtered.length === 0 ? (
           <p style={{ textAlign: 'center', color: '#9fb3c8' }}>
-            {produits.length === 0 ? 'Aucun article pour le moment.' : 'Aucun article ne correspond.'}
+            {produits.length === 0 ? t("announcements_empty") : (language === 'en' ? 'No products match.' : language === 'zh' ? '没有符合条件的产品。' : 'Aucun article ne correspond.')}
           </p>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: 22 }}>
@@ -109,15 +111,15 @@ export default function Galerie() {
                   )}
                 </div>
                 <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
-                  {p.categorie_nom && <span style={{ fontSize: 11, color: '#63798f', fontWeight: 700, textTransform: 'uppercase', letterSpacing: .5 }}>{p.categorie_nom}</span>}
-                  <div style={{ fontWeight: 700, fontSize: 15, lineHeight: 1.3 }}>{p.nom || 'Article OPTINET'}</div>
+                  {p.categorie_nom && <span style={{ fontSize: 11, color: '#63798f', fontWeight: 700, textTransform: 'uppercase', letterSpacing: .5 }}>{tDynamic(p.categorie_nom)}</span>}
+                  <div style={{ fontWeight: 700, fontSize: 15, lineHeight: 1.3 }}>{tDynamic(p.nom || 'Article OPTINET')}</div>
                   <div style={{ marginTop: 'auto', display: 'flex', gap: 8 }}>
                     <span style={{ flex: 1, background: 'transparent', border: '1px solid #12b3d6', color: '#12b3d6', textAlign: 'center', padding: '9px', borderRadius: 10, fontWeight: 700, fontSize: 13 }}>
-                      Détails
+                      {t("view_details")}
                     </span>
                     <button onClick={(e) => handleAdd(e, p)}
                       style={{ flex: 1, background: added[p.id] ? '#11b981' : '#12b3d6', color: '#03121f', border: 'none', padding: '9px', borderRadius: 10, fontWeight: 800, fontSize: 13, cursor: 'pointer' }}>
-                      {added[p.id] ? 'Ajouté ✓' : '+ Panier'}
+                      {added[p.id] ? '✓' : `+ ${t("cart")}`}
                     </button>
                   </div>
                 </div>
@@ -129,3 +131,4 @@ export default function Galerie() {
     </section>
   );
 }
+

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import optinetLogo from "../../assets/optinet-logo.png";
+import { useLanguage } from "../../context/LanguageContext";
 
 // Réseaux sociaux OPTINET — mettre url: "" pour masquer un réseau
 const SOCIALS = [
@@ -28,12 +29,14 @@ const SOCIALS = [
     icone: <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />,
   },
   {
-    nom: "LinkedIn", url: "", couleur: "#0a66c2", // mettre l'URL exacte du profil/page pour l'afficher
+    nom: "LinkedIn", url: "", couleur: "#0a66c2",
     icone: <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z" />,
   },
 ];
 
 export default function Footer() {
+  const { t } = useLanguage();
+
   return (
     <>
       <footer>
@@ -48,9 +51,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="footer-desc">
-              Solutions informatiques, réseaux et télécommunications au service
-              des institutions publiques et entreprises privées en Afrique de
-              l'Ouest.
+              {t("hero_subtitle")}
             </p>
             <div className="footer-badges">
               <span className="footer-badge">CCNA 200-301</span>
@@ -68,47 +69,47 @@ export default function Footer() {
             </div>
           </div>
           <div className="footer-col">
-            <h4>Navigation</h4>
+            <h4>{t("quick_links")}</h4>
             <ul>
               <li>
-                <Link to="/services">Services</Link>
+                <Link to="/services">{t("services")}</Link>
               </li>
               <li>
-                <Link to="/about">À Propos</Link>
+                <Link to="/about">{t("about")}</Link>
               </li>
               <li>
-                <Link to="/certifications">Certifications</Link>
+                <Link to="/certifications">{t("certifications")}</Link>
               </li>
               <li>
-                <Link to="/contact">Contact</Link>
+                <Link to="/contact">{t("contact")}</Link>
               </li>
             </ul>
           </div>
           <div className="footer-col">
-            <h4>Services</h4>
+            <h4>{t("our_services")}</h4>
             <ul>
               <li>
-                <Link to="/services">Réseaux IT</Link>
+                <Link to="/services">{t("footer_net")}</Link>
               </li>
               <li>
-                <Link to="/services">Sécurité</Link>
+                <Link to="/services">{t("footer_sec")}</Link>
               </li>
               <li>
-                <Link to="/services">Télécoms</Link>
+                <Link to="/services">{t("footer_tel")}</Link>
               </li>
               <li>
-                <Link to="/services">Support</Link>
+                <Link to="/services">{t("footer_sup")}</Link>
               </li>
             </ul>
           </div>
           <div className="footer-col">
-            <h4>Légal</h4>
+            <h4>{t("legal")}</h4>
             <ul>
               <li>
-                <a href="#">Confidentialité</a>
+                <a href="#">{t("privacy_policy")}</a>
               </li>
               <li>
-                <a href="#">Conditions</a>
+                <a href="#">{t("terms_of_use")}</a>
               </li>
               <li>
                 <a href="#">RCCM: TG-LOM-2026-B12345</a>
@@ -118,11 +119,11 @@ export default function Footer() {
         </div>
         <div className="footer-bottom">
           <p>
-            © 2026 <strong>OPTINET SARL U</strong>. Tous droits réservés.
+            © 2026 <strong>OPTINET SARL U</strong>. {t("all_rights_reserved")}
           </p>
           <div className="footer-legal">
-            <span>Politique de confidentialité</span>
-            <span>Conditions d'utilisation</span>
+            <span>{t("privacy_policy")}</span>
+            <span>{t("terms_of_use")}</span>
             <span>RCCM: TG-LOM-2026-B12345</span>
           </div>
         </div>
@@ -141,3 +142,4 @@ export default function Footer() {
     </>
   );
 }
+

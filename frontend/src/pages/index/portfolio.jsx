@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { getPortfolios } from '../../services/authService';
 import '../styles_admin/public_portfolio.css';
+import { useLanguage } from '../../context/LanguageContext';
 
 const PortfolioSection = () => {
   const [portfolios, setPortfolios] = useState([]);
+  const { t, tDynamic } = useLanguage();
 
   useEffect(() => {
-    // Fetch real data
     getPortfolios()
       .then((res) => {
-        // Filter only active portfolios and sort by ordre_affichage
         const activePortfolios = res.data
           .filter(p => p.est_actif)
           .sort((a, b) => a.ordre_affichage - b.ordre_affichage);
@@ -49,12 +49,12 @@ const PortfolioSection = () => {
   return (
     <section className="pub-portfolio-section" id="portfolio">
       <div className="pub-portfolio-header">
-        <div className="section-tag">Nos Réalisations</div>
+        <div className="section-tag">{t("portfolio_tag")}</div>
         <h2 className="section-title">
-          Découvrez notre <span className="accent">Portfolio</span>
+          {t("portfolio_title_1")} <span className="accent">{t("portfolio_title_2")}</span>
         </h2>
         <p className="section-sub">
-          Explorez une sélection de nos meilleurs projets, démontrant notre expertise en conception et développement de solutions numériques innovantes.
+          {t("portfolio_sub")}
         </p>
       </div>
 
@@ -66,7 +66,7 @@ const PortfolioSection = () => {
               <div className="pub-portfolio-overlay">
                 {item.lien_projet ? (
                   <a href={item.lien_projet} target="_blank" rel="noopener noreferrer" className="pub-portfolio-link">
-                    Voir le projet
+                    {t("portfolio_view_project")}
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 6 }}>
                       <line x1="5" y1="12" x2="19" y2="12"></line>
                       <polyline points="12 5 19 12 12 19"></polyline>
@@ -74,17 +74,17 @@ const PortfolioSection = () => {
                   </a>
                 ) : (
                   <span className="pub-portfolio-link" style={{ pointerEvents: 'none' }}>
-                    Projet Privé
+                    {t("portfolio_private")}
                   </span>
                 )}
               </div>
             </div>
             <div className="pub-portfolio-content">
               {item.categorie && (
-                <div className="pub-portfolio-client">{item.categorie.nom}</div>
+                <div className="pub-portfolio-client">{tDynamic(item.categorie.nom)}</div>
               )}
-              <h3 className="pub-portfolio-title">{item.titre}</h3>
-              <p className="pub-portfolio-desc">{item.description}</p>
+              <h3 className="pub-portfolio-title">{tDynamic(item.titre)}</h3>
+              <p className="pub-portfolio-desc">{tDynamic(item.description)}</p>
               <div className="pub-portfolio-tags">
                 {item.technologies.split(',').map((tech, i) => (
                   <span className="pub-portfolio-tag" key={i}>{tech.trim()}</span>

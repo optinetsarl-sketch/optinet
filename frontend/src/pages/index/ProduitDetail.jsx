@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getProduitDetail } from '../../services/authService';
 import { addToCart } from '../../services/cart';
+import { useLanguage } from '../../context/LanguageContext';
 
 const httpsUrl = (u) => {
   if (!u) return '';
@@ -19,6 +20,7 @@ export default function ProduitDetail() {
   const [zoom, setZoom] = useState(false);
   const [qte, setQte] = useState(1);
   const [added, setAdded] = useState(false);
+  const { t, tDynamic, language } = useLanguage();
 
   useEffect(() => {
     setLoading(true);
@@ -47,7 +49,7 @@ export default function ProduitDetail() {
   if (erreur || !produit) return (
     <Wrap>
       <p style={{ color: '#9fb3c8', textAlign: 'center' }}>Article introuvable.</p>
-      <div style={{ textAlign: 'center', marginTop: 16 }}><Link to="/galerie" style={backBtn}>← Retour à la boutique</Link></div>
+      <div style={{ textAlign: 'center', marginTop: 16 }}><Link to="/galerie" style={backBtn}>← {t("articles")}</Link></div>
     </Wrap>
   );
 
@@ -55,7 +57,7 @@ export default function ProduitDetail() {
 
   return (
     <Wrap>
-      <Link to="/galerie" style={{ ...backBtn, display: 'inline-block', marginBottom: 24 }}>← Retour à la boutique</Link>
+      <Link to="/galerie" style={{ ...backBtn, display: 'inline-block', marginBottom: 24 }}>← {t("articles")}</Link>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.1fr) minmax(0,1fr)', gap: 34, alignItems: 'start' }} className="pd-grid">
         {/* ---------- Galerie ---------- */}
@@ -98,7 +100,7 @@ export default function ProduitDetail() {
 
         {/* ---------- Infos ---------- */}
         <div>
-          <h1 style={{ fontSize: 30, fontWeight: 800, margin: '0 0 12px', lineHeight: 1.2 }}>{produit.nom}</h1>
+          <h1 style={{ fontSize: 30, fontWeight: 800, margin: '0 0 12px', lineHeight: 1.2 }}>{tDynamic(produit.nom)}</h1>
           {produit.prix && (
             <div style={{ color: '#11b981', fontWeight: 800, fontSize: 30, marginBottom: 8 }}>{produit.prix}</div>
           )}
@@ -106,11 +108,11 @@ export default function ProduitDetail() {
             <div style={{ marginBottom: 16 }}>
               {produit.quantite_disponible > 0 ? (
                 <span style={{ display: 'inline-block', background: 'rgba(17,185,129,.12)', color: '#11b981', fontWeight: 700, fontSize: 13.5, padding: '5px 13px', borderRadius: 20 }}>
-                  ✓ En stock : {produit.quantite_disponible} disponible{produit.quantite_disponible > 1 ? 's' : ''}
+                  ✓ {language === 'en' ? `In stock: ${produit.quantite_disponible} available` : language === 'zh' ? `有现货：剩余 ${produit.quantite_disponible} 件` : `En stock : ${produit.quantite_disponible} disponible(s)`}
                 </span>
               ) : (
                 <span style={{ display: 'inline-block', background: 'rgba(255,90,95,.12)', color: '#ff6b6b', fontWeight: 700, fontSize: 13.5, padding: '5px 13px', borderRadius: 20 }}>
-                  Rupture de stock
+                  {language === 'en' ? 'Out of stock' : language === 'zh' ? '暂时缺货' : 'Rupture de stock'}
                 </span>
               )}
             </div>
@@ -127,29 +129,29 @@ export default function ProduitDetail() {
             <button
               onClick={() => { addToCart(produit, qte); setAdded(true); setTimeout(() => setAdded(false), 1600); }}
               style={{ flex: 1, background: added ? '#11b981' : '#12b3d6', color: '#03121f', border: 'none', borderRadius: 12, fontWeight: 800, fontSize: 16, cursor: 'pointer' }}>
-              {added ? '✓ Ajouté au panier' : '🛒 Ajouter au panier'}
+              {added ? '✓' : `🛒 ${t("add_to_cart")}`}
             </button>
           </div>
           )}
 
           <a href={waLink()} target="_blank" rel="noreferrer"
             style={{ display: 'block', background: '#25D366', color: '#fff', textAlign: 'center', padding: '14px', borderRadius: 12, fontWeight: 800, textDecoration: 'none', fontSize: 16, marginBottom: 24 }}>
-            💬 Commander sur WhatsApp
+            💬 {t("order_whatsapp")}
           </a>
 
           {specs.length > 0 && (
             <div style={{ marginBottom: 24 }}>
-              <h3 style={{ fontSize: 17, fontWeight: 800, margin: '0 0 10px' }}>Caractéristiques</h3>
+              <h3 style={{ fontSize: 17, fontWeight: 800, margin: '0 0 10px' }}>{t("characteristics")}</h3>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
                 <tbody>
                   {specs.map((s, i) => (
                     <tr key={i} style={{ borderBottom: '1px solid #12233a' }}>
                       {s.nom
                         ? <>
-                            <td style={{ padding: '9px 10px', color: '#9fb3c8', fontWeight: 600, width: '42%', verticalAlign: 'top' }}>{s.nom}</td>
-                            <td style={{ padding: '9px 10px', color: '#e6edf5' }}>{s.valeur}</td>
+                            <td style={{ padding: '9px 10px', color: '#9fb3c8', fontWeight: 600, width: '42%', verticalAlign: 'top' }}>{tDynamic(s.nom)}</td>
+                            <td style={{ padding: '9px 10px', color: '#e6edf5' }}>{tDynamic(s.valeur)}</td>
                           </>
-                        : <td colSpan={2} style={{ padding: '9px 10px', color: '#e6edf5' }}>{s.valeur}</td>}
+                        : <td colSpan={2} style={{ padding: '9px 10px', color: '#e6edf5' }}>{tDynamic(s.valeur)}</td>}
                     </tr>
                   ))}
                 </tbody>
@@ -159,9 +161,9 @@ export default function ProduitDetail() {
 
           {produit.description && (
             <div>
-              <h3 style={{ fontSize: 17, fontWeight: 800, margin: '0 0 10px' }}>Description</h3>
+              <h3 style={{ fontSize: 17, fontWeight: 800, margin: '0 0 10px' }}>{t("description")}</h3>
               <p style={{ color: '#cbd7e4', whiteSpace: 'pre-line', lineHeight: 1.7, fontSize: 14.5, margin: 0 }}>
-                {produit.description}
+                {tDynamic(produit.description)}
               </p>
             </div>
           )}
@@ -203,3 +205,4 @@ const navBtn = {
   background: 'rgba(0,0,0,.55)', color: '#fff', fontSize: 26, cursor: 'pointer',
   display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1,
 };
+

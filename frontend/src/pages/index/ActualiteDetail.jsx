@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getActualiteDetail } from '../../services/authService';
 import { catColor, formatDate } from './Journal';
+import { useLanguage } from '../../context/LanguageContext';
 
 const httpsUrl = (u) => {
   if (!u) return '';
@@ -16,6 +17,7 @@ export default function ActualiteDetail() {
   const [erreur, setErreur] = useState(false);
   const [current, setCurrent] = useState(0);
   const [zoom, setZoom] = useState(false);
+  const { t, tDynamic, language } = useLanguage();
 
   useEffect(() => {
     setLoading(true);
@@ -29,7 +31,7 @@ export default function ActualiteDetail() {
   const go = (d) => photos.length && setCurrent((c) => (c + d + photos.length) % photos.length);
 
   const pageUrl = typeof window !== 'undefined' ? window.location.href : '';
-  const shareText = a ? `${a.titre} — OPTINET SARL U` : '';
+  const shareText = a ? `${tDynamic(a.titre)} — OPTINET SARL U` : '';
   const shares = [
     { label: 'WhatsApp', color: '#25D366', href: `https://wa.me/?text=${encodeURIComponent(shareText + ' ' + pageUrl)}` },
     { label: 'Facebook', color: '#2a5fd0', href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}` },
@@ -40,7 +42,7 @@ export default function ActualiteDetail() {
   if (erreur || !a) return (
     <Wrap>
       <p style={{ color: '#9fb3c8', textAlign: 'center' }}>Publication introuvable.</p>
-      <div style={{ textAlign: 'center', marginTop: 16 }}><Link to="/journal" style={backBtn}>← Retour au Journal</Link></div>
+      <div style={{ textAlign: 'center', marginTop: 16 }}><Link to="/journal" style={backBtn}>← {t("journal")}</Link></div>
     </Wrap>
   );
 
@@ -48,16 +50,16 @@ export default function ActualiteDetail() {
 
   return (
     <Wrap>
-      <Link to="/journal" style={{ ...backBtn, display: 'inline-block', marginBottom: 22 }}>← Retour au Journal</Link>
+      <Link to="/journal" style={{ ...backBtn, display: 'inline-block', marginBottom: 22 }}>← {t("journal")}</Link>
 
       {/* En-tête */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 12 }}>
         <span style={{ background: col, color: '#03121f', fontWeight: 800, fontSize: 12, letterSpacing: .5, padding: '5px 12px', borderRadius: 20, textTransform: 'uppercase' }}>
-          {a.categorie_label}
+          {t(`cat_${a.categorie}`) || a.categorie_label}
         </span>
-        <span style={{ fontFamily: 'monospace', fontSize: 12.5, color: '#63798f' }}>{formatDate(a.date_publication)}</span>
+        <span style={{ fontFamily: 'monospace', fontSize: 12.5, color: '#63798f' }}>{formatDate(a.date_publication, language)}</span>
       </div>
-      <h1 style={{ fontSize: 32, fontWeight: 800, margin: '0 0 22px', lineHeight: 1.2, maxWidth: 900 }}>{a.titre}</h1>
+      <h1 style={{ fontSize: 32, fontWeight: 800, margin: '0 0 22px', lineHeight: 1.2, maxWidth: 900 }}>{tDynamic(a.titre)}</h1>
 
       {/* Vidéo YouTube */}
       {a.video_embed && (
@@ -105,13 +107,15 @@ export default function ActualiteDetail() {
       {/* Récit */}
       {a.contenu && (
         <p style={{ color: '#cbd7e4', whiteSpace: 'pre-line', lineHeight: 1.8, fontSize: 16, maxWidth: 760, margin: '0 0 30px' }}>
-          {a.contenu}
+          {tDynamic(a.contenu)}
         </p>
       )}
 
       {/* Partage */}
       <div style={{ borderTop: '1px solid #12233a', paddingTop: 20, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-        <span style={{ color: '#9fb3c8', fontWeight: 700, fontSize: 14 }}>Partager :</span>
+        <span style={{ color: '#9fb3c8', fontWeight: 700, fontSize: 14 }}>
+          {language === 'en' ? 'Share:' : language === 'zh' ? '分享到:' : 'Partager :'}
+        </span>
         {shares.map((s) => (
           <a key={s.label} href={s.href} target="_blank" rel="noreferrer"
             style={{ background: s.color, color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: 13.5, padding: '9px 16px', borderRadius: 10 }}>
@@ -152,3 +156,4 @@ const navBtn = {
   background: 'rgba(0,0,0,.55)', color: '#fff', fontSize: 26, cursor: 'pointer',
   display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1,
 };
+

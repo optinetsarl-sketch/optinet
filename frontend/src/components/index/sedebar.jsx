@@ -3,6 +3,8 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import "./sedebar.css";
 import optinetLogo from "../../assets/optinet-logo.png";
 import { cartCount } from "../../services/cart";
+import { useLanguage } from "../../context/LanguageContext";
+import LanguageSelector from "../LanguageSelector";
 
 function CartLink({ onClick }) {
   const [count, setCount] = useState(cartCount());
@@ -27,20 +29,21 @@ function CartLink({ onClick }) {
   );
 }
 
-const NAV_ITEMS = [
-  { to: "/", label: "Accueil" },
-  { to: "/services", label: "Services" },
-  { to: "/journal", label: "Journal" },
-  { to: "/about", label: "À propos" },
-  { to: "/direction", label: "Direction" },
-  { to: "/certifications", label: "Certifications" },
-  { to: "/portfolios", label: "Portfolio" },
-  { to: "/contact", label: "Contact" },
-  { to: "/galerie", label: "Nos Articles" },
-];
-
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { t } = useLanguage();
+
+  const NAV_ITEMS = [
+    { to: "/", label: t("home") },
+    { to: "/services", label: t("services") },
+    { to: "/journal", label: t("journal") },
+    { to: "/about", label: t("about") },
+    { to: "/direction", label: t("direction") },
+    { to: "/certifications", label: t("certifications") },
+    { to: "/portfolios", label: t("portfolio") },
+    { to: "/contact", label: t("contact") },
+    { to: "/galerie", label: t("articles") },
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -82,8 +85,9 @@ const Navbar = () => {
         ))}
       </ul>
 
-      {/* Panier + CTA — desktop */}
+      {/* Panier + Sélecteur de Langue + CTA — desktop */}
       <div className="nav-cta-desktop" style={{ display: "flex", alignItems: "center", gap: 14 }}>
+        <LanguageSelector />
         <CartLink onClick={closeMenu} />
         <Link
           to="/contact"
@@ -91,7 +95,7 @@ const Navbar = () => {
           style={{ textDecoration: "none" }}
           onClick={closeMenu}
         >
-          Demander un devis
+          {t("quote_request")}
         </Link>
       </div>
 
@@ -114,6 +118,9 @@ const Navbar = () => {
       {/* Menu déroulant — mobile uniquement */}
       {menuOpen && (
         <ul className="nav-mobile-menu">
+          <li style={{ padding: "8px 0", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+            <LanguageSelector isMobile={true} />
+          </li>
           {NAV_ITEMS.map(({ to, label }) => (
             <li key={to}>
               <NavLink
@@ -127,7 +134,7 @@ const Navbar = () => {
           ))}
           <li className="nav-cta-mobile">
             <Link to="/contact" className="nav-cta" onClick={closeMenu}>
-              Demander un devis
+              {t("quote_request")}
             </Link>
           </li>
         </ul>
@@ -136,4 +143,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default Navbar;

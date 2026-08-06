@@ -24,13 +24,19 @@ from django.http import FileResponse
 import os
 
 
+def get_frontend_dist_path(*paths):
+    return os.path.join(settings.BASE_DIR, os.pardir, 'frontend', 'dist', *paths)
+
+
 def serve_index(request):
     """Serve index.html for frontend SPA"""
-    index_path = os.path.join(settings.BASE_DIR, 'frontend_dist', 'index.html')
+    index_path = get_frontend_dist_path('index.html')
     if os.path.exists(index_path):
         return FileResponse(open(index_path, 'rb'), content_type='text/html')
-    # Fallback to template if file doesn't exist
-    return TemplateView.as_view(template_name='index.html')(request)
+    from django.http import HttpResponseServerError
+    return HttpResponseServerError(
+        'Frontend build not found. Run `npm run build` in optinet-site/frontend.'
+    )
 
 
 urlpatterns = [
@@ -39,14 +45,14 @@ urlpatterns = [
 ]
 
 # Serve static assets from frontend build
-if os.path.exists(os.path.join(settings.BASE_DIR, 'frontend_dist')):
+if os.path.exists(get_frontend_dist_path()):
     from django.views.static import serve as static_serve
     
     def serve_static_asset(request, path):
-        """Serve static assets from frontend_dist"""
-        asset_path = os.path.join(settings.BASE_DIR, 'frontend_dist', path)
+        """Serve static assets from frontend dist"""
+        asset_path = get_frontend_dist_path(path)
         if os.path.exists(asset_path):
-            return static_serve(request, path, document_root=os.path.join(settings.BASE_DIR, 'frontend_dist'))
+            return static_serve(request, path, document_root=get_frontend_dist_path())
         # If not found, return 404
         from django.http import HttpResponseNotFound
         return HttpResponseNotFound()
