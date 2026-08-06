@@ -25,6 +25,9 @@ import os
 
 
 def get_frontend_dist_path(*paths):
+    docker_dir = os.path.join(settings.BASE_DIR, 'frontend_dist')
+    if os.path.exists(docker_dir):
+        return os.path.join(docker_dir, *paths)
     return os.path.join(settings.BASE_DIR, os.pardir, 'frontend', 'dist', *paths)
 
 
