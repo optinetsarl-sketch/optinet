@@ -17,7 +17,7 @@ export default function Galerie() {
   const [query, setQuery] = useState('');
   const [cat, setCat] = useState('');       // slug de la catégorie sélectionnée
   const [added, setAdded] = useState({});    // feedback "Ajouté" par produit
-  const { t, tDynamic } = useLanguage();
+  const { t, tDynamic, language } = useLanguage();
 
   useEffect(() => {
     getProduits()
