@@ -53,8 +53,10 @@ fi
 docker rm -f optinet_old >/dev/null 2>&1 || true
 docker stop optinet    >/dev/null 2>&1 || true
 docker rename optinet optinet_old >/dev/null 2>&1 || true
+mkdir -p /home/hugue/optinet_db
 docker run -d --name optinet --network optinet -p 8000:8000 --restart unless-stopped \
-  -v "$MEDIA":/app/media optinet:new >> "$LOG" 2>&1
+  -v "$MEDIA":/app/media \
+  -v /home/hugue/optinet_db/db.sqlite3:/app/db.sqlite3 optinet:new >> "$LOG" 2>&1
 
 # Vérifie le démarrage ; rollback automatique sinon (et pas de marquage -> retry)
 sleep 8
