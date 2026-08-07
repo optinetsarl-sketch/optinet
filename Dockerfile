@@ -34,10 +34,7 @@ RUN mkdir -p /app/staticfiles/frontend
 COPY --from=frontend-builder /app/frontend/dist /app/staticfiles/frontend
 
 # Create a startup script
-RUN echo '#!/bin/bash\n\
-python manage.py migrate --noinput\n\
-python manage.py runserver 0.0.0.0:8000\n\
-' > /app/start.sh && chmod +x /app/start.sh
+RUN printf '#!/bin/bash\nset -e\npython manage.py migrate --noinput\npython manage.py collectstatic --noinput\nexec gunicorn backend.wsgi:application --bind 0.0.0.0:8000 --workers 3 --timeout 120\n' > /app/start.sh && chmod +x /app/start.sh
 
 EXPOSE 8000
 
