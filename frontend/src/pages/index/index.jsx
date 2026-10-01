@@ -1,7 +1,8 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
-import heroBg from "../../assets/360_F_521661218_MNYc5lCrIQUKKwBfIGzxJYHYxZzwNof9.jpg";
+import heroBg from "../../assets/services/service-1.jpg";
 import { useLanguage } from "../../context/LanguageContext";
+import "./home.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "";
 const httpsUrl = (u) => {
@@ -33,11 +34,9 @@ export default function Homes() {
       .catch(() => {});
   }, []);
 
-  const loop = annonces.length ? [...annonces, ...annonces] : [];
-
   return (
-    <>
-      <section className="hero-modern" style={{ backgroundImage: `url(${heroBg})` }}>
+    <div className="home-page">
+      <section className="hero-modern" style={{ backgroundImage: `url(${heroBg})` }} aria-labelledby="home-hero-title">
         <div className="hero-overlay"></div>
 
         <div className="hero-container">
@@ -47,8 +46,8 @@ export default function Homes() {
               <span>{t("hero_location_badge")}</span>
             </div>
 
-            <h1 className="hero-title">
-              {t("hero_title_part1")} <br />
+            <h1 id="home-hero-title" className="hero-title">
+              {t("hero_title_part1")}
               <span className="accent-text">{t("hero_title_part2")}</span>
             </h1>
 
@@ -56,15 +55,14 @@ export default function Homes() {
               {t("hero_description")}
             </p>
 
-            <div className="hero-features">
-              <div className="feat"><span>✔</span> {t("hero_feat_networks")}</div>
-              <div className="feat"><span>✔</span> {t("hero_feat_security")}</div>
-              <div className="feat"><span>✔</span> {t("hero_feat_telecom")}</div>
-              <div className="feat"><span>✔</span> {t("hero_feat_infra")}</div>
-              <div className="feat"><span>✔</span> {t("hero_feat_software")}</div>
-            </div>
-            <br />
-            <br />
+            <ul className="hero-features" aria-label={t("services")}>
+              <li className="feat"><span aria-hidden="true">✓</span> {t("hero_feat_networks")}</li>
+              <li className="feat"><span aria-hidden="true">✓</span> {t("hero_feat_security")}</li>
+              <li className="feat"><span aria-hidden="true">✓</span> {t("hero_feat_telecom")}</li>
+              <li className="feat"><span aria-hidden="true">✓</span> {t("hero_feat_infra")}</li>
+              <li className="feat"><span aria-hidden="true">✓</span> {t("hero_feat_software")}</li>
+            </ul>
+
             <div className="hero-btns">
               <Link to="/contact" className="btn-main">{t("hero_btn_launch")}</Link>
               <Link to="/services" className="btn-outline">{t("hero_btn_services")}</Link>
@@ -74,50 +72,41 @@ export default function Homes() {
       </section>
 
       {/* ── Bande publicitaire défilante : Nos articles ── */}
-      <section style={{ background: "#020b18", padding: "56px 0", color: "#fff", overflow: "hidden" }}>
-        <style>{`
-          @keyframes optipubScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-          .optipub-marquee { display: flex; gap: 18px; width: max-content; animation: optipubScroll 45s linear infinite; padding: 0 9px; }
-          .optipub-marquee:hover { animation-play-state: paused; }
-          .optipub-card { width: 250px; flex: 0 0 auto; background: #0a1526; border: 1px solid #12233a; border-radius: 14px; overflow: hidden; text-decoration: none; color: #fff; }
-        `}</style>
-
-        <div style={{ textAlign: "center", marginBottom: 30, padding: "0 20px" }}>
-          <span style={{ color: "#12b3d6", fontWeight: 800, letterSpacing: 2, fontSize: 13 }}>{t("announcements_badge")}</span>
-          <h2 style={{ fontSize: 34, fontWeight: 800, margin: "8px 0" }}>{t("announcements_title")}</h2>
-          <p style={{ color: "#9fb3c8" }}>{t("announcements_subtitle")}</p>
+      <section className="home-products" aria-labelledby="home-products-title">
+        <div className="home-products__heading">
+          <span className="home-products__eyebrow">{t("announcements_badge")}</span>
+          <h2 id="home-products-title">{t("announcements_title")}</h2>
+          <p>{t("announcements_subtitle")}</p>
         </div>
 
-        {loop.length === 0 ? (
-          <p style={{ textAlign: "center", color: "#9fb3c8" }}>{t("announcements_empty")}</p>
+        {annonces.length === 0 ? (
+          <p className="home-products__empty">{t("announcements_empty")}</p>
         ) : (
-          <div style={{ position: "relative" }}>
-            <div className="optipub-marquee">
-              {loop.map((a, i) => (
-                <Link to={`/articles/${a.uuid}`} key={i} className="optipub-card">
-                  <div style={{ position: "relative" }}>
-                    <img src={httpsUrl(a.image_principale)} alt={a.nom} style={{ width: "100%", height: 175, objectFit: "cover", display: "block" }} />
-                    {a.prix && (
-                      <span style={{ position: "absolute", bottom: 8, left: 8, background: "#11b981", color: "#fff", fontWeight: 800, fontSize: 13, padding: "4px 10px", borderRadius: 16 }}>{a.prix}</span>
+          <div className="home-product-grid">
+            {annonces.map((a) => (
+                <Link to={`/articles/${a.uuid}`} key={a.uuid} className="home-product-card">
+                  <div className="home-product-card__image">
+                    {a.image_principale && (
+                      <img src={httpsUrl(a.image_principale)} alt={tDynamic(a.nom || "Article OPTINET")} loading="lazy" />
                     )}
+                    {a.prix && <span className="home-product-card__price">{a.prix}</span>}
                   </div>
-                  <div style={{ padding: "12px 14px", fontWeight: 700, fontSize: 14, lineHeight: 1.3, minHeight: 44 }}>
+                  <div className="home-product-card__name">
                     {tDynamic(a.nom || "Article OPTINET").slice(0, 60)}
                   </div>
                 </Link>
-              ))}
-            </div>
+            ))}
           </div>
         )}
 
-        <div style={{ textAlign: "center", marginTop: 30 }}>
-          <Link to="/galerie" className="btn-outline">{t("announcements_view_all")}</Link>
+        <div className="home-products__actions">
+          <Link to="/galerie" className="home-products__all">{t("announcements_view_all")}</Link>
         </div>
       </section>
 
       {/* ── Le Journal : dernières actualités ── */}
       {actus.length > 0 && (
-        <section style={{ background: "#050d1c", padding: "64px 20px", color: "#fff" }}>
+        <section className="home-journal" style={{ background: "#050d1c", padding: "64px 20px", color: "#fff" }}>
           <div style={{ maxWidth: 1240, margin: "0 auto" }}>
             <div style={{ textAlign: "center", marginBottom: 34 }}>
               <span style={{ color: "#12b3d6", fontWeight: 800, letterSpacing: 2, fontSize: 13 }}>{t("journal_badge")}</span>
@@ -153,7 +142,7 @@ export default function Homes() {
           </div>
         </section>
       )}
-    </>
+    </div>
   );
 }
 
