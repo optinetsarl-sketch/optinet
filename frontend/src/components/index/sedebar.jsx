@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import "./sedebar.css";
 import optinetLogo from "../../assets/optinet-logo.png";
-import { cartCount } from "../../services/cart";
 import { useLanguage } from "../../context/LanguageContext";
+import { cartCount } from "../../services/cart";
 import LanguageSelector from "../LanguageSelector";
+import "./sedebar.css";
 
 function CartLink({ onClick }) {
   const [count, setCount] = useState(cartCount());
@@ -31,17 +31,26 @@ function CartLink({ onClick }) {
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [openMobileGroup, setOpenMobileGroup] = useState(null);
   const { t } = useLanguage();
 
   const NAV_ITEMS = [
     { to: "/", label: t("home") },
-    { to: "/services", label: t("services") },
-    { to: "/journal", label: t("journal") },
-    { to: "/about", label: t("about") },
-    { to: "/direction", label: t("direction") },
-    { to: "/certifications", label: t("certifications") },
-    { to: "/portfolios", label: t("portfolio") },
-    { to: "/contact", label: t("contact") },
+    {
+      to: "/services",
+      label: t("services"),
+      children: [{ to: "/journal", label: t("journal") }],
+    },
+    {
+      to: "/about",
+      label: t("about"),
+      children: [
+        { to: "/direction", label: t("direction") },
+        { to: "/certifications", label: t("certifications") },
+        { to: "/contact", label: t("contact") },
+        { to: "/portfolios", label: t("portfolio") },
+      ],
+    },
     { to: "/galerie", label: t("articles") },
   ];
 
@@ -57,7 +66,10 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const closeMenu = () => setMenuOpen(false);
+  const closeMenu = () => {
+    setMenuOpen(false);
+    setOpenMobileGroup(null);
+  };
 
   return (
     <nav id="navbar">
@@ -73,14 +85,29 @@ const Navbar = () => {
 
       {/* Liens — desktop uniquement */}
       <ul className="nav-desktop-links">
-        {NAV_ITEMS.map(({ to, label }) => (
-          <li key={to}>
+        {NAV_ITEMS.map(({ to, label, children }) => (
+          <li key={to} className={children ? "nav-dropdown" : undefined}>
             <NavLink
               to={to}
               className={({ isActive }) => (isActive ? "active" : "")}
             >
               {label}
+              {children && <span className="nav-chevron" aria-hidden="true" />}
             </NavLink>
+            {children && (
+              <ul className="nav-submenu">
+                {children.map((child) => (
+                  <li key={child.to}>
+                    <NavLink
+                      to={child.to}
+                      className={({ isActive }) => (isActive ? "active" : "")}
+                    >
+                      {child.label}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            )}
           </li>
         ))}
       </ul>
@@ -121,17 +148,64 @@ const Navbar = () => {
           <li style={{ padding: "8px 0", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
             <LanguageSelector isMobile={true} />
           </li>
-          {NAV_ITEMS.map(({ to, label }) => (
-            <li key={to}>
-              <NavLink
-                to={to}
-                className={({ isActive }) => (isActive ? "active" : "")}
-                onClick={closeMenu}
-              >
-                {label}
-              </NavLink>
-            </li>
-          ))}
+          {NAV_ITEMS.map(({ to, label, children }) => {
+            const isOpen = openMobileGroup === to;
+            const submenuId = `nav-mobile-submenu-${to.slice(1)}`;
+
+            return (
+              <li key={to} className={children ? "nav-mobile-group" : undefined}>
+                {children ? (
+                  <>
+                    <div className="nav-mobile-group__row">
+                      <NavLink
+                        to={to}
+                        className={({ isActive }) => (isActive ? "active" : "")}
+                        onClick={closeMenu}
+                      >
+                        {label}
+                      </NavLink>
+                      <button
+                        type="button"
+                        className="nav-mobile-group__toggle"
+                        aria-label={`${isOpen ? "Masquer" : "Afficher"} les liens de ${label}`}
+                        aria-expanded={isOpen}
+                        aria-controls={submenuId}
+                        onClick={() => setOpenMobileGroup(isOpen ? null : to)}
+                      >
+                        <span
+                          className={`nav-chevron${isOpen ? " nav-chevron--open" : ""}`}
+                          aria-hidden="true"
+                        />
+                      </button>
+                    </div>
+                    {isOpen && (
+                      <ul id={submenuId} className="nav-mobile-submenu">
+                        {children.map((child) => (
+                          <li key={child.to}>
+                            <NavLink
+                              to={child.to}
+                              className={({ isActive }) => (isActive ? "active" : "")}
+                              onClick={closeMenu}
+                            >
+                              {child.label}
+                            </NavLink>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </>
+                ) : (
+                  <NavLink
+                    to={to}
+                    className={({ isActive }) => (isActive ? "active" : "")}
+                    onClick={closeMenu}
+                  >
+                    {label}
+                  </NavLink>
+                )}
+              </li>
+            );
+          })}
           <li className="nav-cta-mobile">
             <Link to="/contact" className="nav-cta" onClick={closeMenu}>
               {t("quote_request")}
@@ -143,4 +217,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default Navbar;
