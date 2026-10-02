@@ -30,7 +30,7 @@ export const translations = {
 
     // Section Annonces & Produits (Index / Galerie)
     announcements_badge: "NOS ANNONCES",
-    announcements_title: "Nos produits en stock 🔥",
+    announcements_title: "Nos produits en stock",
     announcements_subtitle: "Ordinateurs, matériel et bonnes affaires — cliquez pour commander.",
     announcements_empty: "Bientôt de nouvelles annonces…",
     announcements_view_all: "Voir tous les articles",
