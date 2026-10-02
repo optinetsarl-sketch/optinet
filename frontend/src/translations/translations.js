@@ -80,11 +80,11 @@ export const translations = {
 
     // Portfolio Page
     portfolio_tag: "Nos Réalisations",
-    portfolio_title_1: "Découvrez notre",
-    portfolio_title_2: "Portfolio",
-    portfolio_sub: "Explorez une sélection de nos meilleurs projets, démontrant notre expertise en conception et développement de solutions numériques innovantes.",
+    portfolio_title_1: "Des solutions",
+    portfolio_title_2: "qui font la différence",
+    portfolio_sub: "Nous concevons des infrastructures fiables, sécurisées et performantes pour les entreprises et institutions qui veulent optimiser leurs systèmes et accélérer leur croissance.",
     portfolio_view_project: "Voir le projet",
-    portfolio_private: "Projet Privé",
+    portfolio_private: "Projet privé",
 
     // Services Page
     services_tag: "Nos Services",
@@ -233,11 +233,11 @@ export const translations = {
 
     // Portfolio Page
     portfolio_tag: "Our Achievements",
-    portfolio_title_1: "Explore Our",
-    portfolio_title_2: "Portfolio",
-    portfolio_sub: "Explore a selection of our best projects, showcasing our expertise in designing and developing innovative digital solutions.",
-    portfolio_view_project: "View Project",
-    portfolio_private: "Private Project",
+    portfolio_title_1: "Solutions",
+    portfolio_title_2: "that make an impact",
+    portfolio_sub: "We design reliable, secure, and high-performing infrastructures for businesses and institutions aiming to optimize their systems and accelerate growth.",
+    portfolio_view_project: "View project",
+    portfolio_private: "Private project",
 
     // Services Page
     services_tag: "Our Services",

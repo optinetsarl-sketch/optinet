@@ -1,6 +1,6 @@
 .home-page {
   overflow: clip;
-  background: #f4f7fa;
+  background: #eaf4ff;
 }
 
 .home-page .hero-modern {
@@ -90,8 +90,8 @@
 
 .home-products {
   padding: clamp(56px, 7vw, 92px) 6%;
-  background: #f4f7fa;
-  color: #10243a;
+  background: #000203f6;
+  color: #acb5be;
 }
 
 .home-products__heading {
@@ -101,7 +101,7 @@
 }
 
 .home-products__eyebrow {
-  color: #087f88;
+  color: #a5c6c9;
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 1.8px;
@@ -109,20 +109,20 @@
 
 .home-products__heading h2 {
   margin: 10px 0 8px;
-  color: #10243a;
+  color: #acc3dd;
   font-family: "Syne", sans-serif;
   font-size: clamp(1.8rem, 3vw, 2.35rem);
   line-height: 1.15;
 }
 
 .home-products__heading p {
-  color: #50657b;
+  color: #a3bfdd;
   font-size: 15px;
   line-height: 1.65;
 }
 
 .home-products__empty {
-  color: #50657b;
+  color: #acc7e4;
   text-align: center;
 }
 
