@@ -21,6 +21,7 @@ import ProduitDetail from "../pages/index/ProduitDetail";
 import Journal from "../pages/index/Journal";
 import ActualiteDetail from "../pages/index/ActualiteDetail";
 import Panier from "../pages/index/Panier";
+import ChristmasInTheBush from "../pages/index/ChristmasInTheBush";
 
 // Pages auth & admin
 import Login from "../pages/Login";
@@ -58,6 +59,7 @@ function App() {
           <Route path="certifications" element={<Certifications />} />
           <Route path="contact" element={<Contact />} />
           <Route path="portfolios" element={<Journal />} />
+          <Route path="christmas-in-the-bush-2026" element={<ChristmasInTheBush />} />
 
           
           {/* <Route path="portfolios" element={<Portfolios />} /> */}

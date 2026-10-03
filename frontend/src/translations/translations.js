@@ -12,6 +12,8 @@ export const translations = {
     articles: "Nos Articles",
     cart: "Panier",
     quote_request: "Demander un devis",
+    projects: "Nos projets",
+    christmas_project: "Noël en brousse 2026",
 
     // Banner & Hero (Index)
     hero_location_badge: "🇹🇬 Lomé, Togo • Solutions IT , Télécom & WEB",
@@ -165,6 +167,8 @@ export const translations = {
     articles: "Our Products",
     cart: "Cart",
     quote_request: "Get a Quote",
+    projects: "Our Projects",
+    christmas_project: "Christmas in the Bush 2026",
 
     // Banner & Hero (Index)
     hero_location_badge: "🇹🇬 Lomé, Togo • IT, Telecom & WEB Solutions",
@@ -318,6 +322,8 @@ export const translations = {
     articles: "产品中心",
     cart: "购物车",
     quote_request: "获取报价",
+    projects: "我们的项目",
+    christmas_project: "丛林圣诞2026",
 
     // Banner & Hero (Index)
     hero_location_badge: "🇹🇬 多哥洛美 • IT、电信与网络解决方案",

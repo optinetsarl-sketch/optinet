@@ -51,6 +51,11 @@ const Navbar = () => {
         { to: "/portfolios", label: t("portfolio") },
       ],
     },
+    {
+      to: "/christmas-in-the-bush-2026",
+      label: t("projects"),
+      children: [{ to: "/christmas-in-the-bush-2026", label: t("christmas_project") }],
+    },
     { to: "/galerie", label: t("articles") },
   ];
 
