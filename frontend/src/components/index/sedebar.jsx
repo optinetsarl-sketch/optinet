@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import optinetLogo from "../../assets/optinet-logo.png";
+import optinetLogo from "../../assets/logo-Optinet-sokode.webp";
 import { useLanguage } from "../../context/LanguageContext";
 import { cartCount } from "../../services/cart";
 import LanguageSelector from "../LanguageSelector";
