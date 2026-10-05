@@ -502,6 +502,8 @@
 .christmas-hero {
   min-height: 570px;
   display: flex;
+  background-position: center;
+  background-size: cover;
   align-items: center;
   padding: 100px 0 88px;
   background: linear-gradient(112deg, #153d33 0%, #216247 67%, #1a4538 100%);

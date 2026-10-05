@@ -6,6 +6,13 @@ import { useLanguage } from "../../context/LanguageContext";
 import "./christmas.css";
 
 const PAYPAL_DONATION_URL = "https://www.paypal.com/ncp/payment/462YTWR7AWK6N";
+const CHRISTMAS_GALLERY_IMAGES = [
+  "/christmas-bg-1.jpeg",
+  "/christmas-bg-2.jpeg",
+  "/christmas-bg-3.jpeg",
+  "/christmas-bg-4.jpeg",
+  "/christmas-bg-5.jpeg",
+];
 
 const christmasContent = {
   fr: {
@@ -694,9 +701,16 @@ export default function ChristmasInTheBushPage() {
             <h3>{content.galleryTitle}</h3>
           </div>
           <div className="gallery-grid">
-            {content.galleryCards.map((label) => (
+            {content.galleryCards.map((label, index) => (
               <div key={label} className="gallery-item">
-                <div className="gallery-item__placeholder">{label}</div>
+                <div
+                  className="gallery-item__placeholder"
+                  style={{
+                    backgroundImage: `linear-gradient(rgba(7, 24, 39, 0.12), rgba(7, 24, 39, 0.78)), url(${CHRISTMAS_GALLERY_IMAGES[index % CHRISTMAS_GALLERY_IMAGES.length]})`,
+                  }}
+                >
+                  {label}
+                </div>
               </div>
             ))}
           </div>
