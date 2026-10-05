@@ -4,11 +4,16 @@
   position: relative;
   overflow: hidden;
   padding: 96px 6% 110px;
-  background:
+  background-image:
     radial-gradient(circle at 15% 10%, rgba(255, 72, 72, 0.18), transparent 22%),
     radial-gradient(circle at 85% 12%, rgba(88, 188, 92, 0.16), transparent 20%),
     radial-gradient(circle at top left, rgba(0, 200, 200, 0.12), transparent 28%),
-    linear-gradient(180deg, #071d30 0%, #06141f 100%);
+    linear-gradient(180deg, rgba(7, 29, 48, 0.72), rgba(6, 20, 31, 0.86)),
+    url("../../assets/services/service-1.jpg");
+  background-position: center, center;
+  background-size: cover, cover;
+  background-repeat: no-repeat, no-repeat;
+  background-attachment: scroll, fixed;
   border-top: 1px solid rgba(0, 200, 200, 0.14);
 }
 
