@@ -2,11 +2,45 @@
 
 .pub-portfolio-section {
   position: relative;
+  overflow: hidden;
   padding: 96px 6% 110px;
   background:
+    radial-gradient(circle at 15% 10%, rgba(255, 72, 72, 0.18), transparent 22%),
+    radial-gradient(circle at 85% 12%, rgba(88, 188, 92, 0.16), transparent 20%),
     radial-gradient(circle at top left, rgba(0, 200, 200, 0.12), transparent 28%),
-    linear-gradient(180deg, #081a2e 0%, #06141f 100%);
+    linear-gradient(180deg, #071d30 0%, #06141f 100%);
   border-top: 1px solid rgba(0, 200, 200, 0.14);
+}
+
+.pub-portfolio-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 8% 14%, rgba(255, 255, 255, 0.9) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 22% 32%, rgba(255, 255, 255, 0.8) 0 1.2px, transparent 2px),
+    radial-gradient(circle at 48% 18%, rgba(255, 255, 255, 0.85) 0 1.6px, transparent 2px),
+    radial-gradient(circle at 68% 28%, rgba(255, 255, 255, 0.8) 0 1.4px, transparent 2px),
+    radial-gradient(circle at 88% 22%, rgba(255, 255, 255, 0.9) 0 1.7px, transparent 2px),
+    radial-gradient(circle at 36% 62%, rgba(255, 255, 255, 0.75) 0 1.3px, transparent 2px),
+    radial-gradient(circle at 74% 54%, rgba(255, 255, 255, 0.8) 0 1.2px, transparent 2px),
+    radial-gradient(circle at 92% 72%, rgba(255, 255, 255, 0.9) 0 1.5px, transparent 2px);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.pub-portfolio-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(12, 18, 31, 0.14), rgba(12, 18, 31, 0.35));
+  pointer-events: none;
+}
+
+.pub-portfolio-header,
+.pub-portfolio-grid {
+  position: relative;
+  z-index: 1;
 }
 
 .pub-portfolio-header {
