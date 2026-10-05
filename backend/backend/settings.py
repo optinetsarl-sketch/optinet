@@ -66,7 +66,10 @@ CSRF_TRUSTED_ORIGINS = [
     "https://www.optinetbackend.ginolux.com",
     "http://127.0.0.1:8000",
     "http://localhost:8000",
+    "http://127.0.0.1:8001",
+    "http://localhost:8001",
 ]
+
 
 
 # Application definition
@@ -264,6 +267,20 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 
+# ======================================================
+# CONFIGURATION EMAIL — SMTP GMAIL
+# ======================================================
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'optinetsarl@gmail.com')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = f'OPTINET SARLU <{EMAIL_HOST_USER}>'
+
+# Email(s) interne(s) qui reçoivent les notifications de nouveaux messages
+OPTINET_EMAIL_DESTINATAIRE = os.getenv('OPTINET_EMAIL_DESTINATAIRE', 'optinetsarl@gmail.com')
 
 
 

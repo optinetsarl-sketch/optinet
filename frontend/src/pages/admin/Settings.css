@@ -1,0 +1,511 @@
+/* ============================================================
+   SETTINGS PAGE — Design Premium OPTINET 2026
+   ============================================================ */
+
+/* ── Page wrapper ── */
+.settings-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: sett-fadein 0.35s ease both;
+  max-width: 1100px;
+}
+
+@keyframes sett-fadein {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── En-tête ── */
+.settings-page__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.settings-page__title {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+.settings-page__subtitle {
+  margin: 6px 0 0;
+  color: #64748b;
+  font-size: 0.93rem;
+}
+
+/* ── Alerte (success / error) ── */
+.sett-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  animation: sett-fadein 0.25s ease both;
+}
+
+.sett-alert--success {
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+}
+
+.sett-alert--error {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+/* ══════════════════════════════════════════════
+   LAYOUT : nav latérale + contenu
+══════════════════════════════════════════════ */
+.settings-layout {
+  display: grid;
+  grid-template-columns: 210px 1fr;
+  gap: 22px;
+  align-items: start;
+}
+
+/* ── Navigation onglets ── */
+.settings-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 10px;
+  position: sticky;
+  top: 90px;
+}
+
+.settings-nav__btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: #64748b;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.18s ease;
+  width: 100%;
+}
+
+.settings-nav__btn:hover {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.settings-nav__btn--active {
+  background: #eff6ff;
+  color: #0f6cb3;
+  font-weight: 700;
+}
+
+.settings-nav__btn--logout {
+  color: #ef4444;
+  margin-top: 2px;
+}
+
+.settings-nav__btn--logout:hover {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.settings-nav__divider {
+  height: 1px;
+  background: #f1f5f9;
+  margin: 6px 4px;
+}
+
+/* ══════════════════════════════════════════════
+   CARD SECTION
+══════════════════════════════════════════════ */
+.sett-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.sett-card__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 22px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.sett-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: #eff6ff;
+  color: #0f6cb3;
+  border-radius: 9px;
+  flex-shrink: 0;
+}
+
+.sett-card__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.sett-card__body {
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── Divider interne ── */
+.sett-divider {
+  height: 1px;
+  background: #f1f5f9;
+  margin: 18px 0;
+}
+
+/* ══════════════════════════════════════════════
+   SETTING ROW (label + contrôle)
+══════════════════════════════════════════════ */
+.sett-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid #f8fafc;
+}
+
+.sett-row:last-child { border-bottom: none; }
+
+.sett-row__left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.sett-row__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: #f8fafc;
+  color: #64748b;
+  border-radius: 9px;
+  flex-shrink: 0;
+  border: 1px solid #e2e8f0;
+}
+
+.sett-row__label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+.sett-row__desc {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 3px;
+  line-height: 1.4;
+}
+
+.sett-row__control { flex-shrink: 0; }
+
+/* ══════════════════════════════════════════════
+   TOGGLE SWITCH
+══════════════════════════════════════════════ */
+.sett-toggle {
+  position: relative;
+  width: 46px;
+  height: 26px;
+  border: none;
+  border-radius: 999px;
+  background: #e2e8f0;
+  cursor: pointer;
+  transition: background 0.22s ease;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.sett-toggle--on { background: #0f6cb3; }
+
+.sett-toggle__thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+  transition: transform 0.22s cubic-bezier(0.4,0,0.2,1);
+}
+
+.sett-toggle--on .sett-toggle__thumb { transform: translateX(20px); }
+
+/* ══════════════════════════════════════════════
+   FORMULAIRES
+══════════════════════════════════════════════ */
+.sett-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sett-form__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.sett-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sett-field__label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sett-field__input {
+  padding: 10px 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #1e293b;
+  background: #f8fafc;
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  font-family: inherit;
+}
+
+.sett-field__input:focus {
+  border-color: #0f6cb3;
+  box-shadow: 0 0 0 3px rgba(15,108,179,0.12);
+  background: #ffffff;
+}
+
+.sett-field__input--sm {
+  padding: 7px 10px;
+  font-size: 13px;
+  min-width: 160px;
+}
+
+.sett-field__hint {
+  font-size: 11.5px;
+  color: #94a3b8;
+}
+
+.sett-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+/* ── Avatar profil ── */
+.sett-avatar-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.sett-avatar {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0f6cb3, #0b4e82);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: 1px;
+}
+
+.sett-avatar-name { font-size: 14px; font-weight: 700; color: #0f172a; }
+.sett-avatar-role { font-size: 12px; color: #64748b; margin-top: 2px; }
+
+/* ══════════════════════════════════════════════
+   BOUTONS
+══════════════════════════════════════════════ */
+.sett-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  font-family: inherit;
+}
+
+.sett-btn--primary {
+  background: linear-gradient(135deg, #0f6cb3, #0b4e82);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(15,108,179,0.28);
+}
+
+.sett-btn--primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(15,108,179,0.38);
+}
+
+.sett-btn--outline {
+  background: transparent;
+  color: #475569;
+  border: 1.5px solid #e2e8f0;
+}
+
+.sett-btn--outline:hover { background: #f8fafc; border-color: #cbd5e1; }
+
+.sett-btn--danger {
+  background: #fef2f2;
+  color: #ef4444;
+  border: 1.5px solid #fecaca;
+}
+
+.sett-btn--danger:hover { background: #fee2e2; border-color: #fca5a5; }
+
+/* ══════════════════════════════════════════════
+   THÈME BUTTONS
+══════════════════════════════════════════════ */
+.sett-theme-btns {
+  display: flex;
+  gap: 4px;
+  background: #f1f5f9;
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.sett-theme-btn {
+  padding: 7px 14px;
+  border: none;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  background: transparent;
+  color: #64748b;
+  transition: all 0.18s ease;
+  font-family: inherit;
+}
+
+.sett-theme-btn--active {
+  background: #ffffff;
+  color: #0f6cb3;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+/* ══════════════════════════════════════════════
+   INFOS SYSTÈME
+══════════════════════════════════════════════ */
+.sett-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.sett-info-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+
+.sett-info-row__key {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.sett-info-row__val {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1e293b;
+  word-break: break-all;
+}
+
+/* ── Danger zone ── */
+.sett-danger-zone__title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #ef4444;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin: 0 0 12px;
+}
+
+/* ── Actions système ── */
+.sett-sys-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .settings-layout {
+    grid-template-columns: 1fr;
+  }
+  .settings-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    position: static;
+    padding: 8px;
+  }
+  .settings-nav__btn {
+    flex: 1;
+    min-width: 100px;
+    justify-content: center;
+    font-size: 12.5px;
+    padding: 8px 10px;
+  }
+  .settings-nav__divider { display: none; }
+}
+
+@media (max-width: 640px) {
+  .sett-form__grid { grid-template-columns: 1fr; }
+  .sett-info-grid  { grid-template-columns: 1fr; }
+  .sett-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+}

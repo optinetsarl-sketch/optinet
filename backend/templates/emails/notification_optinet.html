@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nouveau message — OPTINET</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f8; color: #1a2332; }
+    .wrapper { max-width: 620px; margin: 32px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.10); }
+    .header { background: linear-gradient(135deg, #0a2463 0%, #1565c0 100%); padding: 32px 40px; text-align: center; }
+    .header img { height: 44px; margin-bottom: 14px; }
+    .header h1 { color: #ffffff; font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
+    .header p { color: #90caf9; font-size: 13px; margin-top: 4px; }
+    .badge { display: inline-block; background: #ff6f00; color: #fff; font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 20px; margin-top: 10px; letter-spacing: 1px; text-transform: uppercase; }
+    .body { padding: 36px 40px; }
+    .section-title { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 28px; }
+    .info-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; }
+    .info-card .label { font-size: 11px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
+    .info-card .value { font-size: 14px; color: #1e293b; font-weight: 600; word-break: break-word; }
+    .message-box { background: #f1f5f9; border-left: 4px solid #1565c0; border-radius: 8px; padding: 20px; margin-bottom: 28px; }
+    .message-box .label { font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+    .message-box .content { font-size: 15px; color: #334155; line-height: 1.7; white-space: pre-wrap; }
+    .cta-section { text-align: center; margin-bottom: 28px; }
+    .cta-btn { display: inline-block; background: linear-gradient(135deg, #1565c0, #0a2463); color: #ffffff !important; padding: 13px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 14px; letter-spacing: 0.3px; }
+    .reply-btn { display: inline-block; background: #f0f9ff; border: 2px solid #1565c0; color: #1565c0 !important; padding: 11px 28px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 14px; margin-left: 12px; }
+    .footer { background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 20px 40px; text-align: center; }
+    .footer p { font-size: 12px; color: #94a3b8; line-height: 1.6; }
+    .footer strong { color: #475569; }
+    @media (max-width: 480px) { .info-grid { grid-template-columns: 1fr; } .body { padding: 24px 20px; } .header { padding: 24px 20px; } }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <!-- EN-TÊTE -->
+    <div class="header">
+      <h1>OPTINET SARLU</h1>
+      <p>Solutions IT &amp; Télécoms — Lomé, Togo</p>
+      <div class="badge">Nouveau message reçu</div>
+    </div>
+
+    <!-- CORPS -->
+    <div class="body">
+      <p class="section-title">Informations de l'expéditeur</p>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="label">Nom complet</div>
+          <div class="value">{{ nom }}</div>
+        </div>
+        <div class="info-card">
+          <div class="label">Email</div>
+          <div class="value">{{ email }}</div>
+        </div>
+        {% if entreprise %}
+        <div class="info-card">
+          <div class="label">Entreprise</div>
+          <div class="value">{{ entreprise }}</div>
+        </div>
+        {% endif %}
+        {% if telephone %}
+        <div class="info-card">
+          <div class="label">Téléphone</div>
+          <div class="value">{{ telephone }}</div>
+        </div>
+        {% endif %}
+        <div class="info-card" style="grid-column: 1 / -1;">
+          <div class="label">Sujet</div>
+          <div class="value">{{ sujet }}</div>
+        </div>
+      </div>
+
+      <p class="section-title">Contenu du message</p>
+      <div class="message-box">
+        <div class="label">Message</div>
+        <div class="content">{{ contenu }}</div>
+      </div>
+
+      <div class="cta-section">
+        <a href="mailto:{{ email }}?subject=Re: {{ sujet }}" class="cta-btn">Répondre à {{ nom }}</a>
+        <a href="https://wa.me/{{ telephone|default:'' }}" class="reply-btn">WhatsApp</a>
+      </div>
+
+      <p style="font-size:12px; color:#94a3b8; text-align:center;">
+        Message reçu le {{ date }} via le formulaire de contact du site web OPTINET.
+      </p>
+    </div>
+
+    <!-- PIED DE PAGE -->
+    <div class="footer">
+      <p>
+        <strong>OPTINET SARLU</strong> — Lomé, Togo<br/>
+        Tél : +228 90 74 84 65 &nbsp;|&nbsp; Email : optinetsarl@gmail.com
+      </p>
+    </div>
+  </div>
+</body>
+</html>

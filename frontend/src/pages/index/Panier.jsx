@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getCart, setQuantite, removeFromCart, clearCart, cartTotal, formatFCFA } from '../../services/cart';
-import { createCommande } from '../../services/authService';
 import { useLanguage } from '../../context/LanguageContext';
+import { createCommande } from '../../services/authService';
+import { cartTotal, clearCart, formatFCFA, getCart, removeFromCart, setQuantite } from '../../services/cart';
 
 const httpsUrl = (u) => {
   if (!u) return '';
@@ -87,7 +87,7 @@ export default function Panier() {
     return (
       <Wrap>
         <div style={{ textAlign: 'center', color: '#9fb3c8', paddingTop: 20 }}>
-          <div style={{ fontSize: 54 }}>🛒</div>
+          <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: 1, color: '#12b3d6' }}>PANIER VIDE</div>
           <h2 style={{ color: '#fff', margin: '10px 0' }}>{t("cart_empty_title")}</h2>
           <p>{t("cart_empty_sub")}</p>
           <Link to="/galerie" style={{ display: 'inline-block', marginTop: 16, background: '#12b3d6', color: '#03121f', padding: '12px 22px', borderRadius: 10, fontWeight: 800, textDecoration: 'none' }}>
@@ -118,7 +118,7 @@ export default function Panier() {
                 <button onClick={() => setQuantite(it.produit, it.quantite + 1)} style={qtyBtn}>+</button>
               </div>
               <button onClick={() => removeFromCart(it.produit)} aria-label="Retirer"
-                style={{ background: 'none', border: 'none', color: '#ff6b6b', fontSize: 20, cursor: 'pointer', flex: '0 0 auto' }}>🗑️</button>
+                style={{ background: 'none', border: 'none', color: '#ff6b6b', fontSize: 15, fontWeight: 800, cursor: 'pointer', flex: '0 0 auto' }}>SUPPR</button>
             </div>
           ))}
         </div>
@@ -138,7 +138,7 @@ export default function Panier() {
               </button>
               <a href={recapWhatsApp()} target="_blank" rel="noreferrer"
                 style={{ display: 'block', textAlign: 'center', background: '#25D366', color: '#fff', padding: '13px', borderRadius: 11, fontWeight: 800, fontSize: 15, textDecoration: 'none' }}>
-                💬 {t("order_whatsapp")}
+                WHATSAPP
               </a>
             </>
           ) : (

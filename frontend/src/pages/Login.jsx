@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/optinet-logo.png";
-import "./styles_admin/login.css";
+import logo from "../assets/logo-Optinet-sokode.webp";
 import { loginUser } from "../services/authService";
+import "./styles_admin/login.css";
 
 const Login = () => {
   const navigate = useNavigate();

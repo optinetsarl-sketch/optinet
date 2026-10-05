@@ -1,6 +1,5 @@
-import React from 'react';
-import '../styles_admin/direction.css';
 import { useLanguage } from '../../context/LanguageContext';
+import '../styles_admin/direction.css';
 
 export default function Direction() {
   const { t, tDynamic } = useLanguage();
@@ -36,14 +35,14 @@ export default function Direction() {
           <p className="executive-title">{t("direction_dg_title")}</p>
 
           <div className="executive-contact-list">
-            <a href="mailto:nabine@optinet.tg" className="contact-pill">
-              <span className="icon">📧</span> nabine@optinet.tg
+            <a href="mailto:optinetsarl@gmail.com" className="contact-pill">
+              <span className="icon">MAIL</span> optinetsarl@gmail.com
             </a>
             <a href="tel:+22890748465" className="contact-pill">
-              <span className="icon">📞</span> +228 90 74 84 65
+              <span className="icon">TEL</span> +228 90 74 84 65
             </a>
             <div className="contact-pill">
-              <span className="icon">🌐</span> LinkedIn: NABINE T.
+              <span className="icon">WEB</span> LinkedIn: NABINE T.
             </div>
           </div>
         </div>

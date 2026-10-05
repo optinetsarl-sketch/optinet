@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import heroBg from "../../assets/services/service-1.jpg";
+import heroBg from "../../assets/services/service-1.webp";
 import { useLanguage } from "../../context/LanguageContext";
 import "./home.css";
 
@@ -68,6 +68,86 @@ export default function Homes() {
               <Link to="/services" className="btn-outline">{t("hero_btn_services")}</Link>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="home-trust" aria-label="Pour quoi choisir OPTINET">
+        <div className="home-trust__wrap">
+          <div className="home-trust__hero">
+            <span className="home-trust__eyebrow">OPTINET SARL U</span>
+            <h2>Des infrastructures fiables, sécurisées et pensées pour la croissance de votre activité.</h2>
+            <p>
+              Nous concevons des solutions IT sur mesure pour les entreprises, les administrations et les opérateurs
+              qui veulent gagner en performance, réduire les risques et accompagner leur transformation numérique.
+            </p>
+            <div className="home-trust__stats" aria-label="Chiffres clés de OPTINET">
+              <div className="home-trust__stat--projects">
+                <strong>150+</strong>
+                <span>projets réalisés</span>
+              </div>
+              <div>
+                <strong>24/7</strong>
+                <span>support technique</span>
+              </div>
+              <div>
+                <strong>98%</strong>
+                <span>clients satisfaits</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="home-trust__cards">
+            <article className="home-trust__card">
+              <span className="home-trust__icon">⚡</span>
+              <h3>Performance</h3>
+              <p>Infrastructure robuste, connectivité stable et systèmes conçus pour soutenir votre croissance.</p>
+            </article>
+            <article className="home-trust__card">
+              <span className="home-trust__icon">🔒</span>
+              <h3>Sécurité</h3>
+              <p>Protection des données, surveillance, périmètre réseau et politiques de contrôle efficaces.</p>
+            </article>
+            <article className="home-trust__card">
+              <span className="home-trust__icon">🤝</span>
+              <h3>Accompagnement</h3>
+              <p>Une équipe experte qui guide chaque étape, de l’audit au déploiement et à la maintenance.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section className="home-value" aria-labelledby="home-value-title">
+        <div className="home-value__heading">
+          <span className="home-products__eyebrow">POURQUOI NOUS CHOISIR</span>
+          <h2 id="home-value-title">Une expertise IT qui fait la différence.</h2>
+        </div>
+
+        <div className="home-value__grid">
+          <article className="home-value__item">
+            <div className="home-value__number">01</div>
+            <h3>Audit clair et recommandations concrètes</h3>
+            <p>Nous identifions les points de friction avant de proposer une solution adaptée à votre environnement.</p>
+          </article>
+          <article className="home-value__item">
+            <div className="home-value__number">02</div>
+            <h3>Solutions sur mesure</h3>
+            <p>Chaque projet est pensé selon vos objectifs, votre budget et votre niveau d’exigence opérationnelle.</p>
+          </article>
+          <article className="home-value__item">
+            <div className="home-value__number">03</div>
+            <h3>Support durable</h3>
+            <p>Une maintenance continue, une disponibilité rassurante et une équipe à l’écoute de vos besoins.</p>
+          </article>
+        </div>
+      </section>
+
+      <section className="home-cta" aria-label="Contact OPTINET">
+        <div className="home-cta__content">
+          <div>
+            <span className="home-products__eyebrow">COMMENCER MAINTENANT</span>
+            <h2>Besoin d’une infrastructure fiable ou d’une solution numérique sur mesure ?</h2>
+          </div>
+          <Link to="/contact" className="btn-main">Demander un devis</Link>
         </div>
       </section>
 

@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { sendMessage } from "../../services/authService";
+import { useState } from "react";
 import { useLanguage } from "../../context/LanguageContext";
+import { sendMessage } from "../../services/authService";
+import "./contact.css";
 
 export default function Contact() {
   const [nom, setNom] = useState("");
@@ -12,6 +13,9 @@ export default function Contact() {
   const [payer, setPayer] = useState('TG');
   const [numeroDeTelephone, setNumeroDeTelephone] = useState("");
   const { t, language } = useLanguage();
+  const OPTINET_EMAIL = "optinetsarl@gmail.com";
+  const whatsappUrl = `https://wa.me/22890748465?text=${encodeURIComponent(t("contact_whatsapp_message"))}`;
+  const mailtoUrl = `mailto:${OPTINET_EMAIL}?subject=${encodeURIComponent("Demande de contact OPTINET")}&body=${encodeURIComponent("Bonjour OPTINET,\n\nJe souhaite obtenir plus d’informations sur votre solution.\n\nMerci.")}`;
 
   const payerInfo = {
     TG: { code: '+228', flag: '🇹🇬', name: 'Togo' },
@@ -90,30 +94,38 @@ export default function Contact() {
           <p className="section-sub">
             {t("contact_sub")}
           </p>
+          <div className="contact-cta-row">
+            <a className="contact-whatsapp" href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+              {t("contact_whatsapp_btn")}
+            </a>
+            <a className="contact-mail" href={mailtoUrl}>
+              Envoyer un e-mail
+            </a>
+          </div>
           <div className="contact-cards">
             <div className="contact-card">
-              <div className="contact-card-icon">📍</div>
+              <div className="contact-card-icon">LOC</div>
               <div className="contact-card-text">
                 <label>{t("contact_loc")}</label>
                 <p>Lomé, Togo</p>
               </div>
             </div>
             <div className="contact-card">
-              <div className="contact-card-icon">📞</div>
+              <div className="contact-card-icon">TEL</div>
               <div className="contact-card-text">
                 <label>{t("contact_phone")}</label>
-                <p>+228 90 74 84 65</p>
+                <p><a className="contact-phone-link" href="tel:+22890748465">+228 90 74 84 65</a></p>
               </div>
             </div>
             <div className="contact-card">
-              <div className="contact-card-icon">📧</div>
+              <div className="contact-card-icon">MAIL</div>
               <div className="contact-card-text">
                 <label>{t("contact_email")}</label>
-                <p>contact@optinet.tg</p>
+                <p><a className="contact-phone-link" href={mailtoUrl}>{OPTINET_EMAIL}</a></p>
               </div>
             </div>
             <div className="contact-card">
-              <div className="contact-card-icon">🕐</div>
+              <div className="contact-card-icon">HRS</div>
               <div className="contact-card-text">
                 <label>{t("contact_avail")}</label>
                 <p>24/7 Support</p>

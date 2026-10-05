@@ -36,6 +36,7 @@ const SOCIALS = [
 
 export default function Footer() {
   const { t } = useLanguage();
+  const OPTINET_EMAIL = "optinetsarl@gmail.com";
 
   return (
     <>
@@ -53,6 +54,9 @@ export default function Footer() {
             <p className="footer-desc">
               {t("hero_subtitle")}
             </p>
+            <a href={`mailto:${OPTINET_EMAIL}`} className="footer-email-link">
+              {OPTINET_EMAIL}
+            </a>
             <div className="footer-badges">
               <span className="footer-badge">CCNA 200-301</span>
               <span className="footer-badge">NSE 4</span>
@@ -137,7 +141,7 @@ export default function Footer() {
         rel="noreferrer"
         title="Discuter sur WhatsApp"
       >
-        💬
+        <span className="whatsapp-float__label">CHAT</span>
       </a>
     </>
   );

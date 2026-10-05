@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Votre message a été reçu — OPTINET</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f8; color: #1a2332; }
+    .wrapper { max-width: 620px; margin: 32px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.10); }
+
+    /* HERO */
+    .hero { background: linear-gradient(135deg, #0a2463 0%, #1565c0 60%, #0288d1 100%); padding: 40px 40px 36px; text-align: center; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; top: -40px; right: -40px; width: 160px; height: 160px; background: rgba(255,255,255,0.06); border-radius: 50%; }
+    .hero::after { content: ''; position: absolute; bottom: -30px; left: -30px; width: 120px; height: 120px; background: rgba(255,255,255,0.04); border-radius: 50%; }
+    .hero h1 { color: #ffffff; font-size: 26px; font-weight: 800; letter-spacing: 1px; }
+    .hero .subtitle { color: #90caf9; font-size: 13px; margin-top: 6px; }
+    .hero .check-icon { width: 56px; height: 56px; background: rgba(255,255,255,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; border: 2px solid rgba(255,255,255,0.3); }
+    .hero .check-icon svg { width: 28px; height: 28px; }
+
+    /* BODY */
+    .body { padding: 36px 40px; }
+    .greeting { font-size: 18px; font-weight: 700; color: #0a2463; margin-bottom: 16px; }
+    .intro-text { font-size: 15px; color: #475569; line-height: 1.7; margin-bottom: 28px; }
+    .intro-text strong { color: #1565c0; }
+
+    /* RÉCAP */
+    .recap-box { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px 24px; margin-bottom: 30px; }
+    .recap-box .recap-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: #64748b; margin-bottom: 12px; }
+    .recap-row { display: flex; align-items: baseline; margin-bottom: 6px; font-size: 14px; }
+    .recap-row .r-label { color: #94a3b8; min-width: 80px; font-size: 12px; font-weight: 600; text-transform: uppercase; }
+    .recap-row .r-value { color: #1e293b; font-weight: 600; }
+
+    /* ENGAGEMENT */
+    .engagement { text-align: center; margin-bottom: 32px; }
+    .engagement .delay-badge { display: inline-block; background: #e0f2fe; color: #0369a1; font-weight: 700; font-size: 13px; padding: 8px 20px; border-radius: 20px; border: 1px solid #bae6fd; }
+
+    /* SOCIAL LINKS */
+    .social-section { margin-bottom: 30px; }
+    .social-title { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 14px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
+    .social-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .social-btn { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; transition: opacity 0.2s; }
+    .social-btn:hover { opacity: 0.85; }
+    .social-btn .icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .social-btn .icon svg { width: 16px; height: 16px; }
+    .btn-website { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+    .btn-website .icon { background: #1d4ed8; }
+    .btn-whatsapp { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+    .btn-whatsapp .icon { background: #16a34a; }
+    .btn-facebook { background: #eff6ff; color: #1877f2; border: 1px solid #93c5fd; }
+    .btn-facebook .icon { background: #1877f2; }
+    .btn-linkedin { background: #eff6ff; color: #0a66c2; border: 1px solid #93c5fd; }
+    .btn-linkedin .icon { background: #0a66c2; }
+    .btn-instagram { background: #fdf2f8; color: #9333ea; border: 1px solid #f0abfc; }
+    .btn-instagram .icon { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+    .btn-youtube { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+    .btn-youtube .icon { background: #dc2626; }
+
+    /* FOOTER */
+    .divider { border: none; border-top: 1px solid #e2e8f0; margin: 28px 0 20px; }
+    .footer-text { font-size: 12px; color: #94a3b8; text-align: center; line-height: 1.8; }
+    .footer-text strong { color: #475569; }
+    .footer-bg { background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 20px 40px; text-align: center; }
+
+    @media (max-width: 480px) {
+      .social-grid { grid-template-columns: 1fr; }
+      .body { padding: 24px 20px; }
+      .hero { padding: 28px 20px; }
+      .recap-row { flex-direction: column; gap: 2px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="check-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <h1>OPTINET SARLU</h1>
+      <p class="subtitle">Solutions IT &amp; Télécoms — Lomé, Togo</p>
+    </div>
+
+    <!-- CORPS -->
+    <div class="body">
+      <p class="greeting">Bonjour {{ prenom }},</p>
+      <p class="intro-text">
+        Nous avons bien reçu votre message concernant <strong>« {{ sujet }} »</strong>.<br/><br/>
+        Merci de nous avoir contactés. Notre équipe a été notifiée et vous répondra dans les meilleurs délais.
+      </p>
+
+      <!-- RÉCAP DU MESSAGE -->
+      <div class="recap-box">
+        <div class="recap-title">Récapitulatif de votre message</div>
+        <div class="recap-row">
+          <span class="r-label">Sujet</span>
+          <span class="r-value">{{ sujet }}</span>
+        </div>
+        <div class="recap-row">
+          <span class="r-label">Message</span>
+          <span class="r-value" style="color:#475569; font-weight:400;">{{ contenu_court }}</span>
+        </div>
+      </div>
+
+      <!-- DÉLAI DE RÉPONSE -->
+      <div class="engagement">
+        <p style="font-size:14px; color:#475569; margin-bottom:10px;">Délai de réponse estimé</p>
+        <span class="delay-badge">24 à 48 heures ouvrables</span>
+      </div>
+
+      <!-- LIENS SOCIAUX -->
+      <div class="social-section">
+        <p class="social-title">Retrouvez-nous sur nos plateformes</p>
+        <div class="social-grid">
+
+          <!-- Site web -->
+          <a href="https://optinet.ginolux.com" class="social-btn btn-website">
+            <div class="icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+              </svg>
+            </div>
+            Site web officiel
+          </a>
+
+          <!-- WhatsApp -->
+          <a href="https://wa.me/22890748465" class="social-btn btn-whatsapp">
+            <div class="icon">
+              <svg viewBox="0 0 24 24" fill="#fff">
+                <path d="M12.031 2C6.495 2 2 6.494 2 12.029c0 1.956.562 3.869 1.63 5.534L2 22l4.606-1.599A9.99 9.99 0 0012.03 22c5.536 0 10.03-4.494 10.03-10.029C22.06 6.494 17.567 2 12.031 2zm4.536 14.077c-.248-.124-1.468-.724-1.696-.807-.228-.083-.394-.124-.56.124-.166.248-.642.807-.787.973-.145.166-.29.186-.538.062-.249-.124-1.049-.386-1.999-1.233-.739-.658-1.238-1.472-1.383-1.72-.145-.248-.016-.382.108-.506.112-.112.249-.29.373-.435.124-.145.166-.248.249-.414.083-.166.041-.311-.021-.435-.062-.124-.56-1.349-.767-1.847-.202-.485-.407-.419-.56-.427l-.477-.008c-.166 0-.435.062-.663.311-.228.248-.871.85-.871 2.073 0 1.223.892 2.404 1.016 2.57.124.166 1.755 2.68 4.252 3.757.594.256 1.058.41 1.42.525.597.19 1.14.163 1.57.099.479-.071 1.468-.6 1.675-1.18.207-.58.207-1.077.145-1.18-.062-.103-.228-.166-.477-.29z"/>
+              </svg>
+            </div>
+            WhatsApp : +228 90 74 84 65
+          </a>
+
+          <!-- Facebook 1 -->
+          <a href="https://web.facebook.com/liconln.nabiscofild.3" class="social-btn btn-facebook">
+            <div class="icon">
+              <svg viewBox="0 0 24 24" fill="#fff">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+              </svg>
+            </div>
+            Facebook OPTINET
+          </a>
+
+          <!-- Facebook 2 / Page officielle -->
+          <a href="https://web.facebook.com/profile.php?id=61582757837937" class="social-btn btn-facebook">
+            <div class="icon">
+              <svg viewBox="0 0 24 24" fill="#fff">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+              </svg>
+            </div>
+            Page Facebook officielle
+          </a>
+
+          <!-- LinkedIn -->
+          <a href="https://www.linkedin.com/company/optinet-sarlu" class="social-btn btn-linkedin">
+            <div class="icon">
+              <svg viewBox="0 0 24 24" fill="#fff">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/>
+                <circle cx="4" cy="4" r="2"/>
+              </svg>
+            </div>
+            LinkedIn
+          </a>
+
+          <!-- YouTube -->
+          <a href="https://www.youtube.com/@optinetsarlu" class="social-btn btn-youtube">
+            <div class="icon">
+              <svg viewBox="0 0 24 24" fill="#fff">
+                <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.5C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/>
+                <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#dc2626"/>
+              </svg>
+            </div>
+            YouTube
+          </a>
+
+        </div>
+      </div>
+
+      <hr class="divider"/>
+      <p class="footer-text">
+        Pour toute urgence, contactez-nous directement sur WhatsApp au <strong>+228 90 74 84 65</strong><br/>
+        ou par email à <strong>optinetsarl@gmail.com</strong>
+      </p>
+    </div>
+
+    <!-- PIED DE PAGE -->
+    <div class="footer-bg">
+      <p style="font-size:12px; color:#94a3b8; line-height:1.7;">
+        <strong style="color:#475569;">OPTINET SARLU</strong> — Lomé, Togo<br/>
+        Ce message est une confirmation automatique. Merci de ne pas y répondre directement.<br/>
+        <span style="color:#cbd5e1;">© 2025 OPTINET SARLU. Tous droits réservés.</span>
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>

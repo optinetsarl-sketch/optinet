@@ -1,10 +1,14 @@
-import React from 'react';
-import '../styles_admin/A_propos.css';
 import optinetLogo from "../../assets/optinet-logo.png";
 import { useLanguage } from '../../context/LanguageContext';
+import '../styles_admin/A_propos.css';
 
 export default function APropos() {
   const { t } = useLanguage();
+  const features = [
+    { title: t("about_feat1_title"), description: t("about_feat1_desc") },
+    { title: t("about_feat2_title"), description: t("about_feat2_desc") },
+    { title: t("about_feat3_title"), description: t("about_feat3_desc") },
+  ];
 
   return (
     <section className="about-ultra" id="about">
@@ -63,30 +67,22 @@ export default function APropos() {
           </p>
 
           <div className="features-stack">
-            <div className="feat-card">
-              <div className="feat-icon">⚡</div>
-              <div className="feat-txt">
-                <h4>{t("about_feat1_title")}</h4>
-                <p>{t("about_feat1_desc")}</p>
+            {features.map((feature, index) => (
+              <div className="feat-card" key={feature.title}>
+                <span className="feat-index" aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <div className="feat-txt">
+                  <h4>{feature.title}</h4>
+                  <p>{feature.description}</p>
+                </div>
               </div>
-            </div>
-
-            <div className="feat-card">
-              <div className="feat-icon">🎯</div>
-              <div className="feat-txt">
-                <h4>{t("about_feat2_title")}</h4>
-                <p>{t("about_feat2_desc")}</p>
-              </div>
-            </div>
-
-            <div className="feat-card">
-              <div className="feat-icon">🛡️</div>
-              <div className="feat-txt">
-                <h4>{t("about_feat3_title")}</h4>
-                <p>{t("about_feat3_desc")}</p>
-              </div>
-            </div>
+            ))}
           </div>
+
+          <a className="about-contact-link" href="mailto:optinetsarl@gmail.com">
+            {t("contact")} <span aria-hidden="true">→</span>
+          </a>
         </div>
 
       </div>

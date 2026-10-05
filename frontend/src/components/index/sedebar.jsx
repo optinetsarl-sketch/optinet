@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import optinetLogo from "../../assets/optinet-logo.png";
+import optinetLogo from "../../assets/logo-Optinet-sokode.webp";
+import optinetLogoFallback from "../../assets/optinet-logo.png";
 import { useLanguage } from "../../context/LanguageContext";
 import { cartCount } from "../../services/cart";
 import LanguageSelector from "../LanguageSelector";
@@ -18,8 +19,12 @@ function CartLink({ onClick }) {
   }, [location]);
   return (
     <Link to="/panier" onClick={onClick} aria-label="Panier"
-      style={{ position: "relative", display: "inline-flex", alignItems: "center", color: "#fff", textDecoration: "none", fontSize: 22, padding: "4px 6px" }}>
-      🛒
+      style={{ position: "relative", display: "inline-flex", alignItems: "center", color: "#fff", textDecoration: "none", padding: "6px 8px" }}>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" style={{ display: "block" }}>
+        <path d="M3 5h2l2.2 9.2a1 1 0 0 0 1 .8h8.8a1 1 0 0 0 1-.76L20 7H7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="10" cy="18.5" r="1.3" fill="currentColor" stroke="none" />
+        <circle cx="17" cy="18.5" r="1.3" fill="currentColor" stroke="none" />
+      </svg>
       {count > 0 && (
         <span style={{ position: "absolute", top: -4, right: -6, background: "#11b981", color: "#fff", fontSize: 11, fontWeight: 800, minWidth: 18, height: 18, borderRadius: 10, display: "grid", placeItems: "center", padding: "0 4px" }}>
           {count}
@@ -81,7 +86,15 @@ const Navbar = () => {
       {/* Logo */}
       <Link className="nav-logo" to="/" onClick={closeMenu}>
         <div className="nav-logo-circle" style={{ overflow: "hidden", padding: 0 }}>
-          <img src={optinetLogo} alt="OptiNet" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }} />
+          <img
+            src={optinetLogo}
+            alt="OptiNet"
+            onError={(event) => {
+              event.currentTarget.onerror = null;
+              event.currentTarget.src = optinetLogoFallback;
+            }}
+            style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }}
+          />
         </div>
         <span className="nav-logo-text">
           Opti<span>Net</span>

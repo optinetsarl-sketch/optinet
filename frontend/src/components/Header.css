@@ -1,45 +1,28 @@
-/* ========================================
-   Header – Variables
-   ======================================== */
+/* ============================================================
+   HEADER — Design Premium OPTINET 2026
+   ============================================================ */
+
 :root {
-  --header-height: 72px;
-  --header-bg: #eaf4ff;
-  --header-border: #cce4fb;
-
-  --header-title-color: #0f4f7b;
-  --header-title-size: 1.125rem;
-
-  --header-icon-color: #0f6cb3;
-  --header-icon-hover-bg: #d9ecff;
-  --header-icon-hover-color: #084d78;
-
-  --header-badge-bg: #0f6cb3;
-  --header-badge-color: #ffffff;
-  --header-badge-danger-bg: #da4b4b;
-
-  --header-divider-color: #cce4fb;
-
-  --header-user-hover-bg: #d9ecff;
-  --header-avatar-bg: #0f6cb3;
-  --header-avatar-color: #ffffff;
-
-  --header-logout-hover-bg: #d8e8ff;
-  --header-logout-hover-color: #084d78;
-
-  --header-transition: 0.2s ease;
+  --hdr-height: 68px;
+  --hdr-bg: #ffffff;
+  --hdr-border: #e2e8f0;
+  --hdr-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  --hdr-blue: #0f6cb3;
+  --hdr-blue-dark: #084d78;
+  --hdr-text: #0f172a;
+  --hdr-muted: #64748b;
+  --hdr-icon-hover: #f1f5f9;
+  --hdr-active-bg: #eff6ff;
+  --hdr-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
 }
 
-/* ========================================
-   Header – Conteneur
-   ======================================== */
+/* ── Conteneur ── */
 .header {
-  position: sticky;
-  top: 0;
-  z-index: 900;
-  height: var(--header-height);
-  background: var(--header-bg);
-  border-bottom: 1px solid var(--header-border);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  position: sticky; top: 0; z-index: 900;
+  height: var(--hdr-height);
+  background: var(--hdr-bg);
+  border-bottom: 1px solid var(--hdr-border);
+  box-shadow: var(--hdr-shadow);
 }
 
 .header__inner {
@@ -47,172 +30,508 @@
   align-items: center;
   justify-content: space-between;
   height: 100%;
-  padding: 0 24px;
+  padding: 0 28px;
 }
 
-/* ========================================
-   Header – Titre
-   ======================================== */
-.header__title {
-  margin: 0;
-  font-size: var(--header-title-size);
-  font-weight: 700;
-  color: var(--header-title-color);
-  letter-spacing: -0.2px;
+/* ── Gauche : titre + badge + date ── */
+.header__left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-/* ========================================
-   Header – Zone d'actions
-   ======================================== */
-.header__actions {
+.header__title-row {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-/* ========================================
-   Header – Boutons icônes (messages, notifs, logout)
-   ======================================== */
+.header__title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--hdr-text);
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+}
+
+.header__env-badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #166534;
+  background: #dcfce7;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid #bbf7d0;
+}
+
+.header__date {
+  font-size: 11.5px;
+  color: var(--hdr-muted);
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+/* ── Zone d'actions ── */
+.header__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Bouton Accès Rapide Site Public ── */
+.header__quick-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all var(--hdr-transition);
+}
+
+.header__quick-btn:hover {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: var(--hdr-blue);
+  transform: translateY(-1px);
+}
+
+/* ── Bouton icône générique ── */
 .header__icon-btn {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
-  border: none;
-  border-radius: 12px;
-  background: transparent;
-  color: var(--header-icon-color);
+  width: 40px; height: 40px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #ffffff;
+  color: var(--hdr-muted);
   cursor: pointer;
-  transition:
-    background var(--header-transition),
-    color var(--header-transition);
+  text-decoration: none;
+  transition: all var(--hdr-transition);
+  flex-shrink: 0;
 }
 
 .header__icon-btn:hover {
-  background: var(--header-icon-hover-bg);
-  color: var(--header-icon-hover-color);
+  background: var(--hdr-icon-hover);
+  border-color: #cbd5e1;
+  color: var(--hdr-blue);
 }
 
-/* --- Variante logout --- */
-.header__icon-btn--logout:hover {
-  background: var(--header-logout-hover-bg);
-  color: var(--header-logout-hover-color);
+.header__icon-btn--active {
+  background: var(--hdr-active-bg);
+  border-color: #bfdbfe;
+  color: var(--hdr-blue);
 }
 
-/* ========================================
-   Header – Badge (compteur messages / notifs)
-   ======================================== */
+/* ── Cloche — animation sonnerie ── */
+.header__bell-icon {
+  transition: transform 0.15s ease;
+}
+
+.header__bell-icon--ring {
+  animation: bell-ring 0.6s ease 0s 1, bell-idle 4s ease 1s infinite;
+  transform-origin: 50% 0%;
+}
+
+@keyframes bell-ring {
+  0%   { transform: rotate(0); }
+  15%  { transform: rotate(14deg); }
+  30%  { transform: rotate(-10deg); }
+  45%  { transform: rotate(8deg); }
+  60%  { transform: rotate(-5deg); }
+  75%  { transform: rotate(3deg); }
+  100% { transform: rotate(0); }
+}
+
+@keyframes bell-idle {
+  0%, 88%, 100% { transform: rotate(0); }
+  90% { transform: rotate(10deg); }
+  92% { transform: rotate(-8deg); }
+  94% { transform: rotate(6deg); }
+  96% { transform: rotate(-4deg); }
+}
+
+/* ── Badge sur la cloche ── */
 .header__badge {
   position: absolute;
-  top: 2px;
-  right: 2px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  border-radius: 9999px;
-  background: var(--header-badge-bg);
-  color: var(--header-badge-color);
-  font-size: 0.65rem;
-  font-weight: 700;
-  line-height: 1;
+  top: -4px; right: -4px;
+  min-width: 18px; height: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  font-size: 10px; font-weight: 800;
+  line-height: 18px; text-align: center;
+  border: 2px solid #ffffff;
   pointer-events: none;
 }
 
 .header__badge--danger {
-  background: var(--header-badge-danger-bg);
+  background: #ef4444;
+  color: #ffffff;
+  animation: badge-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* ========================================
-   Header – Séparateur
-   ======================================== */
+@keyframes badge-pop {
+  from { transform: scale(0); }
+  to   { transform: scale(1); }
+}
+
+/* ══════════════════════════════════════════════
+   DROPDOWN PANEL DE NOTIFICATIONS
+   ══════════════════════════════════════════════ */
+.header__notif-wrap { position: relative; }
+
+.header__notif-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 380px;
+  max-width: calc(100vw - 20px);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px -10px rgba(0,0,0,0.18), 0 2px 10px rgba(0,0,0,0.06);
+  overflow: hidden;
+  z-index: 1200;
+  animation: panel-in 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-origin: top right;
+}
+
+@keyframes panel-in {
+  from { opacity: 0; transform: scale(0.95) translateY(-6px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* En-tête */
+.notif-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: #f8fafc;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.notif-panel__head-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.notif-panel__title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.notif-panel__count {
+  font-size: 11px;
+  font-weight: 700;
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.notif-panel__close {
+  display: flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px;
+  border: none; border-radius: 8px;
+  background: transparent; color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.notif-panel__close:hover { background: #e2e8f0; color: #334155; }
+
+/* Liste */
+.notif-panel__list {
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.notif-panel__list::-webkit-scrollbar { width: 5px; }
+.notif-panel__list::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 5px; }
+
+/* État vide / chargement */
+.notif-panel__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 40px 20px;
+  color: #94a3b8;
+  font-size: 13.5px;
+}
+
+.notif-spinner {
+  width: 24px; height: 24px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #0f6cb3;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Item message */
+.notif-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 13px 18px;
+  border-bottom: 1px solid #f8fafc;
+  text-decoration: none;
+  transition: background 0.15s ease;
+  position: relative;
+}
+
+.notif-item:hover { background: #f8fafc; }
+.notif-item:last-child { border-bottom: none; }
+
+.notif-item__avatar {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0f6cb3, #0b4e82);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: 0.5px;
+}
+
+.notif-item__body { flex: 1; min-width: 0; }
+
+.notif-item__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.notif-item__name {
+  font-size: 13px; font-weight: 700; color: #0f172a;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+.notif-item__time {
+  font-size: 11px; color: #94a3b8; flex-shrink: 0;
+}
+
+.notif-item__subject {
+  font-size: 12.5px; color: #334155; font-weight: 600;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  margin-bottom: 2px;
+}
+
+.notif-item__preview {
+  font-size: 12px; color: #94a3b8; line-height: 1.4;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.notif-item__dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #0f6cb3;
+  box-shadow: 0 0 0 2px rgba(15,108,179,0.2);
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+/* Pied du panel */
+.notif-panel__footer {
+  padding: 12px 16px;
+  border-top: 1px solid #f1f5f9;
+  background: #f8fafc;
+  display: flex;
+  justify-content: center;
+}
+
+.notif-panel__see-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #0f6cb3;
+  text-decoration: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid #e0f2fe;
+  background: #fff;
+  transition: all 0.15s ease;
+}
+
+.notif-panel__see-all:hover {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+/* ══════════════════════════════════════════════
+   SÉPARATEUR
+   ══════════════════════════════════════════════ */
 .header__divider {
-  width: 1px;
-  height: 28px;
-  background: var(--header-divider-color);
-  margin: 0 8px;
+  width: 1px; height: 26px;
+  background: #e2e8f0;
+  margin: 0 6px;
 }
 
-/* ========================================
-   Header – Utilisateur connecté
-   ======================================== */
+/* ══════════════════════════════════════════════
+   UTILISATEUR + DROPDOWN
+   ══════════════════════════════════════════════ */
+.header__user-wrap { position: relative; }
+
 .header__user-btn {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 6px 10px;
-  border: none;
+  padding: 4px 10px 4px 4px;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
-  background: transparent;
-  color: var(--header-icon-color);
-  font-size: 0.9rem;
-  font-weight: 500;
+  background: #ffffff;
+  color: var(--hdr-text);
   cursor: pointer;
-  transition:
-    background var(--header-transition),
-    color var(--header-transition);
+  transition: all var(--hdr-transition);
 }
 
-.header__user-btn:hover {
-  background: var(--header-user-hover-bg);
-  color: var(--header-icon-hover-color);
+.header__user-btn:hover,
+.header__user-btn--active {
+  background: var(--hdr-icon-hover);
+  border-color: #cbd5e1;
 }
 
-/* --- Avatar --- */
 .header__avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
+  width: 34px; height: 34px;
+  border-radius: 10px;
   object-fit: cover;
+  flex-shrink: 0;
 }
 
 .header__avatar--placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--header-avatar-bg);
-  color: var(--header-avatar-color);
-  font-size: 0.85rem;
-  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #0f6cb3, #0b4e82);
+  color: #fff;
+  font-size: 12px; font-weight: 800;
+  letter-spacing: 0.5px;
 }
 
-/* --- Nom utilisateur --- */
+.header__user-text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
 .header__username {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.1;
   white-space: nowrap;
 }
 
-/* --- Chevron --- */
+.header__user-role {
+  font-size: 10.5px;
+  color: #64748b;
+  font-weight: 500;
+}
+
 .header__chevron {
   opacity: 0.5;
-  transition: transform var(--header-transition);
+  transition: transform var(--hdr-transition), opacity var(--hdr-transition);
 }
 
-.header__user-btn:hover .header__chevron {
-  transform: translateY(1px);
+.header__chevron--open { transform: rotate(180deg); opacity: 1; }
+
+/* ── User dropdown ── */
+.header__user-drop {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 250px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 10px 36px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.05);
+  overflow: hidden;
+  z-index: 1200;
+  animation: panel-in 0.2s ease both;
+  transform-origin: top right;
 }
 
-/* ========================================
-   Header – Responsive
-   ======================================== */
-@media (max-width: 640px) {
-  .header__username,
-  .header__chevron {
-    display: none;
-  }
+.user-drop__info {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px;
+  background: #f8fafc;
+}
 
-  .header__user-btn {
-    padding: 4px;
-  }
+.user-drop__avatar {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: linear-gradient(135deg, #0f6cb3, #0b4e82);
+  color: #fff; font-size: 14px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
 
-  .header__divider {
-    margin: 0 4px;
-  }
+.user-drop__name {
+  font-size: 13.5px; font-weight: 700; color: #0f172a;
+}
 
-  .header__inner {
-    padding: 0 12px;
-  }
+.user-drop__email {
+  font-size: 11.5px; color: #94a3b8;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  max-width: 155px;
+}
+
+.user-drop__divider {
+  height: 1px; background: #f1f5f9; margin: 4px 0;
+}
+
+.user-drop__item {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%;
+  padding: 11px 16px;
+  background: none; border: none;
+  font-size: 13px; font-weight: 600;
+  color: #334155; cursor: pointer;
+  transition: background var(--hdr-transition), color var(--hdr-transition);
+  text-align: left;
+  text-decoration: none;
+}
+
+.user-drop__item:hover {
+  background: #f1f5f9;
+  color: #0f6cb3;
+}
+
+.user-drop__item--danger {
+  color: #ef4444 !important;
+}
+
+.user-drop__item--danger:hover {
+  background: #fef2f2 !important;
+  color: #dc2626 !important;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .header__quick-btn-text,
+  .header__user-text,
+  .header__date { display: none; }
+  .header__inner { padding: 0 14px; }
+  .header__notif-panel { width: calc(100vw - 28px); right: -50px; }
 }

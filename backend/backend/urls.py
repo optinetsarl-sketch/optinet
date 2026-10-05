@@ -62,7 +62,7 @@ if os.path.exists(get_frontend_dist_path()):
     
     urlpatterns += [
         re_path(r'^(?P<path>assets/.*)$', serve_static_asset, name='frontend-assets'),
-        re_path(r'^(?P<path>.*\.svg)$', serve_static_asset, name='frontend-svg'),
+        re_path(r'^(?P<path>[^/]+\.(?:svg|ico|png|webp|jpe?g|gif))$', serve_static_asset, name='frontend-static-image'),
     ]
 
 # Serve frontend for all other routes (SPA fallback)

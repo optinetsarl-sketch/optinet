@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { useLanguage } from '../../context/LanguageContext';
 import { getProduitDetail } from '../../services/authService';
 import { addToCart } from '../../services/cart';
-import { useLanguage } from '../../context/LanguageContext';
 
 const httpsUrl = (u) => {
   if (!u) return '';
@@ -129,14 +129,14 @@ export default function ProduitDetail() {
             <button
               onClick={() => { addToCart(produit, qte); setAdded(true); setTimeout(() => setAdded(false), 1600); }}
               style={{ flex: 1, background: added ? '#11b981' : '#12b3d6', color: '#03121f', border: 'none', borderRadius: 12, fontWeight: 800, fontSize: 16, cursor: 'pointer' }}>
-              {added ? '✓' : `🛒 ${t("add_to_cart")}`}
+              {added ? 'AJOUTÉ' : t("add_to_cart")}
             </button>
           </div>
           )}
 
           <a href={waLink()} target="_blank" rel="noreferrer"
             style={{ display: 'block', background: '#25D366', color: '#fff', textAlign: 'center', padding: '14px', borderRadius: 12, fontWeight: 800, textDecoration: 'none', fontSize: 16, marginBottom: 24 }}>
-            💬 {t("order_whatsapp")}
+            WHATSAPP
           </a>
 
           {specs.length > 0 && (

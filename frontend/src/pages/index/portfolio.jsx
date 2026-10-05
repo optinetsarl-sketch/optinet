@@ -1,59 +1,36 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useLanguage } from '../../context/LanguageContext';
 import { getPortfolios } from '../../services/authService';
 import '../styles_admin/public_portfolio.css';
-import { useLanguage } from '../../context/LanguageContext';
 
-const fallbackPortfolios = [
-  {
-    id: 'fallback-1',
-    titre: 'Infrastructure réseau sur mesure',
-    description: 'Conception et mise en place de réseaux sécurisés pour les entreprises et administrations avec optimisation de la performance et de la fiabilité.',
-    image_principale: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80',
-    categorie: { nom: 'Réseaux & Infrastructure' },
-    technologies: 'Cisco, Fortinet, VLAN, Wi‑Fi Enterprise',
-    lien_projet: null,
-    est_actif: true,
-    ordre_affichage: 1,
-  },
-  {
-    id: 'fallback-2',
-    titre: 'Sécurité vidéo & surveillance',
-    description: 'Installation de systèmes de vidéosurveillance intelligents pour améliorer la sécurité des sites, bureaux, entrepôts et espaces publics.',
-    image_principale: 'https://images.unsplash.com/photo-1516321165247-4aa89a48be28?auto=format&fit=crop&w=1200&q=80',
-    categorie: { nom: 'Sécurité' },
-    technologies: 'CCTV, Hikvision, Axis, Alarme',
-    lien_projet: null,
-    est_actif: true,
-    ordre_affichage: 2,
-  },
-  {
-    id: 'fallback-3',
-    titre: 'Téléphonie IP & communication',
-    description: 'Mise en place de solutions de téléphonie IP modernes pour fluidifier les échanges internes et externes des organisations.',
-    image_principale: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80',
-    categorie: { nom: 'Télécommunications' },
-    technologies: 'VoIP, Asterisk, PBX, SIP Trunking',
-    lien_projet: null,
-    est_actif: true,
-    ordre_affichage: 3,
-  },
-];
+const PLACEHOLDER_TEXT = /^(?:test|thoma|r{3,}|d{3,})$/i;
+
+const isPublishablePortfolio = (item) => {
+  if (!item.est_actif || !item.image_principale || !item.titre?.trim()) return false;
+  return ![item.titre, item.description, item.technologies]
+    .some((value) => PLACEHOLDER_TEXT.test((value || '').trim()));
+};
 
 const PortfolioSection = () => {
   const [portfolios, setPortfolios] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const { t, tDynamic } = useLanguage();
 
   useEffect(() => {
     getPortfolios()
       .then((res) => {
-        const data = Array.isArray(res?.data) ? res.data : [];
-        const activePortfolios = data
-          .filter((p) => p?.est_actif)
-          .sort((a, b) => (a.ordre_affichage ?? 0) - (b.ordre_affichage ?? 0));
-
-        setPortfolios(activePortfolios.length ? activePortfolios : fallbackPortfolios);
+        const activePortfolios = (Array.isArray(res.data) ? res.data : [])
+          .filter(isPublishablePortfolio)
+          .sort((a, b) => a.ordre_affichage - b.ordre_affichage);
+        setPortfolios(activePortfolios);
       })
-      .catch(() => setPortfolios(fallbackPortfolios));
+      .catch((err) => {
+        console.error("Erreur lors de la récupération du portfolio:", err);
+        setLoadError(true);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -82,8 +59,6 @@ const PortfolioSection = () => {
     return () => observer.disconnect();
   }, [portfolios]);
 
-  if (portfolios.length === 0) return null;
-
   return (
     <section className="pub-portfolio-section" id="portfolio">
       <div className="pub-portfolio-header">
@@ -96,11 +71,22 @@ const PortfolioSection = () => {
         </p>
       </div>
 
+      {loading ? (
+        <p className="pub-portfolio-status" role="status">{t("portfolio_loading")}</p>
+      ) : portfolios.length === 0 ? (
+        <div className="pub-portfolio-empty" role="status">
+          <h3>{t(loadError ? "portfolio_error_title" : "portfolio_empty_title")}</h3>
+          <p>{t(loadError ? "portfolio_error_sub" : "portfolio_empty_sub")}</p>
+          <Link className="pub-portfolio-empty-link" to="/contact">
+            {t("portfolio_empty_cta")}
+          </Link>
+        </div>
+      ) : (
       <div className="pub-portfolio-grid">
         {portfolios.map((item, index) => (
-          <div className="pub-portfolio-card" key={item.id} style={{ transitionDelay: `${(index % 3) * 0.15}s` }}>
+          <article className="pub-portfolio-card" key={item.id} style={{ transitionDelay: `${(index % 3) * 0.1}s` }}>
             <div className="pub-portfolio-img-wrapper">
-              <img src={item.image_principale} alt={item.titre} className="pub-portfolio-img" />
+              <img src={item.image_principale} alt={tDynamic(item.titre)} className="pub-portfolio-img" loading="lazy" decoding="async" />
               <div className="pub-portfolio-overlay">
                 {item.lien_projet ? (
                   <a href={item.lien_projet} target="_blank" rel="noopener noreferrer" className="pub-portfolio-link">
@@ -119,19 +105,20 @@ const PortfolioSection = () => {
             </div>
             <div className="pub-portfolio-content">
               {item.categorie && (
-                <div className="pub-portfolio-client">{tDynamic(item.categorie.nom || item.categorie)}</div>
+                <div className="pub-portfolio-client">{tDynamic(item.categorie.nom)}</div>
               )}
               <h3 className="pub-portfolio-title">{tDynamic(item.titre)}</h3>
               <p className="pub-portfolio-desc">{tDynamic(item.description)}</p>
               <div className="pub-portfolio-tags">
-                {(typeof item.technologies === 'string' ? item.technologies.split(',') : []).map((tech, i) => (
-                  <span className="pub-portfolio-tag" key={i}>{tech.trim()}</span>
+                {(item.technologies || '').split(',').map((tech) => tech.trim()).filter(Boolean).map((tech) => (
+                  <span className="pub-portfolio-tag" key={tech}>{tech}</span>
                 ))}
               </div>
             </div>
-          </div>
+          </article>
         ))}
       </div>
+      )}
     </section>
   );
 };

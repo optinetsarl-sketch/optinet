@@ -9,26 +9,25 @@ export default function AdminLayout() {
   useSessionTimeout();
   return (
     <MessageProvider>
-      <div className="admin-layout" style={{ minHeight: "10vh", backgroundColor: "#f4f7fa" }}>
+      <div className="admin-layout" style={{ minHeight: "100vh", backgroundColor: "#f0f4f8" }}>
+        <Sidebar />
         {/* CONTENU PRINCIPAL */}
-        <div 
-          className="admin-layout__content" 
-          style={{ 
-            marginLeft: "260px",
+        <div
+          className="admin-layout__content"
+          style={{
+            marginLeft: "268px",
             display: "flex",
             flexDirection: "column",
-            minHeight: "100vh"
+            minHeight: "100vh",
           }}
         >
-          <Sidebar />
           <Header />
-          
           <main
             className="admin-layout__main"
             style={{
               flex: 1,
-              padding: "24px",
-              backgroundColor: "#71b7c3ff"
+              padding: "28px 30px",
+              backgroundColor: "#f0f4f8",
             }}
           >
             <Outlet />

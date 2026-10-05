@@ -67,6 +67,91 @@ class MessageCreateView(generics.CreateAPIView):
     serializer_class = MessageSerializer
     permission_classes = [AllowAny]
 
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        # Envoi des emails en mode non-bloquant
+        try:
+            self._send_emails(instance)
+        except Exception:
+            # Ne jamais bloquer la sauvegarde si l'email échoue
+            import logging
+            logging.getLogger(__name__).exception(
+                "Erreur lors de l'envoi des emails pour le message #%s", instance.pk
+            )
+
+    def _send_emails(self, msg):
+        from django.conf import settings
+        from django.core.mail import EmailMultiAlternatives
+        from django.template.loader import render_to_string
+        from django.utils.timezone import localtime, now
+
+        date_fr = localtime(now()).strftime('%d/%m/%Y à %H:%M')
+        prenom = (msg.nom or '').split()[0] if msg.nom else 'Client'
+        contenu_court = (msg.contenu or '')[:200]
+        if len(msg.contenu or '') > 200:
+            contenu_court += '...'
+
+        destinataire_optinet = getattr(settings, 'OPTINET_EMAIL_DESTINATAIRE', 'optinetsarl@gmail.com')
+
+        # ── 1. Email de NOTIFICATION INTERNE → équipe OPTINET ──────────────
+        ctx_notif = {
+            'nom': msg.nom or 'Inconnu',
+            'email': msg.email,
+            'entreprise': msg.entreprise or '',
+            'telephone': msg.numero_de_telephone or '',
+            'sujet': msg.sujet,
+            'contenu': msg.contenu,
+            'date': date_fr,
+        }
+        html_notif = render_to_string('emails/notification_optinet.html', ctx_notif)
+        text_notif = (
+            f"Nouveau message de : {msg.nom} <{msg.email}>\n"
+            f"Sujet : {msg.sujet}\n"
+            f"Téléphone : {msg.numero_de_telephone or 'N/A'}\n"
+            f"Entreprise : {msg.entreprise or 'N/A'}\n\n"
+            f"{msg.contenu}\n\n"
+            f"Reçu le {date_fr} via le formulaire du site OPTINET."
+        )
+        email_notif = EmailMultiAlternatives(
+            subject=f"[OPTINET] Nouveau message : {msg.sujet}",
+            body=text_notif,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[destinataire_optinet],
+            reply_to=[f"{msg.nom} <{msg.email}>"],
+        )
+        email_notif.attach_alternative(html_notif, 'text/html')
+        email_notif.send(fail_silently=True)
+
+        # ── 2. Email de RÉPONSE AUTOMATIQUE → client ──────────────────────
+        ctx_auto = {
+            'prenom': prenom,
+            'nom': msg.nom or '',
+            'sujet': msg.sujet,
+            'contenu_court': contenu_court,
+        }
+        html_auto = render_to_string('emails/reponse_auto_client.html', ctx_auto)
+        text_auto = (
+            f"Bonjour {prenom},\n\n"
+            f"Nous avons bien reçu votre message concernant : « {msg.sujet} ».\n\n"
+            f"Notre équipe vous répondra dans un délai de 24 à 48 heures ouvrables.\n\n"
+            f"--- OPTINET SARLU ---\n"
+            f"Site web  : https://optinet.ginolux.com\n"
+            f"WhatsApp  : https://wa.me/22890748465\n"
+            f"Facebook  : https://web.facebook.com/profile.php?id=61582757837937\n"
+            f"LinkedIn  : https://www.linkedin.com/company/optinet-sarlu\n"
+            f"YouTube   : https://www.youtube.com/@optinetsarlu\n\n"
+            f"© 2025 OPTINET SARLU — Lomé, Togo"
+        )
+        email_auto = EmailMultiAlternatives(
+            subject="Votre message a bien été reçu — OPTINET SARLU",
+            body=text_auto,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[msg.email],
+            reply_to=[destinataire_optinet],
+        )
+        email_auto.attach_alternative(html_auto, 'text/html')
+        email_auto.send(fail_silently=True)
+
 class MessageDetailView(generics.RetrieveAPIView):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
