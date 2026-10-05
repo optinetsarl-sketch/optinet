@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import christmasFlyerEn from "../../assets/christmas-flyer-en.jpg";
 import christmasFlyerFr from "../../assets/christmas-flyer-fr.jpg";
+import christmasBg1 from "/christmas-bg-1.jpeg";
+import christmasBg2 from "/christmas-bg-2.jpeg";
+import christmasBg3 from "/christmas-bg-3.jpeg";
+import christmasBg4 from "/christmas-bg-4.jpeg";
+import christmasBg5 from "/christmas-bg-5.jpeg";
 import { useLanguage } from "../../context/LanguageContext";
 import "./christmas.css";
 
@@ -401,11 +406,11 @@ export default function ChristmasInTheBushPage() {
     ? [christmasFlyerFr, christmasFlyerEn]
     : [christmasFlyerEn, christmasFlyerFr];
   const heroBackgrounds = [
-    "/christmas-bg-1.jpeg",
-    "/christmas-bg-2.jpeg",
-    "/christmas-bg-3.jpeg",
-    "/christmas-bg-4.jpeg",
-    "/christmas-bg-5.jpeg"
+    christmasBg1,
+    christmasBg2,
+    christmasBg3,
+    christmasBg4,
+    christmasBg5,
   ];
   const [activeFlyerIndex, setActiveFlyerIndex] = useState(0);
   const [activeBackgroundIndex, setActiveBackgroundIndex] = useState(0);
