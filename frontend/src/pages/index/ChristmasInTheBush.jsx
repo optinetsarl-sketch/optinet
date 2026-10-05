@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import christmasFlyerEn from "../../assets/christmas-flyer-en.jpg";
-import christmasFlyerFr from "../../assets/christmas-flyer-fr.jpg";
-import christmasBg1 from "/christmas-bg-1.jpeg";
-import christmasBg2 from "/christmas-bg-2.jpeg";
-import christmasBg3 from "/christmas-bg-3.jpeg";
-import christmasBg4 from "/christmas-bg-4.jpeg";
-import christmasBg5 from "/christmas-bg-5.jpeg";
+import {
+  christmasFlyerEn,
+  christmasFlyerFr,
+  christmasBg1,
+  christmasBg2,
+  christmasBg3,
+  christmasBg4,
+  christmasBg5,
+} from "./christmasImages";
 import { useLanguage } from "../../context/LanguageContext";
 import "./christmas.css";
 
