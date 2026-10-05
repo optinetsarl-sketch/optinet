@@ -12,6 +12,8 @@ export const translations = {
     articles: "Nos Articles",
     cart: "Panier",
     quote_request: "Demander un devis",
+    projects: "Nos projets",
+    christmas_project: "Noël en brousse 2026",
 
     // Banner & Hero (Index)
     hero_location_badge: "🇹🇬 Lomé, Togo • Solutions IT , Télécom & WEB",
@@ -30,7 +32,7 @@ export const translations = {
 
     // Section Annonces & Produits (Index / Galerie)
     announcements_badge: "NOS ANNONCES",
-    announcements_title: "Nos produits en stock 🔥",
+    announcements_title: "Nos produits en stock",
     announcements_subtitle: "Ordinateurs, matériel et bonnes affaires — cliquez pour commander.",
     announcements_empty: "Bientôt de nouvelles annonces…",
     announcements_view_all: "Voir tous les articles",
@@ -80,11 +82,11 @@ export const translations = {
 
     // Portfolio Page
     portfolio_tag: "Nos Réalisations",
-    portfolio_title_1: "Découvrez notre",
-    portfolio_title_2: "Portfolio",
-    portfolio_sub: "Explorez une sélection de nos meilleurs projets, démontrant notre expertise en conception et développement de solutions numériques innovantes.",
+    portfolio_title_1: "Des solutions",
+    portfolio_title_2: "qui font la différence",
+    portfolio_sub: "Nous concevons des infrastructures fiables, sécurisées et performantes pour les entreprises et institutions qui veulent optimiser leurs systèmes et accélérer leur croissance.",
     portfolio_view_project: "Voir le projet",
-    portfolio_private: "Projet Privé",
+    portfolio_private: "Projet privé",
 
     // Services Page
     services_tag: "Nos Services",
@@ -165,6 +167,8 @@ export const translations = {
     articles: "Our Products",
     cart: "Cart",
     quote_request: "Get a Quote",
+    projects: "Our Projects",
+    christmas_project: "Christmas in the Bush 2026",
 
     // Banner & Hero (Index)
     hero_location_badge: "🇹🇬 Lomé, Togo • IT, Telecom & WEB Solutions",
@@ -233,11 +237,11 @@ export const translations = {
 
     // Portfolio Page
     portfolio_tag: "Our Achievements",
-    portfolio_title_1: "Explore Our",
-    portfolio_title_2: "Portfolio",
-    portfolio_sub: "Explore a selection of our best projects, showcasing our expertise in designing and developing innovative digital solutions.",
-    portfolio_view_project: "View Project",
-    portfolio_private: "Private Project",
+    portfolio_title_1: "Solutions",
+    portfolio_title_2: "that make an impact",
+    portfolio_sub: "We design reliable, secure, and high-performing infrastructures for businesses and institutions aiming to optimize their systems and accelerate growth.",
+    portfolio_view_project: "View project",
+    portfolio_private: "Private project",
 
     // Services Page
     services_tag: "Our Services",
@@ -318,6 +322,8 @@ export const translations = {
     articles: "产品中心",
     cart: "购物车",
     quote_request: "获取报价",
+    projects: "我们的项目",
+    christmas_project: "丛林圣诞2026",
 
     // Banner & Hero (Index)
     hero_location_badge: "🇹🇬 多哥洛美 • IT、电信与网络解决方案",

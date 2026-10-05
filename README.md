@@ -1,116 +1,217 @@
-# OPTINET SARL U — Site web & plateforme de contenu
+# 🌐 OPTI-WEB — Site Web Officiel & Plateforme OPTINET SARL U
 
-Site officiel d'**OPTINET SARL U** (Lomé, Togo) — solutions IT, télécom & web.
-Le dépôt contient le **site public** (vitrine + boutique + journal) et son **API**.
+Plateforme web officielle d'**OPTINET SARL U** (Lomé, Togo) — Solutions informatiques, réseaux & télécoms, cybersécurité, développement web et vente d'équipements technologiques.
 
-- `backend/` : API **Django REST Framework** (+ Django Admin)
-- `frontend/` : application **React / Vite** (servie par Django en production)
-
-En ligne : **https://optinet-sarlu.ginolux.com** (aussi `optinet.ginolux.com`)
+Ce sous-projet regroupe le **site web public** (vitrine, catalogue produits & boutique e-commerce, journal d'interventions), l'**espace d'administration** et l'**API REST Django**.
 
 ---
 
-## Fonctionnalités
+## 📑 Sommaire
 
-### Site vitrine
-Accueil, **Services** (7 domaines : réseaux, sécurité, fibre, serveurs, téléphonie, conseil/formation, développement & applications), À propos, Direction, Certifications, Portfolio, Contact.
-
-### Boutique — « Nos Articles »
-- Un **produit = une fiche** avec **plusieurs photos** (modèles `Produit` / `PhotoProduit`).
-- Liste + **barre de recherche** (nom / prix).
-- Page détail `/articles/:id` : **galerie zoomable**, prix, **tableau de caractéristiques**, description, bouton **« Commander sur WhatsApp »**.
-
-### Le Journal — actualités & interventions
-- `Actualite` / `PhotoActualite` : titre, récit, **catégorie** (intervention terrain, réalisation, actualité, annonce), **vidéo YouTube** intégrée, galerie photos.
-- Rubrique **`/journal`** (fil filtrable) + fiche **`/journal/:id`** (galerie, vidéo, partage).
-- Chaque actualité peut être **liée à un service** → elle s'affiche sur la page de ce service.
-
-### Publication depuis OPTIPUB
-Les actualités du Journal sont créées d'un clic depuis **OPTIPUB Studio** (dépôt séparé), qui publie simultanément sur le site **et** les réseaux sociaux (Facebook, Instagram, LinkedIn) via l'API ci-dessous.
+1. [Architecture & Pile Technique](#-architecture--pile-technique)
+2. [Fonctionnalités Principales](#-fonctionnalités-principales)
+3. [Démarrage Rapide en Local](#-démarrage-rapide-en-local)
+4. [Variables d'Environnement](#-variables-denvironnement)
+5. [Endpoints API Principaux](#-endpoints-api-principaux)
+6. [Déploiement Docker](#-déploiement-docker)
+7. [Structure du Projet](#-structure-du-projet)
 
 ---
 
-## Architecture & pile technique
+## 🏗 Architecture & Pile Technique
 
-| Couche | Techno |
-|--------|--------|
-| API | Django + Django REST Framework, JWT (SimpleJWT) |
-| Base de données | **PostgreSQL** en production, SQLite en local (`USE_SQLITE=True`) |
-| Frontend | React + Vite (build copié dans `frontend_dist`, servi par Django) |
-| Médias | `ImageField` → dossier `media/` (volume Docker en prod) |
-| Conteneur | Un seul conteneur : Django sert l'API **et** le frontend build |
+```
+OPTI-WEB
+├── 🖥️ frontend/  → React 19 + Vite 8 + React Router 7 + Chart.js
+└── 🐍 backend/   → Django 5.2 + Django REST Framework + SimpleJWT
+```
 
-### Principaux endpoints API
-
-| Méthode | URL | Rôle |
-|---------|-----|------|
-| `GET` | `/api/produits/` · `/api/produits/<id>/` | Boutique (liste / détail) |
-| `POST` | `/api/produits/create/` | Créer un produit (+ photos) — auth |
-| `GET` | `/api/actualites/?categorie=&service=` | Journal (filtres) |
-| `GET` | `/api/actualites/<id>/` | Détail actualité (photos + vidéo) |
-| `POST` | `/api/actualites/create/` | Créer une actualité — auth |
-| `POST` | `/api/login/` | Obtenir un jeton JWT |
-| `GET/POST` | `/api/messages/`, `/api/portfolio/`, `/api/contacts/` | Contact / portfolio / carnet |
-
-Gestion des contenus : **Django Admin** sur `/admin/` (produits & actualités avec photos en ligne).
+| Composant | Technologie | Détails |
+|---|---|---|
+| **Frontend** | React 19, Vite 8 | SPA fluide, multi-pages, multilingue (i18n), design responsive |
+| **Backend API** | Python 3.11+, Django 5.2 | Django REST Framework, JWT SimpleJWT, gestion médias |
+| **Base de Données** | SQLite (local) / PostgreSQL (prod) | Bascule automatique via `USE_SQLITE` dans `.env` |
+| **Sécurité & Auth** | JWT Bearer Tokens | Rôles hiérarchiques : DG, SG, CD, CP, DV, UT |
+| **Statistiques** | Moteur analytique intégré | Suivi anonyme (visiteurs uniques, pages vues, sources, appareils) |
 
 ---
 
-## Développement local
+## ✨ Fonctionnalités Principales
 
-### Backend
-```bash
-cd backend
-python -m venv venv && source venv/Scripts/activate   # (Windows: venv\Scripts\activate)
+### 🌍 1. Site Public & Vitrine
+- **Accueil dynamique** : Présentation des pôles d'activités, chiffres clés, réalisations récentes.
+- **7 Domaines d'Expertise** :
+  - Réseaux & Infrastructure
+  - Sécurité & Vidéosurveillance
+  - Fibre Optique & Télécoms
+  - Serveurs & Virtualisation
+  - Téléphonie d'Entreprise
+  - Conseil & Formation
+  - Développement & Applications Web
+- **Pages institutionnelles** : À propos, Équipe de Direction, Certifications & Partenariats, Portfolio projets, Contact & Localisation.
+
+### 🛒 2. Boutique « Nos Articles »
+- Catalogue avec filtrage par catégorie et recherche textuelle.
+- Fiches articles détaillées : galerie multi-photos zoomable, spécifications techniques complètes, disponibilité stock.
+- Commande rapide intégrée (Panier, paiement à la livraison, redirection WhatsApp directe).
+
+### 📰 3. Le Journal (Actualités & Interventions)
+- Récits d'interventions terrain, réalisations techniques et annonces.
+- Galerie photos intégrée, support des vidéos YouTube.
+- Liens directs avec les services associés et passerelle avec **OPTIPUB**.
+
+### 📊 4. Espace d'Administration & Métriques
+- Tableau de bord avec statistiques en direct (visiteurs connectés, fréquentation 7j / 30j / 12m).
+- Gestion des utilisateurs, attribution des rôles et statuts d'accès.
+- Gestion du catalogue produits, du portfolio, des actualités et messagerie de contact.
+
+---
+
+## 🚀 Démarrage Rapide en Local
+
+### 1. Prérequis
+- **Python 3.11+**
+- **Node.js 18+** & **npm**
+
+---
+
+### 2. Lancement du Backend (Django)
+
+```powershell
+# 1. Se positionner dans le dossier backend
+cd "c:\MES APP-SOFT\OPTINET WEB-PUB\OPTI-WEB\backend"
+
+# 2. Créer l'environnement virtuel (si pas encore créé)
+py -3.11 -m venv venv_win
+
+# 3. Activer l'environnement virtuel
+.\venv_win\Scripts\activate
+
+# 4. Installer les dépendances
 pip install -r requirements.txt
-# .env : USE_SQLITE=True pour utiliser SQLite en local
+
+# 5. Appliquer les migrations de base de données
 python manage.py migrate
-python manage.py runserver          # http://localhost:8000
+
+# 6. Démarrer le serveur API
+# (Port 8001 recommandé en local si le port 8000 est utilisé)
+python manage.py runserver 127.0.0.1:8001
 ```
 
-### Frontend
-```bash
-cd frontend
+> **API active sur :** `http://127.0.0.1:8001`  
+> **Django Admin sur :** `http://127.0.0.1:8001/admin/`
+
+---
+
+### 3. Lancement du Frontend (React / Vite)
+
+Dans un second terminal :
+
+```powershell
+# 1. Se positionner dans le dossier frontend
+cd "c:\MES APP-SOFT\OPTINET WEB-PUB\OPTI-WEB\frontend"
+
+# 2. Installer les dépendances (si nécessaire)
 npm install
-npm run dev                         # http://localhost:5173
+
+# 3. Lancer le serveur de développement Vite
+npm run dev
 ```
-`frontend/.env` : `VITE_API_URL` = URL de l'API (ex. `http://127.0.0.1:8000` en local).
+
+> **Site accessible sur :** `http://localhost:5173/`
 
 ---
 
-## Déploiement
+## ⚙️ Variables d'Environnement
 
-Le site tourne dans **un conteneur Docker** construit par le `Dockerfile` (multi-étapes : build du frontend puis backend). L'image lance `migrate` puis le serveur au démarrage.
+### Backend (`backend/.env`)
+```env
+# Utiliser SQLite en local (True) ou PostgreSQL en production (False)
+USE_SQLITE=True
 
-### Déploiement automatique (actif)
-Un push sur `main` suffit : le serveur détecte le nouveau code (script `deploy.sh` lancé par cron) puis **reconstruit et redéploie tout seul**, avec rollback automatique en cas d'échec.
+# Paramètres PostgreSQL (utilisés uniquement si USE_SQLITE=False)
+DB_NAME=optinet_db
+DB_USER=kinera_user
+DB_PASSWORD=kinera_password
+DB_HOST=127.0.0.1
+DB_PORT=5432
+```
+
+### Frontend (`frontend/.env`)
+```env
+# URL de l'API locale
+VITE_API_URL=http://127.0.0.1:8001
+
+# En production :
+# VITE_API_URL=https://optinet.ginolux.com
+```
+
+---
+
+## 🔌 Endpoints API Principaux
+
+| Méthode | URL | Description | Accès |
+|---|---|---|---|
+| `POST` | `/api/login/` | Authentification JWT (obtention access & refresh token) | Public |
+| `GET` | `/api/produits/` | Liste des produits (filtres: `?categorie=`, `?q=`) | Public |
+| `GET` | `/api/produits/<uuid_ou_id>/` | Fiche produit détaillée | Public |
+| `POST` | `/api/produits/create/` | Création produit avec photos | Admin (`Token`) |
+| `GET` | `/api/categories-produits/` | Catégories d'articles | Public |
+| `POST` | `/api/commandes/create/` | Enregistrement d'une commande client | Public |
+| `GET` | `/api/actualites/` | Liste des articles du Journal (`?categorie=`, `?service=`) | Public |
+| `POST` | `/api/actualites/create/` | Publication d'une actualité (ou via OPTIPUB) | Admin (`Token`) |
+| `POST` | `/api/contact/create/` | Formulaire de contact public | Public |
+| `POST` | `/api/track/` | Envoi d'un signal de visite anonyme | Public |
+| `GET` | `/api/stats/visites/` | Statistiques analytiques (`?periode=7j\|30j\|12m`) | Admin (`Token`) |
+
+---
+
+## 🐳 Déploiement Docker
+
+Le projet dispose d'une configuration multi-étapes pour déployer l'ensemble (Frontend build + Backend Django) dans un conteneur unifié.
 
 ```bash
-# construire l'image manuellement (si besoin)
-docker build -f Dockerfile -t optinet:new .
+# Construire l'image Docker
+docker build -f Dockerfile -t optinet:latest .
 
-# lancer le conteneur (réseau de la base + volume médias)
-docker run -d --name optinet --network optinet -p 8000:8000 --restart unless-stopped \
-  -v /chemin/vers/media:/app/media optinet:new
-```
-
-Voir aussi `docker-compose.prod.yml`, `Dockerfile`, `deploy.sh` et `DOCKER_SUMMARY.md`.
-
----
-
-## Structure du dépôt
-
-```
-backend/            API Django + admin
-  OPTINET/          modèles (Produit, PhotoProduit, Actualite, PhotoActualite, …),
-                    serializers, views, urls, migrations
-frontend/           React + Vite
-  src/pages/index/  pages publiques (accueil, services, journal, boutique, …)
-  src/components/    navbar, footer, …
-Dockerfile          build multi-étapes (frontend + backend)
-deploy.sh           déploiement automatique (surveille GitHub, rebuild, rollback)
+# Lancer le conteneur avec volume pour les médias
+docker run -d --name optinet-prod \
+  -p 8000:8000 \
+  -v /var/optinet/media:/app/media \
+  --restart unless-stopped \
+  optinet:latest
 ```
 
 ---
 
-© OPTINET SARL U — Lomé, Togo.
+## 📂 Structure du Répertoire
+
+```
+OPTI-WEB/
+├── backend/
+│   ├── backend/            # Configuration Django (settings, urls, wsgi)
+│   ├── OPTINET/            # Application principale (models, views, serializers)
+│   ├── media/              # Fichiers médias (images produits, actualités)
+│   ├── db.sqlite3          # Base de données locale SQLite
+│   ├── manage.py           # CLI Django
+│   ├── requirements.txt    # Dépendances Python
+│   └── .env                # Configuration backend
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/     # Composants réutilisables (Header, Sidebar, Cards)
+│   │   ├── pages/index/    # 18 pages publiques du site
+│   │   ├── pages/admin/    # 12 modules d'administration
+│   │   ├── routes/         # Routage React Router
+│   │   ├── services/       # Appels API Axios & gestion JWT
+│   │   └── translations/   # Dictionnaires de traduction
+│   ├── package.json        # Dépendances Node.js
+│   ├── vite.config.js      # Configuration Vite
+│   └── .env                # Configuration frontend
+│
+└── README.md               # Ce fichier de documentation
+```
+
+---
+
+© **OPTINET SARL U** — Lomé, Togo. Tous droits réservés.

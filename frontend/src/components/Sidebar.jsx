@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import logo from "../assets/logo-Optinet-sokode.png";
+import logo from "../assets/optinet-logo.png";
 import "./Sidebar.css";
 
 const NAV_ITEMS = [

@@ -3,6 +3,42 @@ import { getPortfolios } from '../../services/authService';
 import '../styles_admin/public_portfolio.css';
 import { useLanguage } from '../../context/LanguageContext';
 
+const fallbackPortfolios = [
+  {
+    id: 'fallback-1',
+    titre: 'Infrastructure réseau sur mesure',
+    description: 'Conception et mise en place de réseaux sécurisés pour les entreprises et administrations avec optimisation de la performance et de la fiabilité.',
+    image_principale: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80',
+    categorie: { nom: 'Réseaux & Infrastructure' },
+    technologies: 'Cisco, Fortinet, VLAN, Wi‑Fi Enterprise',
+    lien_projet: null,
+    est_actif: true,
+    ordre_affichage: 1,
+  },
+  {
+    id: 'fallback-2',
+    titre: 'Sécurité vidéo & surveillance',
+    description: 'Installation de systèmes de vidéosurveillance intelligents pour améliorer la sécurité des sites, bureaux, entrepôts et espaces publics.',
+    image_principale: 'https://images.unsplash.com/photo-1516321165247-4aa89a48be28?auto=format&fit=crop&w=1200&q=80',
+    categorie: { nom: 'Sécurité' },
+    technologies: 'CCTV, Hikvision, Axis, Alarme',
+    lien_projet: null,
+    est_actif: true,
+    ordre_affichage: 2,
+  },
+  {
+    id: 'fallback-3',
+    titre: 'Téléphonie IP & communication',
+    description: 'Mise en place de solutions de téléphonie IP modernes pour fluidifier les échanges internes et externes des organisations.',
+    image_principale: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80',
+    categorie: { nom: 'Télécommunications' },
+    technologies: 'VoIP, Asterisk, PBX, SIP Trunking',
+    lien_projet: null,
+    est_actif: true,
+    ordre_affichage: 3,
+  },
+];
+
 const PortfolioSection = () => {
   const [portfolios, setPortfolios] = useState([]);
   const { t, tDynamic } = useLanguage();
@@ -10,12 +46,14 @@ const PortfolioSection = () => {
   useEffect(() => {
     getPortfolios()
       .then((res) => {
-        const activePortfolios = res.data
-          .filter(p => p.est_actif)
-          .sort((a, b) => a.ordre_affichage - b.ordre_affichage);
-        setPortfolios(activePortfolios);
+        const data = Array.isArray(res?.data) ? res.data : [];
+        const activePortfolios = data
+          .filter((p) => p?.est_actif)
+          .sort((a, b) => (a.ordre_affichage ?? 0) - (b.ordre_affichage ?? 0));
+
+        setPortfolios(activePortfolios.length ? activePortfolios : fallbackPortfolios);
       })
-      .catch((err) => console.error("Erreur lors de la récupération du portfolio:", err));
+      .catch(() => setPortfolios(fallbackPortfolios));
   }, []);
 
   useEffect(() => {
@@ -81,12 +119,12 @@ const PortfolioSection = () => {
             </div>
             <div className="pub-portfolio-content">
               {item.categorie && (
-                <div className="pub-portfolio-client">{tDynamic(item.categorie.nom)}</div>
+                <div className="pub-portfolio-client">{tDynamic(item.categorie.nom || item.categorie)}</div>
               )}
               <h3 className="pub-portfolio-title">{tDynamic(item.titre)}</h3>
               <p className="pub-portfolio-desc">{tDynamic(item.description)}</p>
               <div className="pub-portfolio-tags">
-                {item.technologies.split(',').map((tech, i) => (
+                {(typeof item.technologies === 'string' ? item.technologies.split(',') : []).map((tech, i) => (
                   <span className="pub-portfolio-tag" key={i}>{tech.trim()}</span>
                 ))}
               </div>
