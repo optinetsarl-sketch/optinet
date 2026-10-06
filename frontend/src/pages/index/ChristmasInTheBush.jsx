@@ -6,12 +6,12 @@ import { useLanguage } from "../../context/LanguageContext";
 import "./christmas.css";
 
 const PAYPAL_DONATION_URL = "https://www.paypal.com/ncp/payment/462YTWR7AWK6N";
-const CHRISTMAS_GALLERY_IMAGES = [
-  "/christmas-bg-1.jpeg",
+const CHRISTMAS_BACKGROUND_IMAGES = [
   "/christmas-bg-2.jpeg",
-  "/christmas-bg-3.jpeg",
-  "/christmas-bg-4.jpeg",
   "/christmas-bg-5.jpeg",
+  "/christmas-bg-4.jpeg",
+  "/christmas-bg-1.jpeg",
+  "/christmas-bg-3.jpeg",
 ];
 
 const christmasContent = {
@@ -425,9 +425,19 @@ export default function ChristmasInTheBushPage() {
   const flyerSlides = language === "fr"
     ? [christmasFlyerFr, christmasFlyerEn]
     : [christmasFlyerEn, christmasFlyerFr];
+  const heroBackgrounds = CHRISTMAS_BACKGROUND_IMAGES;
   const [activeFlyerIndex, setActiveFlyerIndex] = useState(0);
+  const [activeBackgroundIndex, setActiveBackgroundIndex] = useState(0);
   const [shareStatus, setShareStatus] = useState("");
   const activeFlyer = flyerSlides[activeFlyerIndex];
+  const seasonalTextStyles = [
+    { title: "#fffaf0", accent: "#f7d78c", panel: "rgba(22, 18, 15, 0.38)" },
+    { title: "#fffdf9", accent: "#f9d68e", panel: "rgba(18, 26, 21, 0.42)" },
+    { title: "#fff9f0", accent: "#ffdf9c", panel: "rgba(23, 12, 16, 0.44)" },
+    { title: "#fefaf5", accent: "#ffd97f", panel: "rgba(24, 12, 12, 0.45)" },
+    { title: "#fff6eb", accent: "#f7d98d", panel: "rgba(13, 27, 22, 0.42)" }
+  ];
+  const activeTextStyle = seasonalTextStyles[activeBackgroundIndex] || seasonalTextStyles[0];
 
   const handleShare = async () => {
     const shareData = {
@@ -457,7 +467,17 @@ export default function ChristmasInTheBushPage() {
     }, 6000);
 
     return () => window.clearInterval(intervalId);
-  }, [language]);
+  }, [language, flyerSlides.length]);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
+
+    const intervalId = window.setInterval(() => {
+      setActiveBackgroundIndex((currentIndex) => (currentIndex + 1) % heroBackgrounds.length);
+    }, 7000);
+
+    return () => window.clearInterval(intervalId);
+  }, [heroBackgrounds.length]);
 
   useEffect(() => {
     document.title = `${content.title} | OPTINET`;
@@ -482,14 +502,29 @@ export default function ChristmasInTheBushPage() {
 
   return (
     <div className="christmas-page">
-      <section className="christmas-hero">
+      <section className="christmas-hero" aria-label="Arrière-plan Noël défilant">
+        <div className="christmas-hero__slides" aria-hidden="true">
+          {heroBackgrounds.map((background, index) => (
+            <div
+              key={background}
+              className={`christmas-hero__slide ${index === activeBackgroundIndex ? "is-active" : ""}`}
+              style={{ backgroundImage: `url(${background})` }}
+            />
+          ))}
+        </div>
         <div className="christmas-hero__overlay" />
         <div className="christmas-hero__layout container">
-          <div className="christmas-hero__content">
+          <div
+            className="christmas-hero__content"
+            style={{ background: activeTextStyle.panel, border: `1px solid ${activeTextStyle.accent}33` }}
+          >
             <div className="christmas-hero__badge">{content.badge}</div>
-            <h1>{content.title}</h1>
-            <h2>{content.slogan}</h2>
-            <p>{content.description}</p>
+            <h1 style={{ color: activeTextStyle.title }}>
+              <span className="christmas-hero__title-main">{content.title.replace(/\s*2026$/, "")}</span>
+              <span className="christmas-hero__year">{"\u00a0"}2026</span>
+            </h1>
+            <h2 style={{ color: activeTextStyle.accent }}>{content.slogan}</h2>
+            <p style={{ color: activeTextStyle.title }}>{content.description}</p>
             <div className="christmas-hero__actions">
               <a
                 className="btn btn-primary"
@@ -695,6 +730,22 @@ export default function ChristmasInTheBushPage() {
           </div>
         </section>
 
+        <section className="christmas-section project-info">
+          <div className="section-heading">
+            <span className="eyebrow">{content.infoEyebrow}</span>
+            <h3>{content.infoTitle}</h3>
+          </div>
+          <div className="project-info__grid">
+            {content.infoItems.map(({ label, value }) => (
+              <div key={label} className="project-info__item">
+                <span>{label}</span>
+                <strong>{value}</strong>
+              </div>
+            ))}
+          </div>
+          <p className="project-info__note">{content.infoNote}</p>
+        </section>
+
         <section className="christmas-section">
           <div className="section-heading">
             <span className="eyebrow">{content.galleryEyebrow}</span>
@@ -706,7 +757,7 @@ export default function ChristmasInTheBushPage() {
                 <div
                   className="gallery-item__placeholder"
                   style={{
-                    backgroundImage: `linear-gradient(rgba(7, 24, 39, 0.12), rgba(7, 24, 39, 0.78)), url(${CHRISTMAS_GALLERY_IMAGES[index % CHRISTMAS_GALLERY_IMAGES.length]})`,
+                    backgroundImage: `linear-gradient(rgba(7, 24, 39, 0.12), rgba(7, 24, 39, 0.78)), url(${CHRISTMAS_BACKGROUND_IMAGES[index % CHRISTMAS_BACKGROUND_IMAGES.length]})`,
                   }}
                 >
                   {label}
