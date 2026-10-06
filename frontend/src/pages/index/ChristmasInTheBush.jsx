@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import christmasFlyerEn from "../../assets/christmas-flyer-en.jpg";
-import christmasFlyerFr from "../../assets/christmas-flyer-fr.jpg";
+import {
+  christmasFlyerEn,
+  christmasFlyerFr,
+  christmasBg1,
+  christmasBg2,
+  christmasBg3,
+  christmasBg4,
+  christmasBg5,
+} from "./christmasImages";
 import { useLanguage } from "../../context/LanguageContext";
 import "./christmas.css";
 
 const PAYPAL_DONATION_URL = "https://www.paypal.com/ncp/payment/462YTWR7AWK6N";
-const CHRISTMAS_GALLERY_IMAGES = [
-  "/christmas-bg-1.jpeg",
-  "/christmas-bg-2.jpeg",
-  "/christmas-bg-3.jpeg",
-  "/christmas-bg-4.jpeg",
-  "/christmas-bg-5.jpeg",
-];
 
 const christmasContent = {
   fr: {
@@ -67,9 +67,6 @@ const christmasContent = {
     ],
     actionEyebrow: "Action",
     actionTitle: "Comment vous pouvez aider",
-    volunteerTitle: "Donner un coup de main",
-    volunteerText: "Bénévolat, logistique ou dons en nature : chaque aide contribue à la réussite du projet.",
-    volunteerButton: "Proposer mon aide",
     helpOptions: [
       "Soutien financier",
       "Dons alimentaires",
@@ -144,9 +141,6 @@ const christmasContent = {
     shareEyebrow: "Partager",
     shareTitle: "Partager le projet",
     shareText: "Ensemble, apportons le sourire à chaque village !",
-    shareButton: "Partager le projet",
-    shareCopied: "Lien du projet copié.",
-    shareError: "Le lien n'a pas pu être partagé.",
     projectName: "Noël en brousse 2026"
   },
   en: {
@@ -201,9 +195,6 @@ const christmasContent = {
     ],
     actionEyebrow: "Action",
     actionTitle: "How You Can Help",
-    volunteerTitle: "Give a helping hand",
-    volunteerText: "Volunteering, logistics or in-kind donations: every contribution helps make this project possible.",
-    volunteerButton: "Offer your help",
     helpOptions: [
       "Financial Support",
       "Food Donations",
@@ -278,9 +269,6 @@ const christmasContent = {
     shareEyebrow: "Share",
     shareTitle: "Share the Project",
     shareText: "Together, Bringing Smiles to Every Village!",
-    shareButton: "Share this project",
-    shareCopied: "Project link copied.",
-    shareError: "The project link could not be shared.",
     projectName: "Christmas in the Bush 2026"
   },
   zh: {
@@ -335,9 +323,6 @@ const christmasContent = {
     ],
     actionEyebrow: "参与方式",
     actionTitle: "您如何帮助",
-    volunteerTitle: "伸出援手",
-    volunteerText: "志愿服务、后勤支持或实物捐赠：每一份帮助都让项目更进一步。",
-    volunteerButton: "提供帮助",
     helpOptions: [
       "财政支持",
       "食品捐赠",
@@ -412,9 +397,6 @@ const christmasContent = {
     shareEyebrow: "分享",
     shareTitle: "分享项目",
     shareText: "一起，让每个村庄都充满笑声！",
-    shareButton: "分享项目",
-    shareCopied: "项目链接已复制。",
-    shareError: "无法分享项目链接。",
     projectName: "丛林圣诞2026"
   }
 };
@@ -425,29 +407,24 @@ export default function ChristmasInTheBushPage() {
   const flyerSlides = language === "fr"
     ? [christmasFlyerFr, christmasFlyerEn]
     : [christmasFlyerEn, christmasFlyerFr];
+  const heroBackgrounds = [
+    christmasBg1,
+    christmasBg2,
+    christmasBg3,
+    christmasBg4,
+    christmasBg5,
+  ];
   const [activeFlyerIndex, setActiveFlyerIndex] = useState(0);
-  const [shareStatus, setShareStatus] = useState("");
+  const [activeBackgroundIndex, setActiveBackgroundIndex] = useState(0);
   const activeFlyer = flyerSlides[activeFlyerIndex];
-
-  const handleShare = async () => {
-    const shareData = {
-      title: content.projectName,
-      text: content.shareText,
-      url: window.location.href,
-    };
-
-    try {
-      if (navigator.share) {
-        await navigator.share(shareData);
-        return;
-      }
-
-      await navigator.clipboard.writeText(shareData.url);
-      setShareStatus(content.shareCopied);
-    } catch (error) {
-      if (error.name !== "AbortError") setShareStatus(content.shareError);
-    }
-  };
+  const seasonalTextStyles = [
+    { title: "#fffaf0", accent: "#f7d78c", panel: "rgba(22, 18, 15, 0.38)" },
+    { title: "#fffdf9", accent: "#f9d68e", panel: "rgba(18, 26, 21, 0.42)" },
+    { title: "#fff9f0", accent: "#ffdf9c", panel: "rgba(23, 12, 16, 0.44)" },
+    { title: "#fefaf5", accent: "#ffd97f", panel: "rgba(24, 12, 12, 0.45)" },
+    { title: "#fff6eb", accent: "#f7d98d", panel: "rgba(13, 27, 22, 0.42)" }
+  ];
+  const activeTextStyle = seasonalTextStyles[activeBackgroundIndex] || seasonalTextStyles[0];
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
@@ -457,7 +434,17 @@ export default function ChristmasInTheBushPage() {
     }, 6000);
 
     return () => window.clearInterval(intervalId);
-  }, [language]);
+  }, [language, flyerSlides.length]);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
+
+    const intervalId = window.setInterval(() => {
+      setActiveBackgroundIndex((currentIndex) => (currentIndex + 1) % heroBackgrounds.length);
+    }, 7000);
+
+    return () => window.clearInterval(intervalId);
+  }, [heroBackgrounds.length]);
 
   useEffect(() => {
     document.title = `${content.title} | OPTINET`;
@@ -482,14 +469,29 @@ export default function ChristmasInTheBushPage() {
 
   return (
     <div className="christmas-page">
-      <section className="christmas-hero">
+      <section className="christmas-hero" aria-label="Arrière-plan Noël défilant">
+        <div className="christmas-hero__slides" aria-hidden="true">
+          {heroBackgrounds.map((background, index) => (
+            <div
+              key={background}
+              className={`christmas-hero__slide ${index === activeBackgroundIndex ? "is-active" : ""}`}
+              style={{ backgroundImage: `url(${background})` }}
+            />
+          ))}
+        </div>
         <div className="christmas-hero__overlay" />
         <div className="christmas-hero__layout container">
-          <div className="christmas-hero__content">
+          <div
+            className="christmas-hero__content"
+            style={{ background: activeTextStyle.panel, border: `1px solid ${activeTextStyle.accent}33` }}
+          >
             <div className="christmas-hero__badge">{content.badge}</div>
-            <h1>{content.title}</h1>
-            <h2>{content.slogan}</h2>
-            <p>{content.description}</p>
+            <h1 style={{ color: activeTextStyle.title }}>
+              <span className="christmas-hero__title-main">{content.title.replace(" 2026", "")}</span>
+              <span className="christmas-hero__year"> 2026</span>
+            </h1>
+            <h2 style={{ color: activeTextStyle.accent }}>{content.slogan}</h2>
+            <p style={{ color: activeTextStyle.title }}>{content.description}</p>
             <div className="christmas-hero__actions">
               <a
                 className="btn btn-primary"
@@ -544,15 +546,6 @@ export default function ChristmasInTheBushPage() {
       </section>
 
       <main className="container christmas-main">
-        <section className="campaign-facts" aria-label={content.infoTitle}>
-          {content.infoItems.map(({ label, value }) => (
-            <div className="campaign-facts__item" key={label}>
-              <span>{label}</span>
-              <strong>{value}</strong>
-            </div>
-          ))}
-        </section>
-
         <section id="about-project" className="christmas-section">
           <div className="section-heading">
             <span className="eyebrow">{content.aboutEyebrow}</span>
@@ -614,42 +607,18 @@ export default function ChristmasInTheBushPage() {
           </div>
         </section>
 
-        <section className="christmas-section help-section">
+        <section className="christmas-section">
           <div className="section-heading">
             <span className="eyebrow">{content.actionEyebrow}</span>
             <h3>{content.actionTitle}</h3>
           </div>
-          <div className="help-action-grid">
-            <article className="help-action-card">
-              <span className="help-action-card__number">01</span>
-              <h4>{content.donationAmountTitle}</h4>
-              <p>{content.donationText}</p>
-              <a className="help-action-card__link" href={PAYPAL_DONATION_URL} target="_blank" rel="noreferrer">
-                {content.donate}
-              </a>
-            </article>
-
-            <article className="help-action-card">
-              <span className="help-action-card__number">02</span>
-              <h4>{content.volunteerTitle}</h4>
-              <p>{content.volunteerText}</p>
-              <ul className="help-option-list">
-                {content.helpOptions.map((option) => <li key={option}>{option}</li>)}
-              </ul>
-              <Link className="help-action-card__link" to="/contact">
-                {content.volunteerButton}
-              </Link>
-            </article>
-
-            <article className="help-action-card">
-              <span className="help-action-card__number">03</span>
-              <h4>{content.shareTitle}</h4>
-              <p>{content.shareText}</p>
-              <button className="help-action-card__link" type="button" onClick={handleShare}>
-                {content.shareButton}
-              </button>
-              <span className="share-status" role="status" aria-live="polite">{shareStatus}</span>
-            </article>
+          <div className="card-grid help-grid">
+            {content.helpOptions.map((option) => (
+              <div key={option} className="mini-card">
+                <span className="mini-card__dot" aria-hidden="true" />
+                <span>{option}</span>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -695,22 +664,31 @@ export default function ChristmasInTheBushPage() {
           </div>
         </section>
 
+        <section className="christmas-section project-info">
+          <div className="section-heading">
+            <span className="eyebrow">{content.infoEyebrow}</span>
+            <h3>{content.infoTitle}</h3>
+          </div>
+          <div className="project-info__grid">
+            {content.infoItems.map(({ label, value }) => (
+              <div key={label} className="project-info__item">
+                <span>{label}</span>
+                <strong>{value}</strong>
+              </div>
+            ))}
+          </div>
+          <p className="project-info__note">{content.infoNote}</p>
+        </section>
+
         <section className="christmas-section">
           <div className="section-heading">
             <span className="eyebrow">{content.galleryEyebrow}</span>
             <h3>{content.galleryTitle}</h3>
           </div>
           <div className="gallery-grid">
-            {content.galleryCards.map((label, index) => (
+            {content.galleryCards.map((label) => (
               <div key={label} className="gallery-item">
-                <div
-                  className="gallery-item__placeholder"
-                  style={{
-                    backgroundImage: `linear-gradient(rgba(7, 24, 39, 0.12), rgba(7, 24, 39, 0.78)), url(${CHRISTMAS_GALLERY_IMAGES[index % CHRISTMAS_GALLERY_IMAGES.length]})`,
-                  }}
-                >
-                  {label}
-                </div>
+                <div className="gallery-item__placeholder">{label}</div>
               </div>
             ))}
           </div>
@@ -777,6 +755,18 @@ export default function ChristmasInTheBushPage() {
           </div>
         </section>
 
+        <section className="christmas-section social-share">
+          <div className="section-heading">
+            <span className="eyebrow">{content.shareEyebrow}</span>
+            <h3>{content.shareTitle}</h3>
+          </div>
+          <div className="share-box">
+            <p>
+              <strong>{content.projectName}</strong>
+            </p>
+            <p>{content.slogan}</p>
+          </div>
+        </section>
       </main>
     </div>
   );
